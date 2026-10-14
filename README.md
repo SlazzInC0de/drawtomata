@@ -1,4 +1,15 @@
-<p align="center"><img src="assets/drawtomata-logo.svg" alt="Drawtomata" width="300"></p>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/drawtomata-logo-dark.svg">
+    <img src="assets/drawtomata-logo.svg" alt="Drawtomata" width="300">
+  </picture>
+</p>
+
+<p align="center">
+  <a href="https://slazzinc0de.github.io/drawtomata/"><b>Open Drawtomata</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/SlazzInC0de/drawtomata/actions/workflows/test.yml"><img src="https://github.com/SlazzInC0de/drawtomata/actions/workflows/test.yml/badge.svg" alt="tests" align="center"></a>
+</p>
 
 Drawtomata converts between regular expressions, finite automata and grammars, and shows the working: closure tables, subset tables, the minimization table, state elimination steps, derivations. I built it because these conversions are easy to get wrong by hand in a TOC exam and hard to check.
 
