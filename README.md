@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://slazzinc0de.github.io/drawtomata/"><b>Open Drawtomata</b></a>
+  <a href="https://drawtomata.vercel.app/"><b>Open Drawtomata</b></a>
   &nbsp;·&nbsp;
   <a href="https://github.com/SlazzInC0de/drawtomata/actions/workflows/test.yml"><img src="https://github.com/SlazzInC0de/drawtomata/actions/workflows/test.yml/badge.svg" alt="tests" align="center"></a>
 </p>
