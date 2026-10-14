@@ -1,0 +1,12 @@
+{
+  "name": "drawtomata",
+  "version": "1.0.0",
+  "description": "Automata and formal language conversions in the browser, with every step shown.",
+  "private": true,
+  "scripts": {
+    "test": "node tests/run.js",
+    "start": "python3 -m http.server 8000"
+  },
+  "author": "Suryansh Verma",
+  "license": "MIT"
+}
