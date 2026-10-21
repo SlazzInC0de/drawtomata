@@ -46,7 +46,12 @@
     s += 'edge[fontname="JetBrains Mono",fontsize=11,arrowsize=0.7];';
     const idx = new Map(g.nodes.map((n, i) => [n.id, i]));
     for (const n of g.nodes) if (n.start) { s += `s${idx.get(n.id)}[shape=point,style=invis,width=0.01,height=0.01];s${idx.get(n.id)}->n${idx.get(n.id)}[class="startarrow"];`; }
-    for (const n of g.nodes) s += `n${idx.get(n.id)}[label=${q(D(n.label))},shape=${n.final ? 'doublecircle' : 'circle'},class=${q((n.cls || '') + (n.final ? ' final' : '') + (n.start ? ' start' : ''))}];`;
+    const lab = (t) => String(D(t)).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    for (const n of g.nodes) {
+      const cls = q((n.cls || '') + (n.final ? ' final' : '') + (n.start ? ' start' : '') + (n.lines ? ' itemset' : ''));
+      if (n.lines) s += `n${idx.get(n.id)}[label="${lab(n.label)}\\n${n.lines.map(lab).join('\\l')}\\l",shape=box,style=rounded,fontname="Courier",fontsize=11,margin="0.14,0.08",class=${cls}];`;
+      else s += `n${idx.get(n.id)}[label=${q(D(n.label))},shape=${n.final ? 'doublecircle' : 'circle'},class=${cls}];`;
+    }
     for (const e of g.edges) if (idx.has(e.from) && idx.has(e.to)) s += `n${idx.get(e.from)}->n${idx.get(e.to)}[label=${q(' ' + D(e.label) + ' ')}];`;
     return s + '}';
   }

@@ -163,6 +163,8 @@ select.slim { width: auto; padding: 5px 8px; font-size: 13px; border-color: var(
 .summary { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .chip { display: inline-flex; gap: 6px; align-items: baseline; padding: 3px 10px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--line); font-size: 12.5px; white-space: nowrap; color: var(--muted); }
 .chip b { font: 500 12.5px var(--mono); color: var(--fg); }
+.stage-h .meta { min-width: 0; }
+.stage-h .meta .chip, .summary .chip { white-space: normal; max-width: 100%; }
 .chip.ok { background: var(--green); border-color: transparent; color: var(--green-ink); font-weight: 500; }
 .chip.bad { background: var(--rose); border-color: transparent; color: var(--rose-ink); font-weight: 500; }
 .jump { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -232,6 +234,33 @@ table.mark sub { font-size: 10px; }
 .gv.tree .node.tleaf text { fill: var(--rose-ink); font-weight: 600; }
 .gv.tree .edge path { stroke: var(--line-strong); }
 .treeText { font-family: var(--mono); font-size: 12.5px; margin: 0; }
+
+.gv .node.itemset path, .gv .node.itemset polygon { fill: var(--node); stroke: var(--node-stroke); stroke-width: 1.2; }
+.gv .node.itemset.final path, .gv .node.itemset.final polygon { fill: var(--green); stroke: var(--green-ink); }
+.gv .node.itemset.conflict path, .gv .node.itemset.conflict polygon { fill: var(--rose); stroke: var(--rose-ink); }
+.gv .node.itemset.start path, .gv .node.itemset.start polygon { fill: var(--blue); }
+.gv .node.itemset text { font-size: 11px; font-family: "JetBrains Mono", "Courier New", monospace; }
+
+/* parsing tables */
+table.grid { border-collapse: collapse; }
+table.grid th, table.grid td { border: 1px solid var(--line); padding: 5px 9px; text-align: center; white-space: nowrap; }
+table.grid th { background: var(--bg); color: var(--muted); font-weight: 600; }
+table.grid td:first-child, table.grid th:first-child { text-align: left; font-weight: 600; color: var(--fg); }
+table.grid .sep { border-left: 2px solid var(--line-strong); }
+table.grid td.conflict { background: var(--rose); color: var(--rose-ink); font-weight: 600; }
+table.grid td.resolved { background: var(--amber); }
+table.grid td.acc { color: var(--green-ink); font-weight: 600; }
+table.trace td { white-space: nowrap; }
+table.trace td.act { color: var(--accent); }
+table.trace tr.done td { background: var(--green); }
+table.trace tr.bad td { background: var(--rose); color: var(--rose-ink); }
+.code { font-family: var(--mono); font-size: 12.5px; line-height: 1.6; background: var(--bg); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; overflow-x: auto; white-space: pre; margin: 0; }
+.calls { font-family: var(--mono); font-size: 12.5px; line-height: 1.7; overflow-x: auto; white-space: pre; margin: 0; }
+.calls .ok { color: var(--green-ink); }
+.calls .bad { color: var(--rose-ink); font-weight: 600; }
+.calls .note { color: var(--muted); }
+.sub .raw { text-transform: none; letter-spacing: 0; font-family: var(--mono); color: var(--fg); }
+.cmp { display: flex; gap: 6px; flex-wrap: wrap; }
 
 /* ---------- shared svg drawing (canvas + fallback) ---------- */
 .ncircle { fill: var(--node); stroke: var(--node-stroke); stroke-width: 1.6; }

@@ -60,6 +60,7 @@
       <button role="tab" data-tab="lang" aria-selected="false">Language → DFA</button>
       <button role="tab" data-tab="rg" aria-selected="false">Grammar ⇄ FA</button>
       <button role="tab" data-tab="cfg" aria-selected="false">CFG &amp; PDA</button>
+      <button role="tab" data-tab="parse" aria-selected="false">Parsing</button>
     </nav>
     <div class="topRight">
       <div class="epsSwitch" role="group" aria-label="Empty string symbol" title="Symbol for the empty string">
@@ -286,11 +287,76 @@ B -> aA | bb</textarea>
       </aside>
       <div class="board"><div class="boardInner" id="cfgOut"></div></div>
     </section>
+
+    <!-- ===================== PARSING ===================== -->
+    <section class="panel split" id="tab-parse" role="tabpanel" hidden>
+      <aside class="side">
+        <div class="sideHead"><h1>Syntax analysis</h1><p>FIRST/FOLLOW, LL(1), recursive descent, LR(0), SLR, CLR, LALR and operator precedence, with every table and trace.</p></div>
+        <div class="field">
+          <label for="psIn" class="lbl">Grammar</label>
+          <textarea id="psIn" class="mono" rows="5" spellcheck="false">E -> E + T | T
+T -> T * F | F
+F -> ( E ) | id</textarea>
+          <div class="examples" data-for="psIn">
+            <button type="button" data-v="E -> E + T | T&#10;T -> T * F | F&#10;F -> ( E ) | id">expression</button>
+            <button type="button" data-v="E -> T E'&#10;E' -> + T E' | ε&#10;T -> F T'&#10;T' -> * F T' | ε&#10;F -> ( E ) | id">expression (LL)</button>
+            <button type="button" data-v="E -> E + E | E * E | ( E ) | id">ambiguous E</button>
+            <button type="button" data-v="S -> C C&#10;C -> c C | d">S → CC</button>
+            <button type="button" data-v="S -> L = R | R&#10;L -> * R | id&#10;R -> L">L = R</button>
+            <button type="button" data-v="S -> i E t S | i E t S e S | a&#10;E -> b">dangling else</button>
+            <button type="button" data-v="S -> A a | b&#10;A -> A c | S d | ε">indirect left recursion</button>
+            <button type="button" data-v="A -> a A B | a B c | a A c&#10;B -> b">left factoring</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="psW" class="lbl">Input string</label>
+          <input id="psW" class="mono" value="id + id * id" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="field">
+          <span class="lbl">Transform</span>
+          <div class="opGrid">
+            <button type="button" class="op" data-ps="ff">FIRST &amp; FOLLOW</button>
+            <button type="button" class="op" data-ps="lr">Remove left recursion</button>
+            <button type="button" class="op" data-ps="lf">Left factor</button>
+            <button type="button" class="op" data-ps="amb">Make unambiguous</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="lbl">Top-down</span>
+          <div class="opGrid">
+            <button type="button" class="op" data-ps="ll1">LL(1) table</button>
+            <button type="button" class="op" data-ps="pp">Predictive parse</button>
+            <button type="button" class="op" data-ps="rd">Recursive descent</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="lbl">Bottom-up</span>
+          <div class="opGrid">
+            <button type="button" class="op" data-ps="lr0">LR(0) items</button>
+            <button type="button" class="op" data-ps="slr">SLR(1)</button>
+            <button type="button" class="op" data-ps="clr">CLR(1)</button>
+            <button type="button" class="op" data-ps="lalr">LALR(1)</button>
+            <button type="button" class="op" data-ps="op">Operator precedence</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="psPrec" class="lbl">Precedence (yacc style, lowest first)</label>
+          <textarea id="psPrec" class="mono" rows="2" spellcheck="false">%left + -
+%left * /</textarea>
+          <label class="chk"><input type="checkbox" id="psUsePrec"> Use it to resolve LR conflicts</label>
+          <p class="hint">Used by “Make unambiguous”, by operator precedence, and by SLR/CLR/LALR when ticked.</p>
+        </div>
+        <div class="err" id="psErr" hidden></div>
+        <p class="hint">One production per line. Nonterminals start with a capital (E, E', T1). Write <b>id</b>, <b>if</b>, <b>num</b> as words; separate symbols with spaces when in doubt. <b>ε</b> or <b>λ</b> for empty.</p>
+      </aside>
+      <div class="board"><div class="boardInner" id="psOut"></div></div>
+    </section>
   </main>
 </div>
 <script src="js/regex.js"></script>
 <script src="js/automata.js"></script>
 <script src="js/grammar.js"></script>
+<script src="js/parsing.js"></script>
 <script src="js/render.js"></script>
 <script src="js/editor.js"></script>
 <script src="js/app.js"></script>

@@ -6,10 +6,10 @@ const vm = require('vm');
 const assert = require('assert/strict');
 
 const ctx = vm.createContext({ console });
-for (const f of ['regex.js', 'automata.js', 'grammar.js']) {
+for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'), ctx, { filename: f });
 }
-const { regex, fa, grammar } = ctx.DT;
+const { regex, fa, grammar, parsing: P } = ctx.DT;
 
 let passed = 0;
 const failures = [];
@@ -124,6 +124,78 @@ test('NPDA text format', () => {
   const pda = { start: 'q0', z: 'z', finals: ['qf'], trans: t };
   assert.ok(grammar.simulatePDA(pda, 'aabb').accepted);
   assert.equal(grammar.simulatePDA(pda, 'aab').accepted, false);
+});
+
+
+// ---------- syntax analysis ----------
+const setOf = (m, k) => [...m.get(k)].sort().join(' ');
+test('FIRST and FOLLOW of the LL expression grammar (Aho 4.4)', () => {
+  const G = P.parseGrammar("E -> TE'\nE' -> +TE' | ε\nT -> FT'\nT' -> *FT' | ε\nF -> (E) | id");
+  const ff = P.firstFollow(G);
+  assert.equal(setOf(ff.FIRST, 'E'), '( id');
+  assert.equal(setOf(ff.FOLLOW, 'E'), '$ )');
+  assert.equal(setOf(ff.FOLLOW, 'T'), '$ ) +');
+  assert.equal(setOf(ff.FOLLOW, 'F'), '$ ) * +');
+  const t = P.ll1(G);
+  assert.ok(t.isLL1);
+  assert.ok(P.predictiveParse(G, t, P.tokenizeInput('id + id * id', G)).accepted);
+  assert.ok(P.recursiveTrace(G, t, P.tokenizeInput('(id)*id', G)).accepted);
+  assert.ok(P.checkRecognizer(G, (w) => P.predictiveParse(G, t, w).accepted).ok);
+});
+
+test('left recursion removal, direct and indirect', () => {
+  const G = P.parseGrammar('E -> E + T | T\nT -> T * F | F\nF -> ( E ) | id');
+  const r = P.removeLeftRecursion(G);
+  assert.equal(r.remaining.length, 0);
+  assert.equal(P.grammarText(r.G).split('\n')[0], "E -> T E'");
+  assert.ok(P.ll1(r.G).isLL1);
+  const G2 = P.parseGrammar('S -> A a | b\nA -> A c | S d | ε');
+  const r2 = P.removeLeftRecursion(G2);
+  assert.equal(r2.remaining.length, 0);
+  assert.equal(P.grammarText(r2.G).split('\n')[1], "A -> b d A' | A'");
+});
+
+test('left factoring', () => {
+  const r = P.leftFactor(P.parseGrammar('S -> i E t S | i E t S e S | a\nE -> b'));
+  assert.equal(P.grammarText(r.G).split('\n').slice(0, 2).join(' / '), "S -> i E t S S' | a / S' -> e S | ε".replace('ε', ctx.DT.EPS));
+  assert.equal(P.ll1(r.G).conflicts.length, 1, 'dangling else stays non-LL(1)');
+});
+
+const lrAll = (text) => {
+  const G = P.parseGrammar(text), GA = P.augment(G), ff = P.firstFollow(GA);
+  const c0 = P.lr0Collection(GA), c1 = P.lr1Collection(GA, ff), la = P.lalrFromLr1(GA, c1);
+  return { G, GA, c0, c1, la, slr: P.lrTable(GA, c0, 'slr', ff), clr: P.lrTable(GA, c1, 'clr'), lalr: P.lrTable(GA, la, 'lalr') };
+};
+test('LR state counts and conflicts match the textbook', () => {
+  const e = lrAll('E -> E + T | T\nT -> T * F | F\nF -> ( E ) | id');
+  assert.equal(e.c0.states.length, 12);
+  assert.equal(e.slr.conflicts.length, 0);
+  assert.ok(P.checkRecognizer(e.G, (w) => P.lrParse(e.GA, e.slr, w).accepted).ok);
+  const s = lrAll('S -> C C\nC -> c C | d');
+  assert.equal(s.c1.states.length, 10);
+  assert.equal(s.la.states.length, 7);
+  const l = lrAll('S -> L = R | R\nL -> * R | id\nR -> L');
+  assert.equal(l.slr.conflicts.length, 1);
+  assert.equal(l.slr.conflicts[0].a, '=');
+  assert.equal(l.lalr.conflicts.length, 0);
+  assert.ok(P.checkRecognizer(l.G, (w) => P.lrParse(l.GA, l.lalr, w).accepted).ok);
+});
+
+test('precedence declarations resolve the ambiguous expression grammar', () => {
+  const a = lrAll('E -> E + E | E * E | ( E ) | id');
+  assert.equal(a.slr.conflicts.length, 4);
+  const prec = P.parsePrecedence('%left +\n%left *');
+  const r = P.resolveConflicts(a.GA, a.slr, prec);
+  assert.equal(r.conflicts.length, 0);
+  const trace = P.lrParse(a.GA, r, P.tokenizeInput('id+id*id', a.G));
+  const reductions = trace.rows.filter((x) => x.handle).map((x) => x.handle).join(' | ');
+  assert.equal(reductions, 'id | id | id | E * E | E + E');
+  const op = P.operatorPrecedence(a.G, prec);
+  assert.ok(op.ok && op.conflicts.length === 0);
+  assert.ok(P.opPrecParse(op, P.tokenizeInput('id+id*id', a.G)).accepted);
+  const d = P.disambiguate(a.G, prec);
+  const dl = lrAll(P.grammarText(d.G));
+  assert.equal(dl.lalr.conflicts.length, 0);
 });
 
 console.log(`${passed} passed, ${failures.length} failed`);
