@@ -210,7 +210,7 @@ const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].ma
 test('CSP script-src allows every inline script by hash', () => {
   assert.ok(scriptSrc.length, 'no script-src directive in CSP');
   assert.ok(!scriptSrc.includes("'unsafe-inline'"), "script-src must not use 'unsafe-inline'");
-  for (const { attrs, body } of scripts.filter((x) => !/\bsrc\s*=/i.test(x.attrs))) {
+  for (const { attrs, body } of scripts.filter((x) => !/\bsrc\s*=/i.test(x.attrs) && !/type\s*=\s*"application\/ld\+json"/i.test(x.attrs))) {
     const h = `'sha256-${crypto.createHash('sha256').update(body, 'utf8').digest('base64')}'`;
     assert.ok(scriptSrc.includes(h), `inline <script${attrs}> changed: put ${h} in vercel.json script-src`);
   }
