@@ -24,13 +24,53 @@
     const nextName = () => { let k = 0; while (nameUsed('q' + k)) k++; return 'q' + k; };
     const symsOf = (from, to) => st.trans.filter((t) => t.from === from && t.to === to).map((t) => t.sym);
     const serialize = () => JSON.stringify({ v: 1, states: st.states.map(({ id, name, x, y, start, final }) => ({ id, name, x: Math.round(x), y: Math.round(y), start, final })), trans: st.trans });
-    function apply(json) {
+    // Imported files are untrusted: strict mode rejects anything the editor itself could not have made.
+    // Autosaves use lenient mode so an upgrade never throws away a user's canvas.
+    const MAX_JSON = 1_000_000, MAX_STATES = 5000, MAX_TRANS = 50000, MAX_NAME = 200, MAX_ID = 1e9;
+    const BAD_NAME = /[\s,{}()]/;
+    function apply(json, strict = true) {
+      const fail = (msg) => { throw new Error(msg); };
+      if (typeof json !== 'string') fail('Not a Drawtomata file.');
+      if (strict && json.length > MAX_JSON) fail('File is too large (max 1 MB).');
       const o = JSON.parse(json);
+      if (!o || typeof o !== 'object') fail('Not a Drawtomata file.');
       const states = o.states || o.s, trans = o.trans || o.t;
-      if (!Array.isArray(states) || !Array.isArray(trans)) throw new Error('Not a Drawtomata file.');
-      st.states = states.map((s) => ({ ...s }));
-      st.trans = trans.map((t) => ({ ...t }));
-      st.nextId = Math.max(-1, ...st.states.map((s) => s.id)) + 1;
+      if (!Array.isArray(states) || !Array.isArray(trans)) fail('Not a Drawtomata file.');
+      if (strict && states.length > MAX_STATES) fail(`Too many states (max ${MAX_STATES}).`);
+      if (strict && trans.length > MAX_TRANS) fail(`Too many transitions (max ${MAX_TRANS}).`);
+      const coord = (v) => {
+        if (v === undefined) return 0;
+        if (typeof v === 'number' && Number.isFinite(v)) return Math.max(-1e6, Math.min(1e6, v));
+        return strict ? fail('State coordinates must be numbers.') : 0;
+      };
+      const flag = (v) => {
+        if (v === undefined || typeof v === 'boolean') return v === true;
+        return strict ? fail('start and final must be true or false.') : v === true;
+      };
+      const ids = new Set(), names = new Set();
+      let starts = 0, maxId = -1;
+      const clean = states.map((s) => {
+        if (!s || typeof s !== 'object' || !Number.isSafeInteger(s.id) || s.id < 0 || s.id > MAX_ID || ids.has(s.id)) fail('Invalid or duplicate state id.');
+        if (typeof s.name !== 'string' || !s.name.trim()) fail('Every state needs a name.');
+        if (strict && (s.name.length > MAX_NAME || BAD_NAME.test(s.name))) fail(`State "${s.name.slice(0, 20)}" has an invalid name (no spaces, commas or brackets, max ${MAX_NAME} characters).`);
+        if (names.has(s.name)) fail(`Duplicate state name "${s.name.slice(0, 20)}".`);
+        ids.add(s.id); names.add(s.name); maxId = Math.max(maxId, s.id);
+        let start = flag(s.start);
+        if (start && ++starts > 1) { if (strict) fail('Only one state can be the start state.'); start = false; }
+        return { id: s.id, name: s.name, x: coord(s.x), y: coord(s.y), start, final: flag(s.final) };
+      });
+      const seen = new Set(), cleanT = [];
+      for (const t of trans) {
+        if (!t || typeof t !== 'object' || !ids.has(t.from) || !ids.has(t.to)) fail('A transition points to a state that does not exist.');
+        if (typeof t.sym !== 'string') fail('Transition symbols must be text.');
+        const sym = DT.isEps(t.sym) ? EPS : t.sym;
+        if (strict && sym !== EPS && !/^[a-zA-Z0-9]$/.test(sym)) fail(`"${sym.slice(0, 10)}" is not one symbol. Use single letters, digits or λ.`);
+        const k = t.from + '|' + t.to + '|' + sym;
+        if (!seen.has(k)) { seen.add(k); cleanT.push({ from: t.from, to: t.to, sym }); }
+      }
+      st.states = clean;
+      st.trans = cleanT;
+      st.nextId = maxId + 1;
       st.sel = null; st.pending = null; st.draft = null;
     }
 
@@ -352,6 +392,7 @@
       if (!v) { err.textContent = 'Name cannot be empty.'; return; }
       if (nameUsed(v, s.id)) { err.textContent = 'Another state already has this name.'; return; }
       if (/[\s,{}()]/.test(v)) { err.textContent = 'No spaces, commas or brackets in names.'; return; }
+      if (v.length > MAX_NAME) { err.textContent = `Keep names under ${MAX_NAME} characters.`; return; }
       err.textContent = ''; s.name = v; commit();
     });
     nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { nameInput.blur(); } });
@@ -445,7 +486,7 @@
       commit(); fit();
     }
     function clear() { st.states = []; st.trans = []; st.sel = null; st.pending = null; st.draft = null; commit(); fit(); }
-    function restore(json) { apply(json); hist = [serialize()]; hi = 0; draw(); fit(); }
+    function restore(json) { apply(json, false); hist = [serialize()]; hi = 0; draw(); fit(); }
 
     setTool('move');
     return { toFA, load, clear, restore, tidy, fit, exportAs, importJSON, onChange: (f) => listeners.push(f), redraw: draw, cancel };

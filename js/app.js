@@ -260,11 +260,13 @@
     let ast;
     try { ast = RX.parse(src); } catch (e) { showErr($('#reErr'), e.message); return; }
     store.set('re', src);
-    const t = FA.thompson(ast);
-    const ef = FA.removeEps(t.fa);
-    const sb = FA.subset(t.fa);
-    const mn = FA.minimize(sb.fa);
-    reState = { src, ast, t, ef, sb, mn };
+    try {
+      const t = FA.thompson(ast);
+      const ef = FA.removeEps(t.fa);
+      const sb = FA.subset(t.fa);
+      const mn = FA.minimize(sb.fa);
+      reState = { src, ast, t, ef, sb, mn };
+    } catch (e) { showErr($('#reErr'), e.message); return; }
     renderRE();
   }
   function renderRE() {
@@ -330,11 +332,17 @@
   $('#importJson').addEventListener('change', (e) => {
     const f = e.target.files[0]; setMenu(false);
     if (!f) return;
+    if (f.size > 1_000_000) { toast('Could not open that file: it is larger than 1 MB.'); e.target.value = ''; return; }
     f.text().then((txt) => { try { editor.importJSON(txt); closeDrawer(); } catch (err) { toast('Could not open that file: ' + err.message); } });
     e.target.value = '';
   });
   try { const saved = store.get('editor'); if (saved && (JSON.parse(saved).states || JSON.parse(saved).s || []).length) editor.restore(saved); else editor.load(exFA(EX.minme), { rename: false }); }
-  catch (e) { editor.load(exFA(EX.minme), { rename: false }); }
+  catch (e) {
+    // Keep the unreadable autosave so the example below does not silently overwrite the user's work.
+    try { const saved = store.get('editor'); if (saved) store.set('editor-backup', saved); } catch (e2) { /* ignore */ }
+    editor.load(exFA(EX.minme), { rename: false });
+    toast('Your saved automaton could not be opened. A copy was kept in browser storage as dt-editor-backup.');
+  }
 
   let lastOp = null;
   const elimOrder = () => store.get('elim') || '';

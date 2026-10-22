@@ -198,5 +198,51 @@ test('precedence declarations resolve the ambiguous expression grammar', () => {
   assert.equal(dl.lalr.conflicts.length, 0);
 });
 
-console.log(`${passed} passed, ${failures.length} failed`);
-if (failures.length) { console.log('\n' + failures.join('\n')); process.exit(1); }
+// Security headers: every inline <script> must be allowed by a hash inside script-src,
+// and every external script must carry an SRI digest that matches the file it loads.
+const crypto = require('crypto');
+const root = path.join(__dirname, '..');
+const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const csp = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'))
+  .headers[0].headers.find((h) => h.key === 'Content-Security-Policy').value;
+const scriptSrc = (csp.split(';').map((d) => d.trim().split(/\s+/)).find((d) => d[0] === 'script-src') || []).slice(1);
+const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].map(([, attrs, body]) => ({ attrs, body }));
+test('CSP script-src allows every inline script by hash', () => {
+  assert.ok(scriptSrc.length, 'no script-src directive in CSP');
+  assert.ok(!scriptSrc.includes("'unsafe-inline'"), "script-src must not use 'unsafe-inline'");
+  for (const { attrs, body } of scripts.filter((x) => !/\bsrc\s*=/i.test(x.attrs))) {
+    const h = `'sha256-${crypto.createHash('sha256').update(body, 'utf8').digest('base64')}'`;
+    assert.ok(scriptSrc.includes(h), `inline <script${attrs}> changed: put ${h} in vercel.json script-src`);
+  }
+});
+const external = scripts.map((x) => x.attrs).filter((a) => /\bsrc\s*=\s*"https?:/i.test(a))
+  .map((a) => ({ src: a.match(/src\s*=\s*"([^"]+)"/i)[1], integrity: (a.match(/integrity\s*=\s*"([^"]+)"/i) || [])[1], cors: /crossorigin/i.test(a) }));
+test('CDN scripts declare SRI and CORS', () => {
+  for (const e of external) {
+    assert.match(e.integrity || '', /^sha384-[A-Za-z0-9+/]+=*$/, `missing SRI on ${e.src}`);
+    assert.ok(e.cors, `missing crossorigin on ${e.src}`);
+    assert.ok(scriptSrc.some((s) => e.src.startsWith(s)), `${e.src} is not allowed by script-src`);
+  }
+});
+
+async function checkSriDigests() {
+  for (const e of external) {
+    let buf;
+    try {
+      const res = await fetch(e.src, { signal: AbortSignal.timeout(15000) });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      buf = Buffer.from(await res.arrayBuffer());
+    } catch (err) {
+      if (process.env.CI) { failures.push(`SRI digest for ${e.src}\n    could not download: ${err.message}`); continue; }
+      console.log(`(skipped SRI digest check for ${e.src}: offline)`);
+      continue;
+    }
+    const got = 'sha384-' + crypto.createHash('sha384').update(buf).digest('base64');
+    try { assert.equal(e.integrity, got, `SRI for ${e.src} is stale: use ${got}`); passed++; } catch (err) { failures.push(`SRI digest for ${e.src}\n    ${err.message}`); }
+  }
+}
+
+checkSriDigests().then(() => {
+  console.log(`${passed} passed, ${failures.length} failed`);
+  if (failures.length) { console.log('\n' + failures.join('\n')); process.exit(1); }
+});
