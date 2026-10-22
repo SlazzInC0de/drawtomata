@@ -114,12 +114,18 @@
   }
 
   // NFA / λ-NFA → DFA (subset construction)
+  const MAX_SUBSETS = 10000, MAX_SUBSET_MS = 4000; // keeps the main thread responsive on pathological NFAs
   function subset(fa, alphabet) {
     const d = delta(fa), A = alphabet || alphabetOf(fa);
     const sets = [], keys = new Map(), trans = [];
     const get = (S) => { const k = keyOf(S); if (!keys.has(k)) { keys.set(k, sets.length); sets.push(S); } return keys.get(k); };
     get(closure(d, [fa.start]));
-    for (let i = 0; i < sets.length; i++) for (const a of A) trans.push({ from: i, sym: a, to: get(closure(d, move(d, sets[i], a))) });
+    const t0 = Date.now();
+    for (let i = 0; i < sets.length; i++) {
+      if ((i & 63) === 0 && Date.now() - t0 > MAX_SUBSET_MS) throw new Error(`Subset construction stopped: the DFA is too large (over ${sets.length} states found in ${MAX_SUBSET_MS / 1000} s).`);
+      if (sets.length > MAX_SUBSETS) throw new Error(`Subset construction stopped: the DFA would have more than ${MAX_SUBSETS} states.`);
+      for (const a of A) trans.push({ from: i, sym: a, to: get(closure(d, move(d, sets[i], a))) });
+    }
     let c = 0;
     const labels = sets.map((S) => (S.size === 0 ? '∅' : letterName(c++)));
     const finals = new Set();
