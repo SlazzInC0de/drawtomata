@@ -24,12 +24,32 @@
     const nextName = () => { let k = 0; while (nameUsed('q' + k)) k++; return 'q' + k; };
     const symsOf = (from, to) => st.trans.filter((t) => t.from === from && t.to === to).map((t) => t.sym);
     const serialize = () => JSON.stringify({ v: 1, states: st.states.map(({ id, name, x, y, start, final }) => ({ id, name, x: Math.round(x), y: Math.round(y), start, final })), trans: st.trans });
+    // Untrusted input (imported files, old autosaves): accept only well-formed, bounded data.
+    const MAX_JSON = 1_000_000, MAX_STATES = 300, MAX_TRANS = 5000, MAX_NAME = 200, MAX_SYM = 64;
+    const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? Math.max(-1e6, Math.min(1e6, v)) : 0);
     function apply(json) {
+      if (typeof json !== 'string' || json.length > MAX_JSON) throw new Error('File is too large (max 1 MB).');
       const o = JSON.parse(json);
+      if (!o || typeof o !== 'object') throw new Error('Not a Drawtomata file.');
       const states = o.states || o.s, trans = o.trans || o.t;
       if (!Array.isArray(states) || !Array.isArray(trans)) throw new Error('Not a Drawtomata file.');
-      st.states = states.map((s) => ({ ...s }));
-      st.trans = trans.map((t) => ({ ...t }));
+      if (states.length > MAX_STATES) throw new Error(`Too many states (max ${MAX_STATES}).`);
+      if (trans.length > MAX_TRANS) throw new Error(`Too many transitions (max ${MAX_TRANS}).`);
+      const ids = new Set(), names = new Set();
+      const clean = states.map((s) => {
+        if (!s || typeof s !== 'object' || !Number.isInteger(s.id) || s.id < 0 || ids.has(s.id)) throw new Error('Invalid or duplicate state id.');
+        if (typeof s.name !== 'string' || !s.name.trim() || s.name.length > MAX_NAME) throw new Error(`State names must be 1-${MAX_NAME} characters.`);
+        if (names.has(s.name)) throw new Error(`Duplicate state name "${s.name}".`);
+        ids.add(s.id); names.add(s.name);
+        return { id: s.id, name: s.name, x: num(s.x), y: num(s.y), start: s.start === true, final: s.final === true };
+      });
+      const cleanT = trans.map((t) => {
+        if (!t || typeof t !== 'object' || !ids.has(t.from) || !ids.has(t.to)) throw new Error('A transition points to a state that does not exist.');
+        if (typeof t.sym !== 'string' || t.sym.length > MAX_SYM) throw new Error(`Transition symbols must be text up to ${MAX_SYM} characters.`);
+        return { from: t.from, to: t.to, sym: t.sym };
+      });
+      st.states = clean;
+      st.trans = cleanT;
       st.nextId = Math.max(-1, ...st.states.map((s) => s.id)) + 1;
       st.sel = null; st.pending = null; st.draft = null;
     }
@@ -352,6 +372,7 @@
       if (!v) { err.textContent = 'Name cannot be empty.'; return; }
       if (nameUsed(v, s.id)) { err.textContent = 'Another state already has this name.'; return; }
       if (/[\s,{}()]/.test(v)) { err.textContent = 'No spaces, commas or brackets in names.'; return; }
+      if (v.length > MAX_NAME) { err.textContent = `Keep names under ${MAX_NAME} characters.`; return; }
       err.textContent = ''; s.name = v; commit();
     });
     nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { nameInput.blur(); } });

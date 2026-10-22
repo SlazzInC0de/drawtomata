@@ -330,6 +330,7 @@
   $('#importJson').addEventListener('change', (e) => {
     const f = e.target.files[0]; setMenu(false);
     if (!f) return;
+    if (f.size > 1_000_000) { toast('Could not open that file: it is larger than 1 MB.'); e.target.value = ''; return; }
     f.text().then((txt) => { try { editor.importJSON(txt); closeDrawer(); } catch (err) { toast('Could not open that file: ' + err.message); } });
     e.target.value = '';
   });

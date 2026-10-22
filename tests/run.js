@@ -198,5 +198,19 @@ test('precedence declarations resolve the ambiguous expression grammar', () => {
   assert.equal(dl.lalr.conflicts.length, 0);
 });
 
+// Security headers: every inline <script> in index.html must be allowed by a hash in the CSP,
+// and every external script must carry an SRI integrity attribute.
+test('CSP covers inline scripts and CDN scripts use SRI', () => {
+  const root = path.join(__dirname, '..');
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  const csp = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'))
+    .headers[0].headers.find((h) => h.key === 'Content-Security-Policy').value;
+  for (const [, body] of html.matchAll(/<script>([\s\S]*?)<\/script>/g)) {
+    const h = require('crypto').createHash('sha256').update(body, 'utf8').digest('base64');
+    assert.ok(csp.includes(`'sha256-${h}'`), `inline script changed: put 'sha256-${h}' in vercel.json script-src`);
+  }
+  for (const [tag] of html.matchAll(/<script[^>]+src="https?:[^>]*>/g)) assert.match(tag, /integrity="sha384-/, `missing SRI: ${tag}`);
+});
+
 console.log(`${passed} passed, ${failures.length} failed`);
 if (failures.length) { console.log('\n' + failures.join('\n')); process.exit(1); }
