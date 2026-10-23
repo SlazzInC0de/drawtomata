@@ -40,6 +40,10 @@ The canvas has pan and zoom, undo/redo, autosave, auto-layout, and PNG / SVG / J
 - LR(0) items and automaton, SLR(1), canonical LR(1) and LALR(1) tables, with a shift-reduce trace for any input
 - yacc-style `%left` / `%right` declarations to resolve conflicts, an operator precedence parser, and rewriting an ambiguous expression grammar into an unambiguous one
 
+**Pumping lemma.** Play the adversary game for classic non-regular languages (aⁿbⁿ, wwᴿ, ww, aⁿbⁿcⁿ, square and prime lengths, balanced parentheses): every split xyz is listed with the i that breaks it. For a regular language given as an RE, the minimal DFA and the pigeonhole argument show the split that always pumps.
+
+**More grammar tools.** NPDA → CFG with Linz's [qᵢ A qⱼ] construction (the NPDA is normalized first, and the grammar is checked against the simulator), and grammar simplification (λ-productions, unit productions, useless symbols) with conversion to Chomsky normal form.
+
 Every result is checked against its input for language equivalence before it is shown. The ambiguity search is bounded, so "none found" is evidence, not a proof.
 
 Notation follows Peter Linz for automata and Aho, Lam, Sethi and Ullman for parsing, *An Introduction to Formal Languages and Automata*.
@@ -87,6 +91,7 @@ js/regex.js      RE parser and simplification rules
 js/automata.js   Thompson, λ-removal, subset, minimization, state elimination, products
 js/grammar.js    grammar parsing, CFG derivations, ambiguity, NPDA
 js/parsing.js    FIRST/FOLLOW, LL(1), recursive descent, LR(0)/SLR/CLR/LALR, precedence
+js/theory.js     pumping lemma, NPDA → CFG, simplification and CNF
 js/render.js     diagrams and tables
 js/editor.js     the drawing canvas
 js/app.js        page wiring
@@ -98,7 +103,7 @@ tests/run.js     conversion tests
 | Release | Adds |
 | --- | --- |
 | 21 Oct 2026 | Parsing: FIRST/FOLLOW, left recursion, left factoring, LL(1), recursive descent, LR(0), SLR, CLR, LALR, precedence |
-| 23 Oct 2026 | Pumping lemma helper, PDA → CFG, grammar simplification and CNF |
+| 23 Oct 2026 | Pumping lemma game, NPDA → CFG, grammar simplification and CNF |
 | 25 Oct 2026 | Code generation: DAGs, three-address code, quadruples/triples, basic blocks, flow graphs, peephole |
 | 27 Oct 2026 | Syntax-directed translation: annotated parse trees, dependency graphs, S/L-attributed checks |
 | 29 Oct 2026 | Lexical analysis: token recognition, lexer playground, input buffering, Lex/Yacc specs |

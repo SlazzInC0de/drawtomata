@@ -25,6 +25,7 @@
       if (EPS_WORDS.has(chunk)) return;
       if (spaced && /^[^\sA-Za-z0-9'"]{2,}$/.test(chunk)) { out.push(chunk); return; }
       if (spaced && /^[a-z][a-z0-9_]*$/.test(chunk)) { out.push(chunk); return; }
+      if (spaced && /^[A-Z][A-Za-z0-9_]*'*$/.test(chunk) && /[a-z]/.test(chunk)) { out.push(chunk); return; }
       let i = 0;
       while (i < chunk.length) {
         const c = chunk[i];

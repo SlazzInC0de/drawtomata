@@ -63,6 +63,7 @@
       <button role="tab" data-tab="rg" aria-selected="false">Grammar ⇄ FA</button>
       <button role="tab" data-tab="cfg" aria-selected="false">CFG &amp; PDA</button>
       <button role="tab" data-tab="parse" aria-selected="false">Parsing</button>
+      <button role="tab" data-tab="pump" aria-selected="false">Pumping lemma</button>
     </nav>
     <div class="topRight">
       <div class="epsSwitch" role="group" aria-label="Empty string symbol" title="Symbol for the empty string">
@@ -283,11 +284,42 @@ B -> aA | bb</textarea>
             <div class="field grow"><label for="pdaW" class="lbl">Input</label><input id="pdaW" class="mono" value="aabb" autocomplete="off"></div>
             <button class="primary" type="submit">Run</button>
           </form>
+          <button type="button" class="ghost" id="pdaToCfg">Convert this NPDA to a CFG</button>
           <div class="err" id="pdaErr" hidden></div>
           <div id="pdaOut"></div>
         </div>
       </aside>
       <div class="board"><div class="boardInner" id="cfgOut"></div></div>
+    </section>
+
+    <!-- ===================== PUMPING LEMMA ===================== -->
+    <section class="panel split" id="tab-pump" role="tabpanel" hidden>
+      <aside class="side">
+        <div class="sideHead"><h1>Pumping lemma</h1><p>Play the adversary game for a non-regular language, or see why the lemma holds for a regular one.</p></div>
+        <div class="field">
+          <span class="lbl">Mode</span>
+          <div class="seg2" role="radiogroup" aria-label="Mode">
+            <label class="chk"><input type="radio" name="pmMode" value="non" checked> Show a language is not regular</label>
+            <label class="chk"><input type="radio" name="pmMode" value="reg"> Regular language (from an RE)</label>
+          </div>
+        </div>
+        <div class="field" id="pmLangField">
+          <label for="pmLang" class="lbl">Language</label>
+          <select id="pmLang"></select>
+        </div>
+        <div class="field" id="pmReField" hidden>
+          <label for="pmRe" class="lbl">Regular expression</label>
+          <input id="pmRe" class="mono" value="(a+b)*abb" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="fieldRow">
+          <div class="field" id="pmPField"><label for="pmP" class="lbl">p</label><input id="pmP" class="mono tiny" type="number" min="1" max="10" value="4"></div>
+          <div class="field grow"><label for="pmW" class="lbl">String w</label><input id="pmW" class="mono" placeholder="chosen from p" autocomplete="off" spellcheck="false"></div>
+        </div>
+        <button class="primary block" type="button" id="pmGo">Play</button>
+        <div class="err" id="pmErr" hidden></div>
+        <p class="hint">Leave w empty to use the standard choice for the language. In regular mode, p is the number of states of the minimal DFA.</p>
+      </aside>
+      <div class="board"><div class="boardInner" id="pmOut"></div></div>
     </section>
 
     <!-- ===================== PARSING ===================== -->
@@ -321,6 +353,7 @@ F -> ( E ) | id</textarea>
             <button type="button" class="op" data-ps="lr">Remove left recursion</button>
             <button type="button" class="op" data-ps="lf">Left factor</button>
             <button type="button" class="op" data-ps="amb">Make unambiguous</button>
+            <button type="button" class="op" data-ps="cnf">Simplify + CNF</button>
           </div>
         </div>
         <div class="field">
@@ -359,6 +392,7 @@ F -> ( E ) | id</textarea>
 <script src="js/automata.js"></script>
 <script src="js/grammar.js"></script>
 <script src="js/parsing.js"></script>
+<script src="js/theory.js"></script>
 <script src="js/render.js"></script>
 <script src="js/editor.js"></script>
 <script src="js/app.js"></script>

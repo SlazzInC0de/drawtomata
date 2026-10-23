@@ -15,7 +15,7 @@
   const rerenders = {};
 
   // tabs
-  const TABS = ['re', 'fa', 'lang', 'rg', 'cfg', 'parse'];
+  const TABS = ['re', 'fa', 'lang', 'rg', 'cfg', 'parse', 'pump'];
   function showTab(t, push = true) {
     if (!TABS.includes(t)) t = 're';
     $$('.modes [data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
@@ -866,6 +866,7 @@
       else if (o === 'lr') html += psLeftRec(G);
       else if (o === 'lf') html += psLeftFactor(G);
       else if (o === 'amb') html += psDisambiguate(G, prec);
+      else if (o === 'cnf') html += psCNF(G);
       else if (o === 'll1') html += psLL1(G);
       else if (o === 'pp') html += psLL1(G).replace('id="ps-ll1"', 'id="ps-ll1b"') + psPredictive(G);
       else if (o === 'rd') html += psRecursive(G);
@@ -885,6 +886,164 @@
   });
   ['#psW'].forEach((s) => $(s).addEventListener('keydown', (e) => { if (e.key === 'Enter') runPS(); }));
 
+  // SIMPLIFICATION AND CNF (parsing tab)
+  const TH = DT.theory;
+  function psCNF(G) {
+    const r = TH.simplifyCNF(G);
+    const sameNoEps = (G1, G2, len = 6) => {
+      const a = PS.enumerate(G1, len), b = PS.enumerate(G2, len);
+      const A = new Set(a.list.map((x) => x.join(' ')).filter(Boolean)), B = new Set(b.list.map((x) => x.join(' ')));
+      const diff = [...A].find((x) => !B.has(x)) ?? [...B].find((x) => !A.has(x));
+      return { eq: diff === undefined, n: A.size, len, truncated: a.truncated || b.truncated, witness: diff };
+    };
+    const chk = sameNoEps(G, r.cnf.G);
+    const cnfOk = TH.isCNF(r.cnf.G);
+    const step = (n, title, text, g) => `<div><div class="sub">${n}. ${title}</div><p>${text}</p>${gramBlock(g)}</div>`;
+    const lam = r.lambda.nullable.length
+      ? `Nullable variables: <b class="mono">{${r.lambda.nullable.map(esc).join(', ')}}</b>. Every production gets a copy for each way of leaving nullable symbols out, and the ${EPS}-productions are dropped.${r.lambda.startNullable ? ` ${EPS} itself is in L(G), so the result generates L(G) − {${EPS}}.` : ''}`
+      : `No variable can derive ${EPS}, so nothing changes.`;
+    const unit = r.unit.pairs.length
+      ? `Unit pairs (A ⇒* B through unit productions only): ${r.unit.pairs.map(([a, b]) => `(${esc(a)}, ${esc(b)})`).join(', ')}. Each A gets B's non-unit productions and the unit productions are dropped.`
+      : 'There are no unit productions.';
+    const use = r.useless.nonGen.length || r.useless.unreach.length
+      ? `${r.useless.nonGen.length ? `Cannot derive a terminal string: ${r.useless.nonGen.map(esc).join(', ')}. ` : ''}${r.useless.unreach.length ? `Not reachable from ${esc(G.start)}: ${r.useless.unreach.map(esc).join(', ')}.` : ''}`
+      : 'Every variable is generating and reachable.';
+    const cnf = `Terminals inside longer right sides are replaced by new variables (${r.cnf.termVar.map(([a, B]) => `${esc(B)} → ${esc(a)}`).join(', ') || 'none needed'}), and right sides longer than two are broken into a chain${r.cnf.chain.length ? ` (${r.cnf.chain.map(esc).join(', ')})` : ''}.`;
+    return stage('ps-cnf', '', 'Simplify the grammar and convert to Chomsky normal form',
+      (cnfOk ? okChip('in CNF: every rule is A → BC or A → a') : badChip('not in CNF')) + (chk.eq ? okChip(`same strings as the original (except ${EPS}), all ${chk.n} up to ${chk.len} tokens${chk.truncated ? ' (sampled)' : ''}`) : badChip(`differs on "${chk.witness || EPS}"`)),
+      `<div class="formula">Order: remove ${EPS}-productions → remove unit productions → remove useless symbols → Chomsky normal form</div>
+       ${step(1, `Remove ${EPS}-productions`, lam, r.lambda.G)}
+       ${step(2, 'Remove unit productions', unit, r.unit.G)}
+       ${step(3, 'Remove useless symbols', use, r.useless.G)}
+       ${r.useless.empty ? `<p><b>${esc(G.start)} cannot derive any terminal string, so L(G) is empty.</b></p>` : step(4, 'Chomsky normal form', cnf, r.cnf.G)}
+       <div class="btnRow">${useBtn(r.cnf.G, 'Use the CNF grammar')}</div>`);
+  }
+
+  // NPDA → CFG (CFG & PDA tab)
+  function runPdaToCfg() {
+    showErr($('#pdaErr'), '');
+    try {
+      const trans = pdaFromCfg && pdaFromCfg.text === $('#pdaIn').value ? pdaFromCfg.trans : GR.parsePDA($('#pdaIn').value);
+      if (!trans.length) throw new Error('Write at least one transition.');
+      const pda = { start: $('#pdaStart').value.trim(), z: $('#pdaZ').value.trim() || 'z', finals: $('#pdaF').value.split(/[\s,{}]+/).filter(Boolean), trans };
+      const mode = $('#pdaMode').value;
+      const r = TH.pdaToCfg(pda, mode);
+      // compare with the simulator on every short input
+      const sigma = [...new Set(trans.map((t) => t.inp).filter((a) => a !== EPS))].sort();
+      const maxLen = sigma.length > 3 ? 4 : 5;
+      let all = [''];
+      for (let i = 0; i < maxLen; i++) all = all.concat(all.filter((s) => s.length === i).flatMap((s) => sigma.map((c) => s + c)));
+      const gen = PS.enumerate(r.trimmed, maxLen + 1);
+      const L = new Set(gen.list.map((x) => x.join('')));
+      const miss = all.find((w) => GR.simulatePDA(pda, w, mode).accepted !== L.has(w));
+      const verdict = miss === undefined ? okChip(`grammar and NPDA agree on all ${all.length} strings up to length ${maxLen}`) : badChip(`disagree on "${miss || EPS}"`);
+      const moveRows = r.moves.map((t) => [esc(`δ(${t.from}, ${t.inp}, ${t.pop}) ∋ (${t.to}, ${t.push.join('') || EPS})`), `<span class="muted">${esc(t.why)}</span>`]);
+      const byLhs = new Map();
+      for (const p of r.trimmed.prods) { const k = r.display(p.lhs); if (!byLhs.has(k)) byLhs.set(k, []); byLhs.get(k).push(p.rhs.length ? p.rhs.map(r.display).join(' ') : EPS); }
+      const prodText = [...byLhs].map(([k, v]) => `<span class="v">${esc(k)}</span> → ${v.map(esc).join(' | ')}`).join('\n');
+      const html = stage('pda-cfg', '', 'NPDA → context-free grammar', verdict + chip('useful productions', r.trimmed.prods.length) + chip('generated', r.prods.length),
+        `<div class="formula" style="white-space:normal">[qᵢ A qⱼ] derives w exactly when the NPDA can go from qᵢ to qⱼ reading w and popping A · δ(qᵢ, a, A) ∋ (qⱼ, ${EPS}) gives [qᵢ A qⱼ] → a · δ(qᵢ, a, A) ∋ (qⱼ, BC) gives [qᵢ A qₖ] → a [qⱼ B qₗ][qₗ C qₖ] for all qₖ, qₗ</div>
+         <div class="sub">1. Put the NPDA in Linz form</div>
+         <p>One final state ${esc(r.qf)}, entered only with an empty stack, and every move pops one symbol and pushes zero or two.</p>
+         ${r.notes.length ? `<ul class="steps" style="font-family:inherit;font-size:14px">${r.notes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
+         <details><summary>All ${r.moves.length} moves after normalizing</summary>${ui.table(['Move', 'Why'], moveRows, 'mono')}</details>
+         <div class="sub">2. Productions</div>
+         <p>${r.prods.length} productions come out of the construction (one per pair of states for every push move). Only ${r.trimmed.prods.length} of them can take part in a derivation from the start variable <b class="mono">${esc(r.start)}</b>; the rest are removed as useless.</p>
+         ${r.empty ? '<p><b>The start variable derives nothing, so the NPDA accepts no string.</b></p>' : `<div class="prods">${prodText}</div>`}
+         <div class="sub">3. Strings generated</div>
+         <div class="prods">${gen.list.map((x) => esc(x.join('') || EPS)).join(', ') || 'none'}</div>`);
+      ui.put($('#cfgOut'), html);
+      $('#cfgOut').closest('.board').scrollTop = 0;
+    } catch (e) { showErr($('#pdaErr'), e.message); }
+  }
+  $('#pdaToCfg').addEventListener('click', runPdaToCfg);
+
+  // PUMPING LEMMA
+  const pmLang = $('#pmLang');
+  pmLang.innerHTML = Object.entries(TH.LANGUAGES).map(([k, L]) => `<option value="${k}">${esc(L.name)}</option>`).join('');
+  const pmMode = () => ($$('input[name="pmMode"]').find((x) => x.checked) || {}).value || 'non';
+  function syncPm() {
+    const reg = pmMode() === 'reg';
+    $('#pmLangField').hidden = reg; $('#pmReField').hidden = !reg; $('#pmPField').hidden = reg;
+  }
+  $$('input[name="pmMode"]').forEach((x) => x.addEventListener('change', () => { syncPm(); $('#pmW').value = ''; runPump(); }));
+  pmLang.addEventListener('change', () => { $('#pmW').value = ''; runPump(); });
+  $('#pmGo').addEventListener('click', () => runPump());
+  ['#pmW', '#pmRe', '#pmP'].forEach((s) => $(s).addEventListener('keydown', (e) => { if (e.key === 'Enter') runPump(); }));
+  const lemmaBox = `<div class="formula" style="white-space:normal">If L is regular, there is a p ≥ 1 such that every w ∈ L with |w| ≥ p can be written w = xyz with |xy| ≤ p and |y| ≥ 1, so that xyⁱz ∈ L for every i ≥ 0.</div>`;
+  const splitView = (x, y, z) => `<span class="wsplit"><span class="x">${esc(x)}</span>${y ? `<span class="y">${esc(y)}</span>` : ' '}<span class="z">${esc(z)}</span></span>`;
+  function splitsTable(res, showStrings) {
+    const rows = res.rows.map((r, n) => {
+      const cells = r.results.filter((q) => [0, 1, 2, 3].includes(q.i)).map((q) => ({ v: (showStrings ? esc(q.s || EPS) + ' ' : '') + (q.inL ? '✓' : '✗'), cls: q.inL ? 'yes' : 'no' }));
+      return [String(n + 1), esc(r.x || EPS), esc(r.y), esc(r.z || EPS), ...cells, r.failsAt === null ? { v: 'pumps for i = 0…5', cls: 'yes' } : { v: `out of L at i = ${r.failsAt}`, cls: 'no' }];
+    });
+    return grid(['#', 'x', 'y', 'z', 'i = 0', 'i = 1', 'i = 2', 'i = 3', 'Result'], rows).replace(/<tr><td>(\d+)<\/td>((?:(?!<\/tr>).)*?pumps for)/g, '<tr class="pumps"><td>$1</td>$2');
+  }
+  function runPump() {
+    showErr($('#pmErr'), '');
+    syncPm();
+    const wRaw = $('#pmW').value.trim();
+    const w = DT.isEps(wRaw) ? '' : wRaw.replace(/\s+/g, '');
+    let html = '';
+    try {
+      if (pmMode() === 'reg') {
+        const re = $('#pmRe').value;
+        let r = TH.pumpingRegular(re, w || 'a');
+        if (!wRaw) {
+          // pick the shortest string in L with length ≥ p
+          const A = DT.fa.alphabetOf(r.dfa);
+          let found = null, frontier = [''];
+          for (let len = 0; len <= r.p + 6 && !found; len++) {
+            for (const s of frontier) if (s.length >= r.p && DT.fa.accepts(r.dfa, s).ok) { found = s; break; }
+            frontier = frontier.flatMap((s) => A.map((c) => s + c)).slice(0, 4000);
+          }
+          if (!found) throw new Error('L has no string of length ≥ p, so the lemma holds trivially.');
+          $('#pmW').value = found;
+          r = TH.pumpingRegular(re, found);
+        }
+        store.set('pmre', re);
+        const g = ui.faGraph(r.dfa);
+        html += stage('pm-lemma', '', 'The pumping lemma', '', lemmaBox);
+        html += stage('pm-reg', '', `L(${esc(re)}) is regular, so the lemma holds`, chip('p = states of the minimal DFA', r.p) + (r.problems.length ? badChip('w cannot be used') : r.split && r.check.every((c) => c.inL) ? okChip('split found and it pumps') : ''),
+          `${r.problems.map((p) => `<p><b>${esc(p)}</b></p>`).join('')}
+           <div class="cols"><div><div class="sub">Minimal DFA (${r.p} states)</div>${ui.slot(g)}</div>
+           <div><div class="sub">Why a split always exists (pigeonhole)</div>
+             <p>Reading the first p symbols of w visits p + 1 states, but there are only p states, so some state repeats. The symbols read between the two visits form a loop: that loop is y.</p>
+             <p class="mono small">${r.seq.map((s, i) => (r.split && (i === r.split.from || i === r.split.to) ? `<b style="color:var(--accent)">${esc(s)}</b>` : esc(s))).join(' → ')}</p>
+             ${r.split ? `<p>State <b>${esc(r.split.state)}</b> repeats after ${r.split.from} and ${r.split.to} symbols, giving</p><p>${splitView(r.split.x, r.split.y, r.split.z)}</p>
+             <p class="small">x = ${esc(r.split.x || EPS)}, y = ${esc(r.split.y)}, z = ${esc(r.split.z || EPS)}</p>` : ''}
+           </div></div>
+           ${r.split ? `<div class="sub">Pumping that split</div>${ui.table(['i', 'xyⁱz', 'in L?'], r.check.map((c) => [String(c.i), esc(c.s || EPS), c.inL ? '<span class="chip ok">✓ yes</span>' : '<span class="chip bad">✗ no</span>']), 'mono')}` : ''}
+           <details><summary>All ${r.rows.length} splits with |xy| ≤ p (${r.pumpable.length} of them pump)</summary>${splitsTable(r, false)}</details>`);
+      } else {
+        const key = pmLang.value;
+        const p = Math.max(1, Math.min(10, +$('#pmP').value || 4));
+        const g = TH.pumpingGame(key, p, wRaw ? w : undefined);
+        if (!wRaw) $('#pmW').value = g.w;
+        store.set('pmlang', key);
+        const allFail = g.pumpable.length === 0 && !g.problems.length;
+        const sweepOk = g.sweep.every((s) => s.defeated);
+        html += stage('pm-lemma', '', 'The pumping lemma as a game', '',
+          `${lemmaBox}
+           <ol class="steps" style="font-family:inherit;font-size:14px">
+             <li>The adversary picks p. Here p = <b>${p}</b>.</li>
+             <li>You pick w ∈ L with |w| ≥ p. The standard choice is <b class="mono">${esc(g.L.w)}</b>, here <b class="mono">${esc(g.w)}</b>.</li>
+             <li>The adversary splits w = xyz with |xy| ≤ p and |y| ≥ 1. Every possible split is listed below.</li>
+             <li>You pick i so that xyⁱz ∉ L. If you can do this for every split, the adversary loses for this p.</li>
+           </ol>`);
+        html += stage('pm-game', '', `L = { ${esc(g.L.name)} }`,
+          (g.problems.length ? badChip('w cannot be used') : allFail ? okChip(`all ${g.rows.length} splits break`) : badChip(`${g.pumpable.length} split${g.pumpable.length > 1 ? 's' : ''} survive pumping`)) + (sweepOk ? okChip('the standard w wins for every p from 1 to 8') : ''),
+          `${g.problems.map((pr) => `<p><b>${esc(pr)}</b></p>`).join('')}
+           ${g.problems.length ? '' : `<p>${splitView(g.w.slice(0, p), '', g.w.slice(p))} <span class="small muted">the first p = ${p} symbols are where y must lie</span></p>
+           ${splitsTable(g, true)}
+           ${allFail ? `<div class="sub">Conclusion</div><p>${esc(g.L.why)}</p><p>Every split of w = ${esc(g.w)} leaves L for some i, so no split works for p = ${p}. The same choice of w works for any p, so no p can satisfy the lemma: <b>L is not regular</b>.</p>`
+             : `<div class="sub">This w does not win</div><p>The highlighted split${g.pumpable.length > 1 ? 's' : ''} stay in L for every i tried, so the adversary would choose ${g.pumpable.length > 1 ? 'one of them' : 'it'}. Pick a w that forces y into a part of the string where pumping must break membership, or clear w to use ${esc(g.L.w)}.</p>`}`}`);
+      }
+    } catch (e) { showErr($('#pmErr'), e.message); return; }
+    ui.put($('#pmOut'), html);
+  }
+  rerenders.pump = () => runPump();
+
   // boot
   const savedRE = store.get('re'); if (savedRE) $('#reIn').value = savedRE;
   const savedRG = store.get('rg'); if (savedRG) $('#rgIn').value = savedRG;
@@ -894,6 +1053,9 @@
   const savedPW = store.get('psw'); if (savedPW) $('#psW').value = savedPW;
   const savedPP = store.get('psprec'); if (savedPP !== null) $('#psPrec').value = savedPP;
   runRE(); runRG(); runCFG('derive'); runPDA(); runLang(); runPS('ff');
+  const savedPL = store.get('pmlang'); if (savedPL && DT.theory.LANGUAGES[savedPL]) $('#pmLang').value = savedPL;
+  const savedPR = store.get('pmre'); if (savedPR) $('#pmRe').value = savedPR;
+  runPump();
   showTab((location.hash || '#re').slice(1), false);
   window.addEventListener('hashchange', () => { const t = location.hash.slice(1); if (TABS.includes(t)) showTab(t, false); });
 })(window.DT);

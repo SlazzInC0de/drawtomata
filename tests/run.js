@@ -6,10 +6,10 @@ const vm = require('vm');
 const assert = require('assert/strict');
 
 const ctx = vm.createContext({ console });
-for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js']) {
+for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'), ctx, { filename: f });
 }
-const { regex, fa, grammar, parsing: P } = ctx.DT;
+const { regex, fa, grammar, parsing: P, theory: TH } = ctx.DT;
 
 let passed = 0;
 const failures = [];
@@ -196,6 +196,55 @@ test('precedence declarations resolve the ambiguous expression grammar', () => {
   const d = P.disambiguate(a.G, prec);
   const dl = lrAll(P.grammarText(d.G));
   assert.equal(dl.lalr.conflicts.length, 0);
+});
+
+
+// ---------- pumping lemma, simplification, NPDA → CFG ----------
+test('pumping lemma: the standard w beats every split for non-regular languages', () => {
+  for (const key of Object.keys(TH.LANGUAGES)) {
+    for (let p = 1; p <= 6; p++) {
+      const g = TH.pumpingGame(key, p);
+      assert.ok(!g.problems || g.problems.length === 0, `${key} p=${p}: ${(g.problems || []).join(' ')}`);
+      assert.equal(g.pumpable.length, 0, `${key} p=${p}: a split survives`);
+    }
+  }
+});
+
+test('pumping lemma: regular languages always have a pumpable split', () => {
+  for (const [re, w] of [['(a+b)*abb', 'aababb'], ['a*b*', 'aabbb'], ['(ab)*', 'abababab']]) {
+    const r = TH.pumpingRegular(re, w);
+    assert.ok(r.split, `no repeated state for ${re}`);
+    assert.ok(r.check.every((c) => c.inL), `split for ${re} does not pump`);
+  }
+});
+
+const sameExceptEps = (G1, G2) => {
+  const a = new Set(P.enumerate(G1, 6).list.map((x) => x.join(' ')).filter(Boolean));
+  const b = new Set(P.enumerate(G2, 6).list.map((x) => x.join(' ')));
+  return [...a].every((x) => b.has(x)) && [...b].every((x) => a.has(x));
+};
+test('simplification and Chomsky normal form keep the language', () => {
+  for (const text of ['S -> A B a C\nA -> B C\nB -> b | ε\nC -> D | ε\nD -> d', 'S -> a S b | S S | ε', 'E -> E + T | T\nT -> T * F | F\nF -> ( E ) | id']) {
+    const G = P.parseGrammar(text);
+    const r = TH.simplifyCNF(G);
+    assert.ok(TH.isCNF(r.cnf.G), `not CNF for ${text}`);
+    assert.ok(sameExceptEps(G, r.cnf.G), `language changed for ${text}`);
+  }
+});
+
+test('NPDA → CFG generates exactly what the NPDA accepts', () => {
+  const check = (pda, mode) => {
+    const r = TH.pdaToCfg(pda, mode);
+    const L = new Set(P.enumerate(r.trimmed, 6).list.map((x) => x.join('')));
+    const sigma = [...new Set(pda.trans.map((t) => t.inp).filter((a) => a && a !== 'λ' && a !== 'ε'))];
+    let all = [''];
+    for (let i = 0; i < 4; i++) all = all.concat(all.filter((s) => s.length === i).flatMap((s) => sigma.map((c) => s + c)));
+    for (const w of all) assert.equal(L.has(w), grammar.simulatePDA(pda, w, mode).accepted, `${mode}: disagree on "${w}"`);
+  };
+  const g = grammar.cfgToPDA(grammar.parse('S -> aSb | ab'));
+  check(g, 'final');
+  check(g, 'empty');
+  check(grammar.cfgToPDA(grammar.parse('S -> aSa | bSb | c')), 'final');
 });
 
 // Security headers: every inline <script> must be allowed by a hash inside script-src,

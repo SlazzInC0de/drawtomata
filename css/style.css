@@ -260,6 +260,14 @@ table.trace tr.bad td { background: var(--rose); color: var(--rose-ink); }
 .calls .bad { color: var(--rose-ink); font-weight: 600; }
 .calls .note { color: var(--muted); }
 .sub .raw { text-transform: none; letter-spacing: 0; font-family: var(--mono); color: var(--fg); }
+.seg2 { display: flex; flex-direction: column; gap: 6px; }
+table.grid td.yes { color: var(--green-ink); }
+table.grid td.no { color: var(--rose-ink); font-weight: 600; }
+table.grid tr.pumps td { background: var(--amber); }
+.wsplit { font-family: var(--mono); font-size: 20px; letter-spacing: .02em; }
+.wsplit .x { color: var(--fg); }
+.wsplit .y { background: var(--accent-soft); color: var(--accent); border-radius: 4px; padding: 0 2px; font-weight: 600; }
+.wsplit .z { color: var(--muted); }
 .cmp { display: flex; gap: 6px; flex-wrap: wrap; }
 
 /* ---------- shared svg drawing (canvas + fallback) ---------- */
