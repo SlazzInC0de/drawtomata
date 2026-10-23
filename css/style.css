@@ -25,7 +25,7 @@
   --edge: #64748B;
   --dot: #DCE3EC;
   --float-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 6px 20px rgba(15, 23, 42, 0.06);
-  --ui: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --ui: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
   --r-sm: 6px;
   --r: 8px;
@@ -66,7 +66,7 @@ h1, h2, h3 { margin: 0; line-height: 1.25; text-wrap: balance; font-weight: 600;
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 button { font: inherit; color: inherit; }
 kbd { font: 500 10px var(--ui); color: var(--muted); }
-.ic { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.85; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.ic { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: square; stroke-linejoin: miter; stroke-miterlimit: 8; flex: none; }
 .ic.sm { width: 15px; height: 15px; }
 .muted { color: var(--muted); }
 .small { font-size: 12.5px; }
@@ -78,6 +78,8 @@ kbd { font: 500 10px var(--ui); color: var(--muted); }
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
   background: var(--canvas); border-bottom: 1px solid var(--line);
 }
+.brandH { margin: 0; font-size: inherit; font-weight: inherit; line-height: 1; flex: none; }
+.vh { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .brand { display: flex; align-items: center; gap: 9px; color: var(--fg); flex: none; }
 .brand:hover { text-decoration: none; }
 .logoMark { width: 28px; height: 28px; display: block; }
@@ -107,7 +109,7 @@ kbd { font: 500 10px var(--ui); color: var(--muted); }
   padding: 20px 20px 32px; padding-left: max(20px, env(safe-area-inset-left, 0px));
   display: flex; flex-direction: column; gap: 16px; min-width: 0;
 }
-.sideHead h1 { font-size: 20px; letter-spacing: -0.01em; }
+.sideHead h2 { font-size: 20px; letter-spacing: -0.01em; }
 .sideHead p { margin: 4px 0 0; color: var(--muted); font-size: 13.5px; }
 .board {
   overflow: auto; min-width: 0;

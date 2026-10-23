@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Page not found · Drawtomata</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#2563EB">
+<link rel="icon" type="image/svg+xml" href="/assets/drawtomata-icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/drawtomata-icon-32.png">
+<style>
+  :root {
+    --canvas: #FFFFFF; --bg: #F8FAFC; --fg: #111827; --muted: #64748B; --line: #E2E8F0;
+    --accent: #2563EB; --accent-hover: #1D4ED8; --rose-ink: #BE123C; --dot: #DCE3EC; --node: #FFFFFF; --edge: #64748B;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --canvas: #0B1220; --bg: #0F172A; --fg: #F1F5F9; --muted: #94A3B8; --line: #1E293B;
+      --accent: #3B82F6; --accent-hover: #60A5FA; --rose-ink: #FB7185; --dot: #1C2638; --node: #111A2E; --edge: #94A3B8;
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; display: grid; place-items: center; padding: 24px 16px;
+    background-color: var(--bg); color: var(--fg);
+    background-image: radial-gradient(var(--dot) 1px, transparent 1.2px); background-size: 22px 22px;
+    font: 400 15px/1.6 "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased;
+  }
+  main { width: 100%; max-width: 520px; background: var(--canvas); border: 1px solid var(--line); border-radius: 10px; padding: 28px 24px 26px; }
+  .brand { display: inline-flex; align-items: center; gap: 9px; color: var(--fg); text-decoration: none; font-weight: 600; font-size: 16px; letter-spacing: -0.02em; }
+  .wm { font-weight: 600; }
+  .wm span { color: var(--accent); }
+  svg.dfa { display: block; width: 100%; height: auto; margin: 22px 0 18px; }
+  .dfa text { font: 500 13px "JetBrains Mono", ui-monospace, Consolas, monospace; fill: var(--fg); }
+  .dfa .lbl { fill: var(--muted); font-size: 12px; }
+  .dfa .dead { stroke: var(--rose-ink); stroke-dasharray: 4 3; }
+  .dfa .deadT { fill: var(--rose-ink); }
+  h1 { margin: 0 0 6px; font-size: 22px; font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; }
+  p { margin: 0; color: var(--muted); }
+  code { font: 13px "JetBrains Mono", ui-monospace, Consolas, monospace; color: var(--fg); }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+  .primary { background: var(--accent); color: #fff; border-radius: 8px; padding: 9px 16px; font-weight: 500; text-decoration: none; transition: background 0.12s; }
+  .primary:hover { background: var(--accent-hover); }
+  .ghost { border: 1px solid var(--line); color: var(--fg); border-radius: 8px; padding: 8px 14px; font-weight: 500; text-decoration: none; }
+  .ghost:hover { border-color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <a class="brand" href="/"><img src="/assets/drawtomata-icon.svg" alt="" width="26" height="26"><b class="wm">Draw<span>tomata</span></b></a>
+
+  <svg class="dfa" viewBox="0 0 460 120" role="img" aria-label="A DFA that moves from q0 to a dead state on the requested path">
+    <g fill="none" stroke="var(--edge)" stroke-width="1.4">
+      <path d="M8 62h40"/>
+      <circle cx="80" cy="62" r="26" fill="var(--node)"/>
+      <path d="M106 62h124"/>
+      <circle cx="262" cy="62" r="26" fill="var(--node)"/>
+      <path d="M288 62h88" class="dead"/>
+      <circle cx="406" cy="62" r="26" fill="var(--node)" class="dead"/>
+      <path d="M392 38c-6-28 34-28 28 0" class="dead"/>
+    </g>
+    <path d="M48 56l10 6-10 6z" fill="var(--edge)"/>
+    <path d="M230 56l10 6-10 6z" fill="var(--edge)"/>
+    <path d="M376 56l10 6-10 6z" class="deadT"/>
+    <path d="M415 36l6 4 1-7z" class="deadT"/>
+    <text x="80" y="67" text-anchor="middle">q0</text>
+    <text x="262" y="67" text-anchor="middle">q1</text>
+    <text x="406" y="67" text-anchor="middle">∅</text>
+    <text x="168" y="52" text-anchor="middle" class="lbl">/</text>
+    <text x="332" y="52" text-anchor="middle" class="lbl">this-page</text>
+    <text x="406" y="14" text-anchor="middle" class="lbl">Σ</text>
+  </svg>
+
+  <h1>404: this string is rejected</h1>
+  <p>The path you followed ends in a dead state, so there is no page here. The link may be old, or the address may have a typo.</p>
+  <div class="actions">
+    <a class="primary" href="/">Open Drawtomata</a>
+    <a class="ghost" href="/#fa">Draw an FA</a>
+    <a class="ghost" href="/#parse">Parsing tables</a>
+  </div>
+</main>
+</body>
+</html>
