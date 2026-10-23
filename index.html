@@ -20,7 +20,7 @@
 <link rel="apple-touch-icon" href="assets/drawtomata-icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="css/style.css">
 <script>try{var t=localStorage.getItem('dt-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <script src="https://cdn.jsdelivr.net/npm/@viz-js/viz@3.2.4/lib/viz-standalone.js" integrity="sha384-URBHx/89iDas90V6s3Ec33PIAeGZ91+dHTyBYeYgyj8kYCQvx9iYKcQ3NurLpcRE" crossorigin="anonymous"></script>
@@ -28,34 +28,34 @@
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <symbol id="i-select" viewBox="0 0 24 24"><path d="M4.04 4.69a.5.5 0 0 1 .65-.65l16 6.5a.5.5 0 0 1-.06.95l-6.13 1.58a2 2 0 0 0-1.43 1.44l-1.58 6.12a.5.5 0 0 1-.95.06z"/></symbol>
-    <symbol id="i-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v2"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-6-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></symbol>
-    <symbol id="i-state" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8.5v7M8.5 12h7"/></symbol>
-    <symbol id="i-arrow" viewBox="0 0 24 24"><circle cx="5.5" cy="18.5" r="2.5"/><path d="M7.5 16.5C9 9 13 6 19.5 5.5"/><path d="M15.5 3.5l4 2-2 4"/></symbol>
-    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
-    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
-    <symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></symbol>
-    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
-    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
-    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></symbol>
-    <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></symbol>
-    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
-    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
-    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
-    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></symbol>
-    <symbol id="i-final" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></symbol>
-    <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M15 3v18"/></symbol>
-    <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></symbol>
-    <symbol id="i-layout" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-select" viewBox="0 0 24 24"><path d="M5.5 3.5v15.2l4.1-3.9 2.9 6.2 2.7-1.3-2.9-6.1 5.6-.4z"/></symbol>
+    <symbol id="i-hand" viewBox="0 0 24 24"><path d="M12 6.5v11M6.5 12h11"/><path d="M12 2.5 15 6H9zM12 21.5 15 18H9zM2.5 12 6 9v6zM21.5 12 18 9v6z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-state" viewBox="0 0 24 24"><circle cx="10" cy="14" r="6.5"/><path d="M19 2.5v5M16.5 5h5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><circle cx="4.5" cy="17.5" r="2.5"/><circle cx="19.5" cy="17.5" r="2.5"/><path d="M6.3 15.6Q11.5 5 16.1 12.6"/><path d="m18.2 15.9-4-2.1 3.6-2.2z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3.5 6.5h17M9 6.5v-3h6v3M5.8 6.5l1.2 14h10l1.2-14M10 10.5v6.5M14 10.5v6.5"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M7.5 10h8a4.5 4.5 0 0 1 0 9H11"/><path d="M2.5 10 8 5.5v9z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24"><path d="M16.5 10h-8a4.5 4.5 0 0 0 0 9H13"/><path d="M21.5 10 16 5.5v9z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5.5 12h13"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M3.5 8.5v-5h5M15.5 3.5h5v5M20.5 15.5v5h-5M8.5 20.5h-5v-5"/><path d="M9.5 9.5h5v5h-5z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M3.5 15v5.5h17V15M12 3v8"/><path d="M12 16.5 7 11h10z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M14 3.2a9 9 0 1 0 6.8 12.6A7.2 7.2 0 0 1 14 3.2z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="m5.5 5.5 13 13M18.5 5.5l-13 13"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M1.5 12H7"/><path d="M11 12 6.5 8v8z" fill="currentColor" stroke="none"/><circle cx="17" cy="12" r="5"/></symbol>
+    <symbol id="i-final" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5"/></symbol>
+    <symbol id="i-panel" viewBox="0 0 24 24"><path d="M3.5 4.5h17v15h-17zM15 4.5v15"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-layout" viewBox="0 0 24 24"><circle cx="5.5" cy="6" r="2.5"/><circle cx="18.5" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8 6h8M6.7 8.2l4.1 7.6M17.3 8.2l-4.1 7.6"/></symbol>
   </defs>
 </svg>
 
 <div class="app">
   <header class="topbar">
-    <a class="brand" href="#re" data-goto="re" aria-label="Drawtomata home">
+    <h1 class="brandH"><a class="brand" href="#re" data-goto="re" aria-label="Drawtomata home">
       <img src="assets/drawtomata-icon.svg" alt="" class="logoMark" width="28" height="28">
-      <span class="wordmark">Draw<span>tomata</span></span>
-    </a>
+      <span class="wordmark">Draw<span>tomata</span></span><span class="vh">: automata, grammar and parsing conversions, step by step</span>
+    </a></h1>
     <nav class="modes" role="tablist" aria-label="Tools">
       <button role="tab" data-tab="re" aria-selected="true">RE → FA</button>
       <button role="tab" data-tab="fa" aria-selected="false">Draw FA</button>
@@ -78,7 +78,7 @@
     <!-- ===================== RE → FA ===================== -->
     <section class="panel split" id="tab-re" role="tabpanel">
       <aside class="side">
-        <div class="sideHead"><h1>Regular expression to automata</h1><p>λ-NFA, NFA, DFA and the minimal DFA, with every table.</p></div>
+        <div class="sideHead"><h2>Regular expression to automata</h2><p>λ-NFA, NFA, DFA and the minimal DFA, with every table.</p></div>
         <form class="field" id="reForm">
           <label for="reIn" class="lbl">Regular expression</label>
           <input id="reIn" class="mono big" autocomplete="off" spellcheck="false" value="(a+b)*abb">
@@ -191,7 +191,7 @@
     <!-- ===================== LANGUAGE → DFA ===================== -->
     <section class="panel split" id="tab-lang" role="tabpanel" hidden>
       <aside class="side">
-        <div class="sideHead"><h1>Language to DFA</h1><p>For questions like “strings over {a, b} that start with ab and have an even number of b's”.</p></div>
+        <div class="sideHead"><h2>Language to DFA</h2><p>For questions like “strings over {a, b} that start with ab and have an even number of b's”.</p></div>
         <div class="field">
           <label for="langSigma" class="lbl">Alphabet Σ</label>
           <input id="langSigma" class="mono" value="a,b" autocomplete="off">
@@ -215,7 +215,7 @@
     <!-- ===================== GRAMMAR ⇄ FA ===================== -->
     <section class="panel split" id="tab-rg" role="tabpanel" hidden>
       <aside class="side">
-        <div class="sideHead"><h1>Regular grammar to FA</h1><p>Right-linear or left-linear. For FA → grammar, draw it in <a href="#fa" data-goto="fa">Draw FA</a>.</p></div>
+        <div class="sideHead"><h2>Regular grammar to FA</h2><p>Right-linear or left-linear. For FA → grammar, draw it in <a href="#fa" data-goto="fa">Draw FA</a>.</p></div>
         <div class="field">
           <label for="rgIn" class="lbl">Grammar</label>
           <textarea id="rgIn" class="mono" rows="6" spellcheck="false">S -> abA
@@ -241,7 +241,7 @@ B -> aA | bb</textarea>
     <!-- ===================== CFG & PDA ===================== -->
     <section class="panel split" id="tab-cfg" role="tabpanel" hidden>
       <aside class="side">
-        <div class="sideHead"><h1>Context-free grammars</h1><p>Derivations, parse trees, ambiguity and CFG → NPDA.</p></div>
+        <div class="sideHead"><h2>Context-free grammars</h2><p>Derivations, parse trees, ambiguity and CFG → NPDA.</p></div>
         <div class="field">
           <label for="cfgIn" class="lbl">Grammar</label>
           <textarea id="cfgIn" class="mono" rows="4" spellcheck="false">E -> E+E | E*E | (E) | a</textarea>
@@ -295,7 +295,7 @@ B -> aA | bb</textarea>
     <!-- ===================== PUMPING LEMMA ===================== -->
     <section class="panel split" id="tab-pump" role="tabpanel" hidden>
       <aside class="side">
-        <div class="sideHead"><h1>Pumping lemma</h1><p>Play the adversary game for a non-regular language, or see why the lemma holds for a regular one.</p></div>
+        <div class="sideHead"><h2>Pumping lemma</h2><p>Play the adversary game for a non-regular language, or see why the lemma holds for a regular one.</p></div>
         <div class="field">
           <span class="lbl">Mode</span>
           <div class="seg2" role="radiogroup" aria-label="Mode">
@@ -325,7 +325,7 @@ B -> aA | bb</textarea>
     <!-- ===================== PARSING ===================== -->
     <section class="panel split" id="tab-parse" role="tabpanel" hidden>
       <aside class="side">
-        <div class="sideHead"><h1>Syntax analysis</h1><p>FIRST/FOLLOW, LL(1), recursive descent, LR(0), SLR, CLR, LALR and operator precedence, with every table and trace.</p></div>
+        <div class="sideHead"><h2>Syntax analysis</h2><p>FIRST/FOLLOW, LL(1), recursive descent, LR(0), SLR, CLR, LALR and operator precedence, with every table and trace.</p></div>
         <div class="field">
           <label for="psIn" class="lbl">Grammar</label>
           <textarea id="psIn" class="mono" rows="5" spellcheck="false">E -> E + T | T
