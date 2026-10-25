@@ -41,7 +41,7 @@
   // Graphviz
   const q = (s) => '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n') + '"';
   function toDot(g) {
-    let s = 'digraph G{rankdir=LR;bgcolor="transparent";pad=0.15;nodesep=0.3;ranksep=0.45;';
+    let s = `digraph G{rankdir=${g.rankdir || 'LR'};${g.ordering ? 'ordering=out;' : ''}bgcolor="transparent";pad=0.15;nodesep=0.3;ranksep=0.45;`;
     s += 'node[shape=circle,fontname="JetBrains Mono",fontsize=12,width=0.5,height=0.5,margin=0.02];';
     s += 'edge[fontname="JetBrains Mono",fontsize=11,arrowsize=0.7];';
     const idx = new Map(g.nodes.map((n, i) => [n.id, i]));
@@ -50,9 +50,9 @@
     for (const n of g.nodes) {
       const cls = q((n.cls || '') + (n.final ? ' final' : '') + (n.start ? ' start' : '') + (n.lines ? ' itemset' : ''));
       if (n.lines) s += `n${idx.get(n.id)}[label="${lab(n.label)}\\n${n.lines.map(lab).join('\\l')}\\l",shape=box,style=rounded,fontname="Courier",fontsize=11,margin="0.14,0.08",class=${cls}];`;
-      else s += `n${idx.get(n.id)}[label=${q(D(n.label))},shape=${n.final ? 'doublecircle' : 'circle'},class=${cls}];`;
+      else s += `n${idx.get(n.id)}[label=${q(D(n.label))},shape=${n.shape || (n.final ? 'doublecircle' : 'circle')},class=${cls}${n.xlabel ? `,xlabel=${q(n.xlabel)}` : ''}];`;
     }
-    for (const e of g.edges) if (idx.has(e.from) && idx.has(e.to)) s += `n${idx.get(e.from)}->n${idx.get(e.to)}[label=${q(' ' + D(e.label) + ' ')}];`;
+    for (const e of g.edges) if (idx.has(e.from) && idx.has(e.to)) s += `n${idx.get(e.from)}->n${idx.get(e.to)}[${e.label ? `label=${q(' ' + D(e.label) + ' ')}` : ''}${e.cls ? `${e.label ? ',' : ''}class=${q(e.cls)},style=dashed` : ''}];`;
     return s + '}';
   }
   function treeDot(root) {

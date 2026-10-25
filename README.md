@@ -44,9 +44,11 @@ The canvas has pan and zoom, undo/redo, autosave, auto-layout, and PNG / SVG / J
 
 **More grammar tools.** NPDA → CFG with Linz's [qᵢ A qⱼ] construction (the NPDA is normalized first, and the grammar is checked against the simulator), and grammar simplification (λ-productions, unit productions, useless symbols) with conversion to Chomsky normal form.
 
-Every result is checked against its input for language equivalence before it is shown. The ambiguity search is bounded, so "none found" is evidence, not a proof.
+**Code generation.** Three-address code with quadruples, triples and indirect triples; DAGs by the value-number method; SSA form with φ-functions placed at dominance frontiers; leaders, basic blocks, flow graphs and natural loops; live variables and next-use tables; block optimization through the DAG (common subexpressions, constant folding, dead code); the getReg code generator with register and address descriptors and instruction costs; and a peephole optimizer on both three-address and target code. Every transformed program is run against the original on random inputs, and the target code on a small simulated machine.
 
-Notation follows Peter Linz for automata and Aho, Lam, Sethi and Ullman for parsing, *An Introduction to Formal Languages and Automata*.
+Every result is checked against its input before it is shown. The ambiguity search is bounded, so "none found" is evidence, not a proof.
+
+Notation follows Peter Linz, *An Introduction to Formal Languages and Automata*, for automata, and Aho, Lam, Sethi and Ullman, *Compilers*, for parsing and code generation.
 
 ## Input format
 
@@ -57,6 +59,7 @@ Notation follows Peter Linz for automata and Aho, Lam, Sethi and Ullman for pars
 | Parsing grammar | `E -> E + T \| T`, `F -> ( E ) \| id`; words like `id`, `if`, `num` are single terminals |
 | Precedence | `%left + -` then `%left * /`, lowest precedence first |
 | NPDA | `δ(q0, a, z) = {(q0, az), (q1, λ)}` with the stack top written first |
+| Program | `x = a + b * c`, `a[i] = x`, `if i <= 10 goto (3)`, `L1: goto L2`; lines may be numbered `(3)` or `3)`; `t1`, `t2`, … are temporaries |
 
 ## Keyboard (Draw FA)
 
@@ -92,6 +95,7 @@ js/automata.js   Thompson, λ-removal, subset, minimization, state elimination, 
 js/grammar.js    grammar parsing, CFG derivations, ambiguity, NPDA
 js/parsing.js    FIRST/FOLLOW, LL(1), recursive descent, LR(0)/SLR/CLR/LALR, precedence
 js/theory.js     pumping lemma, NPDA → CFG, simplification and CNF
+js/codegen.js    three-address code, DAGs, SSA, blocks, liveness, code generator, peephole
 js/render.js     diagrams and tables
 js/editor.js     the drawing canvas
 js/app.js        page wiring
@@ -104,7 +108,7 @@ tests/run.js     conversion tests
 | --- | --- |
 | 21 Oct 2026 | Parsing: FIRST/FOLLOW, left recursion, left factoring, LL(1), recursive descent, LR(0), SLR, CLR, LALR, precedence |
 | 23 Oct 2026 | Pumping lemma game, NPDA → CFG, grammar simplification and CNF |
-| 25 Oct 2026 | Code generation: DAGs, three-address code, quadruples/triples, basic blocks, flow graphs, peephole |
+| 25 Oct 2026 | Code generation: three-address code, quadruples and triples, DAGs, SSA, basic blocks and flow graphs, liveness, code generator, peephole |
 | 27 Oct 2026 | Syntax-directed translation: annotated parse trees, dependency graphs, S/L-attributed checks |
 | 29 Oct 2026 | Lexical analysis: token recognition, lexer playground, input buffering, Lex/Yacc specs |
 

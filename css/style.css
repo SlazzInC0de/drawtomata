@@ -249,6 +249,7 @@ table.grid th, table.grid td { border: 1px solid var(--line); padding: 5px 9px; 
 table.grid th { background: var(--bg); color: var(--muted); font-weight: 600; }
 table.grid td:first-child, table.grid th:first-child { text-align: left; font-weight: 600; color: var(--fg); }
 table.grid .sep { border-left: 2px solid var(--line-strong); }
+table.grid td.l { text-align: left; white-space: nowrap; vertical-align: top; }
 table.grid td.conflict { background: var(--rose); color: var(--rose-ink); font-weight: 600; }
 table.grid td.resolved { background: var(--amber); }
 table.grid td.acc { color: var(--green-ink); font-weight: 600; }

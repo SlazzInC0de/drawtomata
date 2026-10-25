@@ -6,7 +6,7 @@ const vm = require('vm');
 const assert = require('assert/strict');
 
 const ctx = vm.createContext({ console });
-for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js']) {
+for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'), ctx, { filename: f });
 }
 const { regex, fa, grammar, parsing: P, theory: TH } = ctx.DT;
@@ -245,6 +245,99 @@ test('NPDA → CFG generates exactly what the NPDA accepts', () => {
   check(g, 'final');
   check(g, 'empty');
   check(grammar.cfgToPDA(grammar.parse('S -> aSa | bSb | c')), 'final');
+});
+
+// ---------- code generation ----------
+const CG = ctx.DT.codegen;
+const plain = (x) => JSON.parse(JSON.stringify(x));
+const AHO_LOOPS = '1) i = 1\n2) j = 1\n3) t1 = 10 * i\n4) t2 = t1 + j\n5) t3 = 8 * t2\n6) t4 = t3 - 88\n7) a[t4] = 0\n8) j = j + 1\n9) if j <= 10 goto (3)\n10) i = i + 1\n11) if i <= 10 goto (2)\n12) i = 1\n13) t5 = i - 1\n14) t6 = 88 * t5\n15) a[t6] = 1\n16) i = i + 1\n17) if i <= 10 goto (13)';
+const CG_PROGRAMS = [
+  'a = b * -c + b * -c',
+  'x = (a + b) * (a + b) - c / (a + b)',
+  'a = b + c\nb = a - d\nc = b + c\nd = a - d',
+  'p = a + b\nq = p - c\np = q * d\np = e - p\nq = p + q',
+  'x = a[i] + a[j]\nif x > 0 goto L1\ny = 0 - x\ngoto L2\nL1: y = x\nL2: z = y * 2',
+  AHO_LOOPS,
+  't = a - b\nu = a - c\nv = t + u\na = d\nd = v + u',
+  'if debug == 1 goto L1\ngoto L2\nL1: x = x * 1\ny = y * 2\nL2: i = i + 1\ngoto L3\nk = 0\nL3: goto L4\nL4: n = 4 * 2',
+  'a[i] = b\nc = a[j]\na[k] = c + 0\nd = a[j] * 1\ne = 3 * 4 + d'
+];
+
+test('three-address code follows Aho 6.2 for a = b * -c + b * -c', () => {
+  const p = CG.parseProgram('a = b * -c + b * -c');
+  assert.deepEqual(plain(p.ins.map((x) => CG.insStr(x))), ['t1 = minus c', 't2 = b * t1', 't3 = minus c', 't4 = b * t3', 't5 = t2 + t4', 'a = t5']);
+  const r = CG.representations(p);
+  assert.deepEqual(plain(r.quads[1]), ['*', 'b', 't1', 't2']);
+  assert.deepEqual(plain(r.triples[4].slice(0, 3)), ['+', '(1)', '(3)']);
+  assert.deepEqual(plain(r.triples[5].slice(0, 3)), ['=', 'a', '(4)']);
+});
+
+test('basic blocks, flow graph and loops match Aho 8.4', () => {
+  const bb = CG.basicBlocks(CG.parseProgram(AHO_LOOPS).ins);
+  assert.deepEqual(plain(bb.leaders.map((i) => i + 1)), [1, 2, 3, 10, 12, 13]);
+  assert.deepEqual(plain(bb.blocks.map((b) => b.succ)), [[1], [2], [2, 3], [1, 4], [5], [5, 6]]);
+  assert.deepEqual(plain(CG.dominators(bb).loops.map((l) => `${l.from}>${l.head}`).sort()), ['2>2', '3>1', '5>5']);
+});
+
+test('DAG optimization finds common subexpressions and keeps the results', () => {
+  const p = CG.parseProgram('a = b * -c + b * -c');
+  const o = CG.optimize(p);
+  assert.equal(o.ins.length, 3);
+  for (const text of CG_PROGRAMS) {
+    const q = CG.parseProgram(text);
+    assert.ok(CG.equivalent(q.ins, CG.optimize(q).ins, { names: CG.observedOf(q) }).ok, text);
+  }
+  const live = CG.parseProgram('a = b + c\nb = a - d\nc = b + c\nd = a - d');
+  live.liveExit = ['a', 'c', 'd'];
+  const o2 = CG.optimize(live);
+  assert.equal(o2.ins.length, 3, 'b is dead, so Aho 8.10 needs three instructions');
+  assert.ok(CG.equivalent(live.ins, o2.ins, { names: CG.observedOf(live) }).ok);
+});
+
+test('SSA: one assignment per name, φ at joins, same results', () => {
+  const s1 = CG.toSSA(CG.parseProgram('p = a + b\nq = p - c\np = q * d\np = e - p\nq = p + q'));
+  assert.deepEqual(plain(s1.blocks[0].ins.map((x) => CG.insStr(x))), ['p₁ = a + b', 'q₁ = p₁ - c', 'p₂ = q₁ * d', 'p₃ = e - p₂', 'q₂ = p₃ + q₁']);
+  const counts = { [CG_PROGRAMS[4]]: 1, [AHO_LOOPS]: 3 };
+  for (const text of CG_PROGRAMS) {
+    const p = CG.parseProgram(text), s = CG.toSSA(p);
+    assert.ok(s.single, text);
+    assert.ok(CG.checkSSA(p, s).ok, text);
+    if (text in counts) assert.equal(s.phiCount, counts[text], text);
+  }
+});
+
+test('next-use information (Aho 8.5.1)', () => {
+  const p = CG.parseProgram('t = a - b\nu = a - c\nv = t + u\na = d\nd = v + u');
+  const nu = CG.nextUse(p.ins, new Set(['a', 'b', 'c', 'd']));
+  assert.deepEqual(plain(nu.rows[0].a), { live: true, next: 1 });
+  assert.deepEqual(plain(nu.rows[2].t), { live: false, next: null });
+  assert.deepEqual(plain(nu.rows[2].u), { live: true, next: 4 });
+});
+
+test('code generator output runs like the three-address code', () => {
+  for (const text of CG_PROGRAMS) {
+    const p = CG.parseProgram(text);
+    for (const n of [2, 3, 4]) {
+      const g = CG.generate(p, n);
+      assert.ok(CG.checkMachine(p.ins, g.code, 40, CG.observedOf(p)).ok, `${n} registers: ${text}`);
+      assert.equal(g.total, g.code.reduce((s, m) => s + CG.mCost(m), 0));
+    }
+  }
+});
+
+test('peephole keeps the results and lowers the cost', () => {
+  for (const text of CG_PROGRAMS) {
+    const p = CG.parseProgram(text), r = CG.peephole(p), names = CG.observedOf(p);
+    assert.ok(CG.equivalent(p.ins, r.tac.ins, { names }).ok, text);
+    assert.ok(CG.checkMachine(p.ins, r.after.code, 40, names).ok, text);
+    assert.ok(r.costAfter <= r.costBefore, text);
+  }
+  const r = CG.peephole(CG.parseProgram(CG_PROGRAMS[7]));
+  assert.equal(r.tac.ins.length, 4);
+  for (const rule of ['Jump over a jump', 'Algebraic identity', 'Strength reduction', 'Jump to a jump', 'Constant folding', 'Unreachable code']) assert.ok(r.tac.log.some((l) => l.rule === rule), rule);
+  assert.ok(r.after.log.some((l) => l.rule === 'Machine idiom'));
+  const st = CG.peepholeMachine(CG.naiveCode(CG.parseProgram('a = b + c\nd = a + e').ins));
+  assert.ok(st.log.some((l) => l.rule === 'Redundant load'), 'ST a, R0; LD R0, a');
 });
 
 // Security headers: every inline <script> must be allowed by a hash inside script-src,

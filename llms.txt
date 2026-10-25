@@ -2,7 +2,7 @@
 
 > Drawtomata is a free, browser-only tool for Theory of Computation and Compiler Design. Type a regular expression, grammar or NPDA, or draw a finite automaton, and it shows every conversion step: closure tables, subset tables, minimization tables, state elimination, derivations, parse trees and parsing tables. Every result is checked against its input for language equivalence before it is shown. No sign-up, no build step, nothing is sent to a server.
 
-Notation follows Peter Linz (An Introduction to Formal Languages and Automata) for automata and Aho, Lam, Sethi and Ullman for parsing. The empty string can be shown as λ or ε.
+Notation follows Peter Linz (An Introduction to Formal Languages and Automata) for automata and Aho, Lam, Sethi and Ullman (Compilers) for parsing and code generation. The empty string can be shown as λ or ε.
 
 ## Tools
 
@@ -12,6 +12,7 @@ Notation follows Peter Linz (An Introduction to Formal Languages and Automata) f
 - [Grammar ⇄ FA](https://drawtomata.vercel.app/#rg): right-linear and left-linear regular grammars to NFA
 - [CFG & PDA](https://drawtomata.vercel.app/#cfg): leftmost and rightmost derivations, parse trees, bounded ambiguity search, strings of L(G) up to a length, CFG → NPDA (GNF or general method), NPDA simulator with instantaneous descriptions, NPDA → CFG, grammar simplification and Chomsky normal form
 - [Parsing](https://drawtomata.vercel.app/#parse): FIRST and FOLLOW sets, left recursion removal, left factoring, LL(1) table and trace, recursive descent, LR(0) items, SLR(1), canonical LR(1) and LALR(1) tables with shift-reduce traces, %left / %right precedence, operator precedence parsing
+- [Code gen](https://drawtomata.vercel.app/#cg): three-address code, quadruples, triples and indirect triples, DAG by value numbers, SSA with φ-functions, leaders, basic blocks, flow graph and loops, live variables and next-use tables, DAG-based block optimization, the getReg code generator with register and address descriptors and costs, peephole optimization
 - [Pumping lemma](https://drawtomata.vercel.app/#pump): adversary game for non-regular languages such as aⁿbⁿ, wwᴿ, ww, aⁿbⁿcⁿ and balanced parentheses, and the pigeonhole argument for a regular language given as an RE
 
 ## Input format
@@ -20,6 +21,7 @@ Notation follows Peter Linz (An Introduction to Formal Languages and Automata) f
 - Grammar: one production per line, e.g. `S -> aSb | λ`; variables are capitals like `S` or `A1`
 - Parsing grammar: `E -> E + T | T`, `F -> ( E ) | id`; words like `id`, `if`, `num` are single terminals
 - NPDA: `δ(q0, a, z) = {(q0, az), (q1, λ)}` with the stack top written first
+- Program: `x = a + b * c`, `a[i] = x`, `if i <= 10 goto (3)`, `goto L1`; lines may be numbered `(3)`; `t1`, `t2` are temporaries
 
 ## Source
 
