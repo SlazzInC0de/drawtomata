@@ -377,3 +377,25 @@ svg.canvas[data-tool="delete"] .fnode:hover .ncircle, svg.canvas[data-tool="dele
   .actions select.slim { flex: 1; min-width: 0; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+/* ---------- converter pages: explanation and links below the tool ---------- */
+.seo { max-width: 760px; margin: 0 auto; padding: 40px 20px 8px; color: var(--fg); font-size: 15px; line-height: 1.7; }
+footer.seo { padding: 24px 20px 48px; border-top: 1px solid var(--line); }
+article.seo + footer.seo { margin-top: 24px; }
+.seo h1 { font-size: 28px; line-height: 1.25; margin: 6px 0 12px; letter-spacing: -0.01em; }
+.seo h2 { font-size: 19px; margin: 32px 0 8px; }
+.seo h3 { font-size: 15.5px; margin: 20px 0 4px; }
+.seo p, .seo ul, .seo ol { margin: 0 0 12px; }
+.seo li { margin: 4px 0; }
+.seo a { color: var(--accent); }
+.seoLead { font-size: 16.5px; color: var(--fg); }
+.seoCrumb, .seoMeta { font-size: 13px; color: var(--muted); margin: 0; }
+.seo table { border-collapse: collapse; font-family: var(--mono); font-size: 13.5px; margin: 8px 0 16px; }
+.seo th, .seo td { border: 1px solid var(--line); padding: 6px 12px; text-align: left; }
+.seo th { background: var(--bg); color: var(--muted); font-weight: 600; }
+.seoNav h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 10px; }
+.seoNav ul { list-style: none; padding: 0; margin: 0 0 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+.seoNav li { margin: 0; }
+.seoNav a, .seoNav span { display: inline-block; padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: 13.5px; text-decoration: none; color: var(--fg); background: var(--panel, var(--bg)); }
+.seoNav a:hover { border-color: var(--accent); color: var(--accent); }
+.seoNav span { border-color: var(--accent); color: var(--accent); }

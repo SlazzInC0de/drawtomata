@@ -340,6 +340,20 @@ test('peephole keeps the results and lowers the cost', () => {
   assert.ok(st.log.some((l) => l.rule === 'Redundant load'), 'ST a, R0; LD R0, a');
 });
 
+// Converter pages are generated from index.html; they must not drift from it.
+test('converter pages and sitemap are up to date (run node scripts/build-pages.js)', () => {
+  const { build, PAGES } = require('../scripts/build-pages.js');
+  for (const [f, want] of Object.entries(build())) {
+    assert.equal(fs.readFileSync(path.join(__dirname, '..', f), 'utf8'), want, `${f} is stale`);
+  }
+  for (const p of PAGES) {
+    const h = fs.readFileSync(path.join(__dirname, '..', p.slug, 'index.html'), 'utf8');
+    assert.equal((h.match(/<h1[ >]/g) || []).length, 1, `${p.slug}: exactly one h1`);
+    assert.ok(h.includes(`<link rel="canonical" href="https://drawtomata.vercel.app/${p.slug}/">`));
+    assert.ok(!/(src|href)="(js|css|assets)\//.test(h), `${p.slug}: asset paths must be relative to the parent folder`);
+  }
+});
+
 // Security headers: every inline <script> must be allowed by a hash inside script-src,
 // and every external script must carry an SRI digest that matches the file it loads.
 const crypto = require('crypto');

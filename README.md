@@ -96,6 +96,7 @@ js/grammar.js    grammar parsing, CFG derivations, ambiguity, NPDA
 js/parsing.js    FIRST/FOLLOW, LL(1), recursive descent, LR(0)/SLR/CLR/LALR, precedence
 js/theory.js     pumping lemma, NPDA → CFG, simplification and CNF
 js/codegen.js    three-address code, DAGs, SSA, blocks, liveness, code generator, peephole
+scripts/build-pages.js  one page per converter (/nfa-to-dfa/, /ll1-parser/, …) and the sitemap, built from index.html
 js/render.js     diagrams and tables
 js/editor.js     the drawing canvas
 js/app.js        page wiring

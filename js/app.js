@@ -337,11 +337,14 @@
     f.text().then((txt) => { try { editor.importJSON(txt); closeDrawer(); } catch (err) { toast('Could not open that file: ' + err.message); } });
     e.target.value = '';
   });
-  try { const saved = store.get('editor'); if (saved && (JSON.parse(saved).states || JSON.parse(saved).s || []).length) editor.restore(saved); else editor.load(exFA(EX.minme), { rename: false }); }
+  // a converter page (e.g. /nfa-to-dfa/) names its tab, operation and example on <body>
+  const PAGE = document.body.dataset;
+  const startEx = EX[PAGE.example] || EX.minme;
+  try { const saved = store.get('editor'); if (saved && (JSON.parse(saved).states || JSON.parse(saved).s || []).length) editor.restore(saved); else editor.load(exFA(startEx), { rename: false }); }
   catch (e) {
     // Keep the unreadable autosave so the example below does not silently overwrite the user's work.
     try { const saved = store.get('editor'); if (saved) store.set('editor-backup', saved); } catch (e2) { /* ignore */ }
-    editor.load(exFA(EX.minme), { rename: false });
+    editor.load(exFA(startEx), { rename: false });
     toast('Your saved automaton could not be opened. A copy was kept in browser storage as dt-editor-backup.');
   }
 
@@ -1303,6 +1306,12 @@
   const savedCG = store.get('cg'); if (savedCG) $('#cgIn').value = savedCG;
   const savedCL = store.get('cglive'); if (savedCL) $('#cgLive').value = savedCL;
   runCG('tac');
-  showTab((location.hash || '#re').slice(1), false);
+  showTab((location.hash || '#' + (PAGE.tab || 're')).slice(1), false);
+  if (!location.hash && PAGE.op) {
+    if (PAGE.tab === 'fa') runOp(PAGE.op);
+    else if (PAGE.tab === 'parse') runPS(PAGE.op);
+    else if (PAGE.tab === 'cg') runCG(PAGE.op);
+    else if (PAGE.tab === 'cfg') runCFG(PAGE.op);
+  }
   window.addEventListener('hashchange', () => { const t = location.hash.slice(1); if (TABS.includes(t)) showTab(t, false); });
 })(window.DT);

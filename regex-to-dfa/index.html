@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Regex to DFA Converter: RE to NFA to DFA, Step by Step | Drawtomata</title>
+<meta name="description" content="Convert a regular expression to an NFA and a DFA with every step: Thompson construction, λ-closure, subset construction and the minimal DFA.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Regular expression to DFA converter","url":"https://drawtomata.vercel.app/regex-to-dfa/","applicationCategory":"EducationalApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"description":"Convert a regular expression to an NFA and a DFA with every step: Thompson construction, λ-closure, subset construction and the minimal DFA.","isPartOf":{"@type":"WebSite","name":"Drawtomata","url":"https://drawtomata.vercel.app/"},"author":{"@type":"Person","name":"Suryansh Verma","url":"https://github.com/SlazzInC0de"}}</script>
+<meta name="google-site-verification" content="lD49FQi-laK4Ykwxqgnlgu-ZVwIR7JKvXZEgora-BPs">
+<link rel="canonical" href="https://drawtomata.vercel.app/regex-to-dfa/">
+<meta name="theme-color" content="#2563EB">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Regular expression to DFA converter | Drawtomata">
+<meta property="og:description" content="Convert a regular expression to an NFA and a DFA with every step: Thompson construction, λ-closure, subset construction and the minimal DFA.">
+<meta property="og:url" content="https://drawtomata.vercel.app/regex-to-dfa/">
+<meta property="og:image" content="https://drawtomata.vercel.app/docs/screenshot.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="../assets/drawtomata-icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/drawtomata-icon-32.png">
+<link rel="apple-touch-icon" href="../assets/drawtomata-icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+<script>try{var t=localStorage.getItem('dt-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script src="https://cdn.jsdelivr.net/npm/@viz-js/viz@3.2.4/lib/viz-standalone.js" integrity="sha384-URBHx/89iDas90V6s3Ec33PIAeGZ91+dHTyBYeYgyj8kYCQvx9iYKcQ3NurLpcRE" crossorigin="anonymous"></script>
+</head>
+<body data-tab="re">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-select" viewBox="0 0 24 24"><path d="M5.5 3.5v15.2l4.1-3.9 2.9 6.2 2.7-1.3-2.9-6.1 5.6-.4z"/></symbol>
+    <symbol id="i-hand" viewBox="0 0 24 24"><path d="M12 6.5v11M6.5 12h11"/><path d="M12 2.5 15 6H9zM12 21.5 15 18H9zM2.5 12 6 9v6zM21.5 12 18 9v6z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-state" viewBox="0 0 24 24"><circle cx="10" cy="14" r="6.5"/><path d="M19 2.5v5M16.5 5h5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><circle cx="4.5" cy="17.5" r="2.5"/><circle cx="19.5" cy="17.5" r="2.5"/><path d="M6.3 15.6Q11.5 5 16.1 12.6"/><path d="m18.2 15.9-4-2.1 3.6-2.2z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3.5 6.5h17M9 6.5v-3h6v3M5.8 6.5l1.2 14h10l1.2-14M10 10.5v6.5M14 10.5v6.5"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M7.5 10h8a4.5 4.5 0 0 1 0 9H11"/><path d="M2.5 10 8 5.5v9z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24"><path d="M16.5 10h-8a4.5 4.5 0 0 0 0 9H13"/><path d="M21.5 10 16 5.5v9z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5.5 12h13"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M3.5 8.5v-5h5M15.5 3.5h5v5M20.5 15.5v5h-5M8.5 20.5h-5v-5"/><path d="M9.5 9.5h5v5h-5z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M3.5 15v5.5h17V15M12 3v8"/><path d="M12 16.5 7 11h10z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M14 3.2a9 9 0 1 0 6.8 12.6A7.2 7.2 0 0 1 14 3.2z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="m5.5 5.5 13 13M18.5 5.5l-13 13"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M1.5 12H7"/><path d="M11 12 6.5 8v8z" fill="currentColor" stroke="none"/><circle cx="17" cy="12" r="5"/></symbol>
+    <symbol id="i-final" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5"/></symbol>
+    <symbol id="i-panel" viewBox="0 0 24 24"><path d="M3.5 4.5h17v15h-17zM15 4.5v15"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-layout" viewBox="0 0 24 24"><circle cx="5.5" cy="6" r="2.5"/><circle cx="18.5" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8 6h8M6.7 8.2l4.1 7.6M17.3 8.2l-4.1 7.6"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brandH"><a class="brand" href="../" aria-label="Drawtomata home">
+      <img src="../assets/drawtomata-icon.svg" alt="" class="logoMark" width="28" height="28">
+      <span class="wordmark">Draw<span>tomata</span></span><span class="vh">: automata, grammar and parsing conversions, step by step</span>
+    </a></div>
+    <nav class="modes" role="tablist" aria-label="Tools">
+      <button role="tab" data-tab="re" aria-selected="true">RE → FA</button>
+      <button role="tab" data-tab="fa" aria-selected="false">Draw FA</button>
+      <button role="tab" data-tab="lang" aria-selected="false">Language → DFA</button>
+      <button role="tab" data-tab="rg" aria-selected="false">Grammar ⇄ FA</button>
+      <button role="tab" data-tab="cfg" aria-selected="false">CFG &amp; PDA</button>
+      <button role="tab" data-tab="parse" aria-selected="false">Parsing</button>
+      <button role="tab" data-tab="cg" aria-selected="false">Code gen</button>
+      <button role="tab" data-tab="pump" aria-selected="false">Pumping lemma</button>
+    </nav>
+    <div class="topRight">
+      <div class="epsSwitch" role="group" aria-label="Empty string symbol" title="Symbol for the empty string">
+        <button type="button" data-eps="λ" aria-pressed="true">λ</button>
+        <button type="button" data-eps="ε" aria-pressed="false">ε</button>
+      </div>
+      <button type="button" class="iconBtn" id="themeBtn" title="Switch light / dark" aria-label="Switch light or dark theme"><svg class="ic"><use href="#i-moon"/></svg></button>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- ===================== RE → FA ===================== -->
+    <section class="panel split" id="tab-re" role="tabpanel">
+      <aside class="side">
+        <div class="sideHead"><h2>Regular expression to automata</h2><p>λ-NFA, NFA, DFA and the minimal DFA, with every table.</p></div>
+        <form class="field" id="reForm">
+          <label for="reIn" class="lbl">Regular expression</label>
+          <input id="reIn" class="mono big" autocomplete="off" spellcheck="false" value="(a+b)*abb">
+          <div class="keys" data-target="reIn">
+            <button type="button" data-ins="λ">λ</button><button type="button" data-ins="∅">∅</button><button type="button" data-ins="+">+</button><button type="button" data-ins="*">*</button><button type="button" data-ins="(">(</button><button type="button" data-ins=")">)</button>
+          </div>
+          <button class="primary block" type="submit">Convert</button>
+        </form>
+        <div class="err" id="reErr" hidden></div>
+        <div class="field">
+          <span class="lbl">Examples</span>
+          <div class="examples" data-for="reIn">
+            <button type="button">(a+b)*abb</button><button type="button">(0+1)*01</button><button type="button">a*b*</button><button type="button">(ab+ba)*</button><button type="button">a(a+b)*b</button><button type="button">((aab)*ab)*</button>
+          </div>
+        </div>
+        <p class="hint"><b>+</b> union · <b>*</b> star · symbols side by side are concatenation · <b>λ</b>, <b>ε</b> or <b>@</b> for the empty string.</p>
+      </aside>
+      <div class="board"><div class="boardInner" id="reOut"></div></div>
+    </section>
+
+    <!-- ===================== DRAW FA ===================== -->
+    <section class="panel workspace" id="tab-fa" role="tabpanel" hidden>
+      <div class="stageArea" id="editor">
+        <svg class="canvas" role="img" aria-label="Automaton canvas"></svg>
+        <div class="emptyHint" hidden><b>Start drawing</b><span>Press <kbd>S</kbd> and click to add a state, or pick an example.</span></div>
+
+        <div class="float tools" role="toolbar" aria-label="Drawing tools">
+          <button type="button" data-tool="move" title="Select and move (V)" aria-label="Select and move"><svg class="ic"><use href="#i-select"/></svg><kbd>V</kbd></button>
+          <button type="button" data-tool="pan" title="Pan (H)" aria-label="Pan"><svg class="ic"><use href="#i-hand"/></svg><kbd>H</kbd></button>
+          <span class="sep"></span>
+          <button type="button" data-tool="state" title="State (S)" aria-label="Add state"><svg class="ic"><use href="#i-state"/></svg><kbd>S</kbd></button>
+          <button type="button" data-tool="edge" title="Transition (A)" aria-label="Add transition"><svg class="ic"><use href="#i-arrow"/></svg><kbd>A</kbd></button>
+          <button type="button" data-tool="delete" title="Erase (E)" aria-label="Erase"><svg class="ic"><use href="#i-trash"/></svg><kbd>E</kbd></button>
+        </div>
+
+        <div class="float opsBar" role="toolbar" aria-label="Conversions">
+          <button type="button" class="op" data-op="eps">Remove λ</button>
+          <button type="button" class="op" data-op="dfa">NFA → DFA</button>
+          <button type="button" class="op" data-op="min">Minimize</button>
+          <button type="button" class="op" data-op="re">FA → RE</button>
+          <button type="button" class="op" data-op="rlg">Right-linear G</button>
+          <button type="button" class="op" data-op="llg">Left-linear G</button>
+          <button type="button" class="op" data-op="test">Test strings</button>
+        </div>
+
+        <div class="float actions">
+          <button type="button" class="iconBtn" id="undoBtn" title="Undo (Ctrl+Z)" aria-label="Undo"><svg class="ic"><use href="#i-undo"/></svg></button>
+          <button type="button" class="iconBtn" id="redoBtn" title="Redo (Ctrl+Shift+Z)" aria-label="Redo"><svg class="ic"><use href="#i-redo"/></svg></button>
+          <span class="sep v"></span>
+          <label class="sr" for="faExample">Examples</label>
+          <select id="faExample" class="slim">
+            <option value="">Examples</option>
+            <option value="even">DFA: even number of a's</option>
+            <option value="endsab">NFA: ends with ab</option>
+            <option value="contains01">DFA: contains 01</option>
+            <option value="lnfa">λ-NFA: a*b*</option>
+            <option value="minme">DFA with equivalent states</option>
+          </select>
+          <button type="button" class="iconBtn" id="tidyBtn" title="Auto-arrange states" aria-label="Auto-arrange"><svg class="ic"><use href="#i-layout"/></svg></button>
+          <div class="menuWrap">
+            <button type="button" class="iconBtn" id="exportBtn" title="Export" aria-label="Export" aria-haspopup="true" aria-expanded="false"><svg class="ic"><use href="#i-download"/></svg></button>
+            <div class="menu" id="exportMenu" hidden>
+              <button type="button" data-export="png">Export PNG</button>
+              <button type="button" data-export="svg">Export SVG</button>
+              <button type="button" data-export="json">Save as .json</button>
+              <label class="menuFile">Open .json<input type="file" id="importJson" accept=".json,application/json"></label>
+              <button type="button" id="faClear" class="danger">Clear canvas</button>
+            </div>
+          </div>
+          <button type="button" class="iconBtn" id="drawerBtn" title="Show results" aria-label="Show results panel"><svg class="ic"><use href="#i-panel"/></svg></button>
+        </div>
+
+        <div class="float zoomBar">
+          <button type="button" class="iconBtn" id="zoomOut" title="Zoom out (−)" aria-label="Zoom out"><svg class="ic"><use href="#i-minus"/></svg></button>
+          <button type="button" class="zoomPct" id="zoomPct" title="Reset to 100%">100%</button>
+          <button type="button" class="iconBtn" id="zoomIn" title="Zoom in (+)" aria-label="Zoom in"><svg class="ic"><use href="#i-plus"/></svg></button>
+          <button type="button" class="iconBtn" id="zoomFit" title="Fit to screen (F)" aria-label="Fit to screen"><svg class="ic"><use href="#i-fit"/></svg></button>
+        </div>
+        <div class="float statusBar"><span id="objCount">0 states</span><span class="dotSep">·</span><span id="saveState">Saved</span></div>
+
+        <div class="ctx" id="ctx" hidden>
+          <div class="ctxNode">
+            <label class="sr" for="selName">State name</label>
+            <input id="selName" class="mono" autocomplete="off" spellcheck="false">
+            <button type="button" class="chipBtn" id="selStart" aria-pressed="false" title="Make start state"><svg class="ic sm"><use href="#i-flag"/></svg>Start</button>
+            <button type="button" class="chipBtn" id="selFinal" aria-pressed="false" title="Toggle final state"><svg class="ic sm"><use href="#i-final"/></svg>Final</button>
+            <button type="button" class="iconBtn danger" id="selDelete" title="Delete state (Del)" aria-label="Delete state"><svg class="ic"><use href="#i-trash"/></svg></button>
+          </div>
+          <form class="ctxEdge" id="edgeForm">
+            <span class="edgeWhat mono"></span>
+            <label class="sr" for="edgeSyms">Symbols</label>
+            <input id="edgeSyms" class="mono" placeholder="a, b or λ" autocomplete="off" spellcheck="false">
+            <button type="submit" class="primary sm">Save</button>
+            <button type="button" class="iconBtn danger" id="edgeDelete" title="Delete transition" aria-label="Delete transition"><svg class="ic"><use href="#i-trash"/></svg></button>
+          </form>
+          <p class="ctxErr" id="ctxErr"></p>
+        </div>
+        <div class="toast" id="faErr" hidden></div>
+      </div>
+
+      <aside class="drawer" id="drawer" aria-label="Results" hidden>
+        <div class="drawerHead">
+          <h2 id="drawerTitle">Results</h2>
+          <button type="button" class="iconBtn" id="drawerClose" title="Close" aria-label="Close results"><svg class="ic"><use href="#i-x"/></svg></button>
+        </div>
+        <div class="drawerBody" id="faOut"></div>
+      </aside>
+    </section>
+
+    <!-- ===================== LANGUAGE → DFA ===================== -->
+    <section class="panel split" id="tab-lang" role="tabpanel" hidden>
+      <aside class="side">
+        <div class="sideHead"><h2>Language to DFA</h2><p>For questions like “strings over {a, b} that start with ab and have an even number of b's”.</p></div>
+        <div class="field">
+          <label for="langSigma" class="lbl">Alphabet Σ</label>
+          <input id="langSigma" class="mono" value="a,b" autocomplete="off">
+        </div>
+        <div class="cond" id="cond1"></div>
+        <div class="field">
+          <label for="langOp" class="lbl">Combine with a second condition</label>
+          <select id="langOp">
+            <option value="">No, just the first condition</option>
+            <option value="and">AND (both true)</option>
+            <option value="or">OR (at least one true)</option>
+          </select>
+        </div>
+        <div class="cond" id="cond2" hidden></div>
+        <button class="primary block" type="button" id="langGo">Build DFA</button>
+        <div class="err" id="langErr" hidden></div>
+      </aside>
+      <div class="board"><div class="boardInner" id="langOut"></div></div>
+    </section>
+
+    <!-- ===================== GRAMMAR ⇄ FA ===================== -->
+    <section class="panel split" id="tab-rg" role="tabpanel" hidden>
+      <aside class="side">
+        <div class="sideHead"><h2>Regular grammar to FA</h2><p>Right-linear or left-linear. For FA → grammar, draw it in <a href="#fa" data-goto="fa">Draw FA</a>.</p></div>
+        <div class="field">
+          <label for="rgIn" class="lbl">Grammar</label>
+          <textarea id="rgIn" class="mono" rows="6" spellcheck="false">S -> abA
+A -> baB
+B -> aA | bb</textarea>
+        </div>
+        <button class="primary block" type="button" id="rgGo">Convert to FA</button>
+        <div class="err" id="rgErr" hidden></div>
+        <div class="field">
+          <span class="lbl">Examples</span>
+          <div class="examples" data-for="rgIn">
+            <button type="button" data-v="S -> abA&#10;A -> baB&#10;B -> aA | bb">right-linear</button>
+            <button type="button" data-v="S -> abS | A&#10;A -> baB&#10;B -> aA | bb">right-linear 2</button>
+            <button type="button" data-v="S -> Aab&#10;A -> Aab | B&#10;B -> a">left-linear</button>
+            <button type="button" data-v="S -> aS | bA&#10;A -> bA | λ">ends in b's</button>
+          </div>
+        </div>
+        <p class="hint">One production per line. Variables are capital letters (S, A, B1), terminals are lowercase letters or digits. <b>|</b> separates alternatives, <b>λ</b> is the empty string. The first left side is the start symbol.</p>
+      </aside>
+      <div class="board"><div class="boardInner" id="rgOut"></div></div>
+    </section>
+
+    <!-- ===================== CFG & PDA ===================== -->
+    <section class="panel split" id="tab-cfg" role="tabpanel" hidden>
+      <aside class="side">
+        <div class="sideHead"><h2>Context-free grammars</h2><p>Derivations, parse trees, ambiguity and CFG → NPDA.</p></div>
+        <div class="field">
+          <label for="cfgIn" class="lbl">Grammar</label>
+          <textarea id="cfgIn" class="mono" rows="4" spellcheck="false">E -> E+E | E*E | (E) | a</textarea>
+          <div class="examples" data-for="cfgIn">
+            <button type="button" data-v="E -> E+E | E*E | (E) | a">E+E | E*E</button>
+            <button type="button" data-v="S -> aSb | λ">aⁿbⁿ</button>
+            <button type="button" data-v="S -> aSa | bSb | λ">wwᴿ</button>
+            <button type="button" data-v="S -> aAA&#10;A -> aB | a | bB&#10;B -> c">GNF</button>
+            <button type="button" data-v="S -> SS | aSb | λ">balanced</button>
+          </div>
+        </div>
+        <div class="fieldRow">
+          <div class="field grow"><label for="cfgW" class="lbl">String w</label><input id="cfgW" class="mono" value="a+a*a" autocomplete="off" spellcheck="false"></div>
+          <div class="field"><label for="cfgLen" class="lbl">Max length</label><input id="cfgLen" class="mono tiny" type="number" min="1" max="12" value="6"></div>
+        </div>
+        <div class="opGrid">
+          <button type="button" class="op" data-cfg="derive">LMD, RMD, tree</button>
+          <button type="button" class="op" data-cfg="ambig">Ambiguity</button>
+          <button type="button" class="op" data-cfg="lang">List strings</button>
+          <button type="button" class="op" data-cfg="pda">CFG → NPDA</button>
+        </div>
+        <div class="err" id="cfgErr" hidden></div>
+
+        <div class="divider"></div>
+        <div id="pdaCard" class="field">
+          <span class="lbl">NPDA simulator</span>
+          <textarea id="pdaIn" class="mono" rows="6" spellcheck="false" aria-label="NPDA transitions">δ(q0, a, z) = {(q1, az)}
+δ(q1, a, a) = {(q1, aa)}
+δ(q1, b, a) = {(q2, λ)}
+δ(q2, b, a) = {(q2, λ)}
+δ(q2, λ, z) = {(qf, z)}</textarea>
+          <p class="hint">Linz style, one per line: <code>δ(q0, a, z) = {(q0, az)}</code>. Stack top first.</p>
+          <div class="fieldRow wrap">
+            <div class="field"><label for="pdaStart" class="lbl">Start</label><input id="pdaStart" class="mono tiny" value="q0"></div>
+            <div class="field"><label for="pdaZ" class="lbl">Stack</label><input id="pdaZ" class="mono tiny" value="z"></div>
+            <div class="field"><label for="pdaF" class="lbl">Final</label><input id="pdaF" class="mono tiny" value="qf"></div>
+            <div class="field"><label for="pdaMode" class="lbl">Accept by</label><select id="pdaMode"><option value="final">final state</option><option value="empty">empty stack</option></select></div>
+          </div>
+          <form class="fieldRow" id="pdaForm">
+            <div class="field grow"><label for="pdaW" class="lbl">Input</label><input id="pdaW" class="mono" value="aabb" autocomplete="off"></div>
+            <button class="primary" type="submit">Run</button>
+          </form>
+          <button type="button" class="ghost" id="pdaToCfg">Convert this NPDA to a CFG</button>
+          <div class="err" id="pdaErr" hidden></div>
+          <div id="pdaOut"></div>
+        </div>
+      </aside>
+      <div class="board"><div class="boardInner" id="cfgOut"></div></div>
+    </section>
+
+    <!-- ===================== CODE GENERATION ===================== -->
+    <section class="panel split" id="tab-cg" role="tabpanel" hidden>
+      <aside class="side">
+        <div class="sideHead"><h2>Code generation</h2><p>Three-address code, DAGs, SSA, basic blocks, liveness, register allocation and peephole optimization.</p></div>
+        <div class="field">
+          <label for="cgIn" class="lbl">Program</label>
+          <textarea id="cgIn" class="mono" rows="7" spellcheck="false">a = b * -c + b * -c</textarea>
+          <div class="examples" data-for="cgIn">
+            <button type="button" data-v="a = b * -c + b * -c">a = b * -c + b * -c</button>
+            <button type="button" data-v="x = (a + b) * (a + b) - c / (a + b)">(a + b) reused</button>
+            <button type="button" data-v="a = b + c&#10;b = a - d&#10;c = b + c&#10;d = a - d" data-live="a, b, c, d">block DAG</button>
+            <button type="button" data-v="p = a + b&#10;q = p - c&#10;p = q * d&#10;p = e - p&#10;q = p + q">SSA</button>
+            <button type="button" data-v="x = a[i] + a[j]&#10;if x > 0 goto L1&#10;y = 0 - x&#10;goto L2&#10;L1: y = x&#10;L2: z = y * 2">if-else (φ)</button>
+            <button type="button" data-v="1) i = 1&#10;2) j = 1&#10;3) t1 = 10 * i&#10;4) t2 = t1 + j&#10;5) t3 = 8 * t2&#10;6) t4 = t3 - 88&#10;7) a[t4] = 0&#10;8) j = j + 1&#10;9) if j &lt;= 10 goto (3)&#10;10) i = i + 1&#10;11) if i &lt;= 10 goto (2)&#10;12) i = 1&#10;13) t5 = i - 1&#10;14) t6 = 88 * t5&#10;15) a[t6] = 1&#10;16) i = i + 1&#10;17) if i &lt;= 10 goto (13)">loops (Aho 8.7)</button>
+            <button type="button" data-v="t = a - b&#10;u = a - c&#10;v = t + u&#10;a = d&#10;d = v + u" data-live="a, b, c, d">registers (Aho 8.16)</button>
+            <button type="button" data-v="if debug == 1 goto L1&#10;goto L2&#10;L1: x = x * 1&#10;y = y * 2&#10;L2: i = i + 1&#10;goto L3&#10;k = 0&#10;L3: goto L4&#10;L4: n = 4 * 2">peephole</button>
+          </div>
+        </div>
+        <div class="fieldRow">
+          <div class="field grow"><label for="cgLive" class="lbl">Live on exit</label><input id="cgLive" class="mono" placeholder="all but temporaries" autocomplete="off" spellcheck="false"></div>
+          <div class="field"><label for="cgRegs" class="lbl">Registers</label><input id="cgRegs" class="mono tiny" type="number" min="2" max="8" value="3"></div>
+        </div>
+        <div class="field">
+          <span class="lbl">Intermediate code</span>
+          <div class="opGrid">
+            <button type="button" class="op" data-cg="tac">Three-address code</button>
+            <button type="button" class="op" data-cg="dag">DAG (value numbers)</button>
+            <button type="button" class="op" data-cg="ssa">SSA form</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="lbl">Basic blocks</span>
+          <div class="opGrid">
+            <button type="button" class="op" data-cg="bb">Blocks + flow graph</button>
+            <button type="button" class="op" data-cg="live">Liveness + next use</button>
+            <button type="button" class="op" data-cg="opt">Optimize blocks</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="lbl">Target code</span>
+          <div class="opGrid">
+            <button type="button" class="op" data-cg="gen">Code generator</button>
+            <button type="button" class="op" data-cg="peep">Peephole</button>
+          </div>
+        </div>
+        <div class="err" id="cgErr" hidden></div>
+        <p class="hint">One statement per line: <b>x = expr</b>, <b>a[i] = x</b>, <b>goto L</b>, <b>if a &lt; b goto L</b>. Labels are written <b>L1:</b>, or number the lines <b>(3)</b> and write <b>goto (3)</b>. Names like t1, t2 are temporaries, dead when the code ends.</p>
+      </aside>
+      <div class="board"><div class="boardInner" id="cgOut"></div></div>
+    </section>
+
+    <!-- ===================== PUMPING LEMMA ===================== -->
+    <section class="panel split" id="tab-pump" role="tabpanel" hidden>
+      <aside class="side">
+        <div class="sideHead"><h2>Pumping lemma</h2><p>Play the adversary game for a non-regular language, or see why the lemma holds for a regular one.</p></div>
+        <div class="field">
+          <span class="lbl">Mode</span>
+          <div class="seg2" role="radiogroup" aria-label="Mode">
+            <label class="chk"><input type="radio" name="pmMode" value="non" checked> Show a language is not regular</label>
+            <label class="chk"><input type="radio" name="pmMode" value="reg"> Regular language (from an RE)</label>
+          </div>
+        </div>
+        <div class="field" id="pmLangField">
+          <label for="pmLang" class="lbl">Language</label>
+          <select id="pmLang"></select>
+        </div>
+        <div class="field" id="pmReField" hidden>
+          <label for="pmRe" class="lbl">Regular expression</label>
+          <input id="pmRe" class="mono" value="(a+b)*abb" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="fieldRow">
+          <div class="field" id="pmPField"><label for="pmP" class="lbl">p</label><input id="pmP" class="mono tiny" type="number" min="1" max="10" value="4"></div>
+          <div class="field grow"><label for="pmW" class="lbl">String w</label><input id="pmW" class="mono" placeholder="chosen from p" autocomplete="off" spellcheck="false"></div>
+        </div>
+        <button class="primary block" type="button" id="pmGo">Play</button>
+        <div class="err" id="pmErr" hidden></div>
+        <p class="hint">Leave w empty to use the standard choice for the language. In regular mode, p is the number of states of the minimal DFA.</p>
+      </aside>
+      <div class="board"><div class="boardInner" id="pmOut"></div></div>
+    </section>
+
+    <!-- ===================== PARSING ===================== -->
+    <section class="panel split" id="tab-parse" role="tabpanel" hidden>
+      <aside class="side">
+        <div class="sideHead"><h2>Syntax analysis</h2><p>FIRST/FOLLOW, LL(1), recursive descent, LR(0), SLR, CLR, LALR and operator precedence, with every table and trace.</p></div>
+        <div class="field">
+          <label for="psIn" class="lbl">Grammar</label>
+          <textarea id="psIn" class="mono" rows="5" spellcheck="false">E -> E + T | T
+T -> T * F | F
+F -> ( E ) | id</textarea>
+          <div class="examples" data-for="psIn">
+            <button type="button" data-v="E -> E + T | T&#10;T -> T * F | F&#10;F -> ( E ) | id">expression</button>
+            <button type="button" data-v="E -> T E'&#10;E' -> + T E' | ε&#10;T -> F T'&#10;T' -> * F T' | ε&#10;F -> ( E ) | id">expression (LL)</button>
+            <button type="button" data-v="E -> E + E | E * E | ( E ) | id">ambiguous E</button>
+            <button type="button" data-v="S -> C C&#10;C -> c C | d">S → CC</button>
+            <button type="button" data-v="S -> L = R | R&#10;L -> * R | id&#10;R -> L">L = R</button>
+            <button type="button" data-v="S -> i E t S | i E t S e S | a&#10;E -> b">dangling else</button>
+            <button type="button" data-v="S -> A a | b&#10;A -> A c | S d | ε">indirect left recursion</button>
+            <button type="button" data-v="A -> a A B | a B c | a A c&#10;B -> b">left factoring</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="psW" class="lbl">Input string</label>
+          <input id="psW" class="mono" value="id + id * id" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="field">
+          <span class="lbl">Transform</span>
+          <div class="opGrid">
+            <button type="button" class="op" data-ps="ff">FIRST &amp; FOLLOW</button>
+            <button type="button" class="op" data-ps="lr">Remove left recursion</button>
+            <button type="button" class="op" data-ps="lf">Left factor</button>
+            <button type="button" class="op" data-ps="amb">Make unambiguous</button>
+            <button type="button" class="op" data-ps="cnf">Simplify + CNF</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="lbl">Top-down</span>
+          <div class="opGrid">
+            <button type="button" class="op" data-ps="ll1">LL(1) table</button>
+            <button type="button" class="op" data-ps="pp">Predictive parse</button>
+            <button type="button" class="op" data-ps="rd">Recursive descent</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="lbl">Bottom-up</span>
+          <div class="opGrid">
+            <button type="button" class="op" data-ps="lr0">LR(0) items</button>
+            <button type="button" class="op" data-ps="slr">SLR(1)</button>
+            <button type="button" class="op" data-ps="clr">CLR(1)</button>
+            <button type="button" class="op" data-ps="lalr">LALR(1)</button>
+            <button type="button" class="op" data-ps="op">Operator precedence</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="psPrec" class="lbl">Precedence (yacc style, lowest first)</label>
+          <textarea id="psPrec" class="mono" rows="2" spellcheck="false">%left + -
+%left * /</textarea>
+          <label class="chk"><input type="checkbox" id="psUsePrec"> Use it to resolve LR conflicts</label>
+          <p class="hint">Used by “Make unambiguous”, by operator precedence, and by SLR/CLR/LALR when ticked.</p>
+        </div>
+        <div class="err" id="psErr" hidden></div>
+        <p class="hint">One production per line. Nonterminals start with a capital (E, E', T1). Write <b>id</b>, <b>if</b>, <b>num</b> as words; separate symbols with spaces when in doubt. <b>ε</b> or <b>λ</b> for empty.</p>
+      </aside>
+      <div class="board"><div class="boardInner" id="psOut"></div></div>
+    </section>
+  </main>
+</div>
+<!-- converter pages: generated by scripts/build-pages.js -->
+<article class="seo" id="how">
+<p class="seoCrumb"><a href="../">Drawtomata</a> / Regular expression to DFA converter</p>
+<h1>Regular expression to DFA converter</h1>
+<p class="seoLead">Type a regular expression such as <b>(a+b)*abb</b> above. Drawtomata builds the λ-NFA by Thompson’s construction, removes λ-moves, converts to a DFA by subset construction and minimizes it, showing the table for each step.</p>
+<h2>The steps</h2>
+<ol>
+<li><b>RE → λ-NFA</b> (Thompson): one small NFA per symbol, joined with λ-moves for union (+), concatenation and star (*).</li>
+<li><b>λ-NFA → NFA</b>: compute the λ-closure of every state and rebuild the moves without λ.</li>
+<li><b>NFA → DFA</b>: subset construction, where each DFA state is a set of NFA states.</li>
+<li><b>DFA → minimal DFA</b>: merge states that no string can tell apart, by the table-filling (mark) method or π-partitions.</li>
+</ol>
+<p>Each stage is checked against the others, so the final DFA is guaranteed to accept exactly the language of the expression.</p>
+<h2>Syntax</h2>
+<p>Use <b>+</b> for union, <b>*</b> for Kleene star, juxtaposition for concatenation and parentheses for grouping. Write the empty string as λ, ε or @, and the empty set as ∅. For example (0+1)*01, a(a+b)*b and (ab+ba)*.</p>
+<h2>Questions</h2>
+<h3>Why do different books get different NFAs for the same expression?</h3>
+<p>Thompson’s construction adds λ-moves in a fixed pattern; some books shortcut it. The NFAs differ, but the minimal DFA is the same for every correct method, up to the names of the states.</p>
+<h3>Can I go back from a DFA to a regular expression?</h3>
+<p>Yes, with <a href="../fa-to-regex/">state elimination</a>.</p>
+</article>
+<footer class="seo"><nav class="seoNav" aria-label="All converters"><h2>All converters</h2><ul><li><a href="../nfa-to-dfa/">NFA to DFA</a></li><li><span aria-current="page">Regex to DFA</span></li><li><a href="../dfa-minimization/">DFA minimization</a></li><li><a href="../epsilon-nfa-to-nfa/">ε-NFA to NFA</a></li><li><a href="../fa-to-regex/">FA to regex</a></li><li><a href="../first-and-follow/">FIRST and FOLLOW</a></li><li><a href="../ll1-parser/">LL(1) table</a></li><li><a href="../lr-parsing-table/">SLR, CLR, LALR</a></li><li><a href="../cfg-to-pda/">CFG to PDA</a></li><li><a href="../pumping-lemma/">Pumping lemma</a></li><li><a href="../three-address-code/">Three-address code</a></li></ul></nav><p class="seoMeta">Drawtomata is free and runs in your browser. <a href="https://github.com/SlazzInC0de/drawtomata">Source on GitHub</a>.</p></footer>
+<!-- /converter pages -->
+<script src="../js/regex.js"></script>
+<script src="../js/automata.js"></script>
+<script src="../js/grammar.js"></script>
+<script src="../js/parsing.js"></script>
+<script src="../js/theory.js"></script>
+<script src="../js/codegen.js"></script>
+<script src="../js/render.js"></script>
+<script src="../js/editor.js"></script>
+<script src="../js/app.js"></script>
+</body>
+</html>
