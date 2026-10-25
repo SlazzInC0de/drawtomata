@@ -7,7 +7,7 @@
 <meta name="description" content="Generate three-address code, quadruples, triples and indirect triples, the DAG of a basic block, SSA form, basic blocks, flow graphs, register allocation and peephole optimization.">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Three-address code and code generation","url":"https://drawtomata.vercel.app/three-address-code/","applicationCategory":"EducationalApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"description":"Generate three-address code, quadruples, triples and indirect triples, the DAG of a basic block, SSA form, basic blocks, flow graphs, register allocation and peephole optimization.","isPartOf":{"@type":"WebSite","name":"Drawtomata","url":"https://drawtomata.vercel.app/"},"author":{"@type":"Person","name":"Suryansh Verma","url":"https://github.com/SlazzInC0de"}}</script>
 <meta name="google-site-verification" content="lD49FQi-laK4Ykwxqgnlgu-ZVwIR7JKvXZEgora-BPs">
-<link rel="canonical" href="https://drawtomata.vercel.app/three-address-code/">
+<link rel="canonical" href="https://drawtomata.vercel.app/three-address-code/"><!-- nosemgrep: missing-integrity (a canonical URL is not fetched, so it has no integrity hash) -->
 <meta name="theme-color" content="#2563EB">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Three-address code and code generation | Drawtomata">
@@ -447,7 +447,7 @@ F -> ( E ) | id</textarea>
 <p class="seoLead">Type an expression such as <b>a = b * -c + b * -c</b> or a short program above. Drawtomata produces three-address code with quadruples, triples and indirect triples, and goes on to DAGs, SSA, basic blocks, liveness, target code and peephole optimization.</p>
 <h2>Three-address code</h2>
 <p>Every instruction has at most one operator and three addresses, such as t2 = b * t1. Temporaries hold intermediate results, in the order the expression is evaluated. For a = b * -c + b * -c:</p>
-<table><thead><tr><th>#</th><th>op</th><th>arg1</th><th>arg2</th><th>result</th></tr></thead><tbody>
+<table class="ex"><thead><tr><th>#</th><th>op</th><th>arg1</th><th>arg2</th><th>result</th></tr></thead><tbody>
 <tr><td>0</td><td>minus</td><td>c</td><td></td><td>t1</td></tr>
 <tr><td>1</td><td>*</td><td>b</td><td>t1</td><td>t2</td></tr>
 <tr><td>2</td><td>minus</td><td>c</td><td></td><td>t3</td></tr>

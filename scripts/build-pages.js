@@ -25,7 +25,7 @@ const PAGES = [
 </ol>
 <h2>Example</h2>
 <p>The NFA loaded above accepts strings over {a, b} that end in <b>ab</b>: q0 loops on a and b, q0 –a→ q1 and q1 –b→ q2, with q2 final.</p>
-<table><thead><tr><th>DFA state</th><th>a</th><th>b</th></tr></thead><tbody>
+<table class="ex"><thead><tr><th>DFA state</th><th>a</th><th>b</th></tr></thead><tbody>
 <tr><td>→ {q0}</td><td>{q0, q1}</td><td>{q0}</td></tr>
 <tr><td>{q0, q1}</td><td>{q0, q1}</td><td>{q0, q2}</td></tr>
 <tr><td>* {q0, q2}</td><td>{q0, q1}</td><td>{q0}</td></tr>
@@ -226,7 +226,7 @@ const PAGES = [
     body: `
 <h2>Three-address code</h2>
 <p>Every instruction has at most one operator and three addresses, such as t2 = b * t1. Temporaries hold intermediate results, in the order the expression is evaluated. For a = b * -c + b * -c:</p>
-<table><thead><tr><th>#</th><th>op</th><th>arg1</th><th>arg2</th><th>result</th></tr></thead><tbody>
+<table class="ex"><thead><tr><th>#</th><th>op</th><th>arg1</th><th>arg2</th><th>result</th></tr></thead><tbody>
 <tr><td>0</td><td>minus</td><td>c</td><td></td><td>t1</td></tr>
 <tr><td>1</td><td>*</td><td>b</td><td>t1</td><td>t2</td></tr>
 <tr><td>2</td><td>minus</td><td>c</td><td></td><td>t3</td></tr>
@@ -274,7 +274,7 @@ function build() {
     const rep = (re, s) => { if (!re.test(h)) throw new Error(`${p.slug}: pattern ${re} not found`); h = h.replace(re, s); };
     rep(/<title>[^<]*<\/title>/, `<title>${esc(p.title)}</title>`);
     rep(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(p.description)}">`);
-    rep(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="${url}">`);
+    rep(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="${url}">`); // keeps the nosemgrep note after it
     rep(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${esc(p.h1)} | Drawtomata">`);
     rep(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${esc(p.description)}">`);
     rep(/<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="${url}">`);
@@ -310,8 +310,11 @@ module.exports = { build, PAGES };
 if (require.main === module) {
   const out = build();
   for (const [f, s] of Object.entries(out)) {
+    // output names come only from the fixed PAGES list above, never from input
     const full = path.join(root, f);
+    // eslint-disable-next-line security/detect-non-literal-fs-filename
     fs.mkdirSync(path.dirname(full), { recursive: true });
+    // eslint-disable-next-line security/detect-non-literal-fs-filename
     fs.writeFileSync(full, s);
   }
   console.log(`wrote ${Object.keys(out).length} files`);

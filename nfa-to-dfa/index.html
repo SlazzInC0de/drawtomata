@@ -7,7 +7,7 @@
 <meta name="description" content="Free NFA to DFA converter. Draw an NFA and get the subset construction table, the DFA diagram and its transition table, with every step shown.">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"NFA to DFA converter","url":"https://drawtomata.vercel.app/nfa-to-dfa/","applicationCategory":"EducationalApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"description":"Free NFA to DFA converter. Draw an NFA and get the subset construction table, the DFA diagram and its transition table, with every step shown.","isPartOf":{"@type":"WebSite","name":"Drawtomata","url":"https://drawtomata.vercel.app/"},"author":{"@type":"Person","name":"Suryansh Verma","url":"https://github.com/SlazzInC0de"}}</script>
 <meta name="google-site-verification" content="lD49FQi-laK4Ykwxqgnlgu-ZVwIR7JKvXZEgora-BPs">
-<link rel="canonical" href="https://drawtomata.vercel.app/nfa-to-dfa/">
+<link rel="canonical" href="https://drawtomata.vercel.app/nfa-to-dfa/"><!-- nosemgrep: missing-integrity (a canonical URL is not fetched, so it has no integrity hash) -->
 <meta name="theme-color" content="#2563EB">
 <meta property="og:type" content="website">
 <meta property="og:title" content="NFA to DFA converter | Drawtomata">
@@ -455,7 +455,7 @@ F -> ( E ) | id</textarea>
 </ol>
 <h2>Example</h2>
 <p>The NFA loaded above accepts strings over {a, b} that end in <b>ab</b>: q0 loops on a and b, q0 –a→ q1 and q1 –b→ q2, with q2 final.</p>
-<table><thead><tr><th>DFA state</th><th>a</th><th>b</th></tr></thead><tbody>
+<table class="ex"><thead><tr><th>DFA state</th><th>a</th><th>b</th></tr></thead><tbody>
 <tr><td>→ {q0}</td><td>{q0, q1}</td><td>{q0}</td></tr>
 <tr><td>{q0, q1}</td><td>{q0, q1}</td><td>{q0, q2}</td></tr>
 <tr><td>* {q0, q2}</td><td>{q0, q1}</td><td>{q0}</td></tr>
