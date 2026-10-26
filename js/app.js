@@ -400,14 +400,19 @@
     el.innerHTML = `<span class="lbl">Condition ${n}</span>
       <label class="chk small"><input type="checkbox" class="cNot"> NOT</label>
       <label class="sr" for="cType${n}">Type</label><select class="cType" id="cType${n}">${CONDS.map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select>
-      <label class="small muted cf" data-f="w">w <input class="cW mono" value="${def.w || 'ab'}"></label>
-      <label class="small muted cf" data-f="x">x <input class="cX mono" value="${def.x || 'b'}" maxlength="1"></label>
+      <label class="small muted cf" data-f="w">w <input class="cW mono"></label>
+      <label class="small muted cf" data-f="x">x <input class="cX mono" maxlength="1"></label>
       <label class="small muted cf" data-f="cmp"><select class="cCmp"><option value="eq">=</option><option value="ge">≥</option><option value="le">≤</option></select></label>
-      <label class="small muted cf" data-f="k">k <input class="cK mono" type="number" min="0" max="12" value="${def.k || 2}"></label>
-      <label class="small muted cf" data-f="m">m <input class="cM mono" type="number" min="1" max="12" value="${def.m || 2}"></label>
-      <label class="small muted cf" data-f="r">r <input class="cR mono" type="number" min="0" max="11" value="${def.r || 0}"></label>`;
+      <label class="small muted cf" data-f="k">k <input class="cK mono" type="number" min="0" max="12"></label>
+      <label class="small muted cf" data-f="m">m <input class="cM mono" type="number" min="1" max="12"></label>
+      <label class="small muted cf" data-f="r">r <input class="cR mono" type="number" min="0" max="11"></label>`;
     const sel = el.querySelector('.cType');
     sel.value = def.type;
+    el.querySelector('.cW').value = def.w || 'ab';
+    el.querySelector('.cX').value = def.x || 'b';
+    el.querySelector('.cK').value = def.k || 2;
+    el.querySelector('.cM').value = def.m || 2;
+    el.querySelector('.cR').value = def.r || 0;
     const sync = () => { const f = CONDS.find((c) => c[0] === sel.value)[2]; el.querySelectorAll('.cf').forEach((x) => (x.hidden = !f.includes(x.dataset.f))); };
     sel.addEventListener('change', sync); sync();
     return () => {

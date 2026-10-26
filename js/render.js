@@ -220,7 +220,7 @@
       if (kind === 'g') renderGraph(el, g); else renderTree(el, g);
     }
   };
-  ui.put = (el, html) => { el.innerHTML = D(html); ui.flush(); };
+  ui.put = (el, html) => { el.innerHTML = DOMPurify.sanitize(D(html)); ui.flush(); };
 
   // tables
   ui.table = (head, rows, cls = '') =>
