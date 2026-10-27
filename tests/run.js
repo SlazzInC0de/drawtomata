@@ -5,9 +5,26 @@ const path = require('path');
 const vm = require('vm');
 const assert = require('assert/strict');
 
+const ROOT = path.resolve(__dirname, '..');
+const BUILD = require('../scripts/build-pages.js');
+const JS_FILES = ['app.js', 'automata.js', 'codegen.js', 'editor.js', 'grammar.js', 'parsing.js', 'regex.js', 'render.js', 'sdt.js', 'theory.js'];
+// The only files these tests read.
+const READABLE = new Set([
+  ...JS_FILES.map((f) => `js/${f}`), 'index.html', 'vercel.json', 'sitemap.xml', '.github/workflows/test.yml',
+  ...BUILD.PAGES.map((p) => `${p.slug}/index.html`)
+]);
+function readRepoFile(name) {
+  if (!READABLE.has(name)) throw new Error(`not an allowed file: ${name}`);
+  const full = path.resolve(ROOT, ...name.split('/')); // nosemgrep
+  if (!full.startsWith(ROOT + path.sep)) throw new Error(`outside the repository: ${name}`);
+  BUILD.assertInsideRepo(full);
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- allowlisted and checked above
+  return fs.readFileSync(full, 'utf8'); // nosemgrep
+}
+
 const ctx = vm.createContext({ console });
 for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js']) {
-  vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'), ctx, { filename: f });
+  vm.runInContext(readRepoFile(`js/${f}`), ctx, { filename: f });
 }
 const { regex, fa, grammar, parsing: P, theory: TH } = ctx.DT;
 
@@ -393,14 +410,132 @@ test('SDT: every evaluation order respects the dependency graph', () => {
   assert.ok(cyc.res.error && /cycle/.test(cyc.res.error));
 });
 
+// Markup reaches the page only through ui.put(), which sanitizes it with DOMPurify.
+// Checked on the syntax tree, so comments and strings cannot hide a sink and a sink
+// name built from string pieces ('inner' + 'HTML') is still caught.
+const espree = require('espree');
+const SINK_NAMES = new Set(['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'srcdoc', 'write', 'writeln']);
+const HTML_SINKS = new Set(['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'srcdoc']);
+function staticString(n) {
+  if (!n) return null;
+  if (n.type === 'Literal' && typeof n.value === 'string') return n.value;
+  if (n.type === 'TemplateLiteral' && !n.expressions.length) return n.quasis[0].value.cooked;
+  if (n.type === 'BinaryExpression' && n.operator === '+') {
+    const l = staticString(n.left), r = staticString(n.right);
+    return l === null || r === null ? null : l + r;
+  }
+  return null;
+}
+function sinkProblems(code) {
+  const out = [];
+  const walk = (n, parent) => {
+    if (!n || typeof n.type !== 'string') return;
+    const at = (msg) => out.push(`line ${n.loc.start.line}: ${msg}`);
+    const str = staticString(n);
+    if (str !== null && HTML_SINKS.has(str) && !(parent && (parent.type === 'BinaryExpression' || (parent.type === 'MemberExpression' && parent.property === n)))) at(`string "${str}" names an HTML sink`);
+    if (n.type === 'MemberExpression') {
+      const name = n.computed ? staticString(n.property) : n.property.name;
+      if (HTML_SINKS.has(name)) at(`writes ${name}`);
+      if ((name === 'write' || name === 'writeln') && n.object.type === 'Identifier' && n.object.name === 'document') at(`calls document.${name}`);
+    }
+    if ((n.type === 'CallExpression' || n.type === 'NewExpression') && n.callee.type === 'Identifier') {
+      if (n.callee.name === 'eval' || n.callee.name === 'Function') at(`calls ${n.callee.name}`);
+      if ((n.callee.name === 'setTimeout' || n.callee.name === 'setInterval') && n.arguments[0] && staticString(n.arguments[0]) !== null) at(`passes a string to ${n.callee.name}`);
+    }
+    for (const k of Object.keys(n)) {
+      if (k === 'loc' || k === 'range') continue;
+      const v = n[k];
+      if (Array.isArray(v)) v.forEach((c) => walk(c, n)); else if (v && typeof v.type === 'string') walk(v, n);
+    }
+  };
+  walk(espree.parse(code, { ecmaVersion: 'latest', sourceType: 'script', loc: true }), null);
+  return out;
+}
+test('sink check catches what a line-based scan would miss', () => {
+  assert.equal(sinkProblems("el.innerHTML = x;").length, 1);
+  assert.equal(sinkProblems("el['inner' + 'HTML'] = x;").length, 1);
+  assert.equal(sinkProblems("const k = 'outerHTML'; el[k] = x;").length, 1);
+  assert.equal(sinkProblems("const u = 'http://a'; el.insertAdjacentHTML('beforeend', x);").length, 1);
+  assert.equal(sinkProblems("document.write(x); eval(y); new Function(z);").length, 3);
+  assert.equal(sinkProblems("// el.innerHTML = x\nconst s = 'el.innerHTML is not used';").length, 0);
+});
+test('no raw HTML sinks or dynamic code outside the sanitizer', () => {
+  for (const f of JS_FILES) {
+    const bad = sinkProblems(readRepoFile(`js/${f}`));
+    assert.deepEqual(bad, [], `js/${f}: ${bad.join('; ')}`);
+  }
+  assert.ok(readRepoFile('js/render.js').includes('RETURN_DOM_FRAGMENT: true'), 'ui.put must sanitize into a DOM fragment');
+});
+
+// File access stays inside the repository and inside the fixed lists.
+test('build output names are allowlisted and stay in the repository', () => {
+  assert.equal(BUILD.outputPath('nfa-to-dfa/index.html'), path.join(ROOT, 'nfa-to-dfa', 'index.html'));
+  for (const bad of ['../evil.html', '/etc/passwd', 'notes.html', 'nfa-to-dfa/../../x.html', 'nfa-to-dfa/../index.html', '']) {
+    assert.throws(() => BUILD.outputPath(bad), /refusing/, bad);
+  }
+});
+test('repository reads are allowlisted and stay in the repository', () => {
+  for (const bad of ['../package.json', 'js/../../etc/passwd', '/etc/passwd', 'package.json', 'js/vendor/purify.min.js']) {
+    assert.throws(() => readRepoFile(bad), /not an allowed file/, bad);
+  }
+});
+test('a symlink cannot lead a read or write outside the repository', () => {
+  const link = path.join(ROOT, 'tests', '.symlink-check');
+  try {
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- fixed test path
+    fs.symlinkSync(require('os').tmpdir(), link); // nosemgrep
+    assert.throws(() => BUILD.assertInsideRepo(path.join(link, 'x.html')), /outside the repository/);
+    assert.throws(() => BUILD.assertInsideRepo(link), /outside the repository/);
+    BUILD.assertInsideRepo(path.join(ROOT, 'tests', 'not-there-yet.html'));
+  } finally {
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- fixed test path
+    try { fs.unlinkSync(link); } catch (e) { /* not created */ } // nosemgrep
+  }
+});
+
+// Keys typed by the user (symbols, variable names) must not touch object prototypes.
+const PROTO = '__proto__';
+test('symbols named __proto__ or constructor are ordinary symbols', () => {
+  const m = { n: 3, start: 0, finals: new Set([2]), labels: ['q0', 'q1', 'q2'], trans: [{ from: 0, sym: '__proto__', to: 1 }, { from: 1, sym: 'constructor', to: 2 }, { from: 0, sym: 'a', to: 0 }] };
+  const r = fa.removeEps(m);
+  assert.ok(Object.keys(r.rows[0].next).includes('__proto__'), '__proto__ is stored as an own key');
+  assert.deepEqual(plain(r.rows[0].next[PROTO]), [1]);
+  const min = fa.minimize(m).min;
+  const step = (q, a) => (min.trans.find((t) => t.from === q && t.sym === a) || {}).to;
+  assert.ok(min.finals.has(step(step(min.start, '__proto__'), 'constructor')), 'q0 -__proto__-> q1 -constructor-> q2 survives minimization');
+  const p = CG.parseProgram('__proto__ = 1 + 2\nb = __proto__ * 3');
+  assert.ok(CG.equivalent(p.ins, CG.optimize(p).ins, { names: CG.observedOf(p) }).ok);
+  assert.equal(Object.getPrototypeOf({}), Object.prototype);
+  assert.equal({}.constructor, Object);
+});
+
+// Behaviour around the rewritten regexes and the operator switch.
+test('number tokens and SDT arithmetic', () => {
+  assert.deepEqual(plain(CG.parseProgram('x = 3.25 + 10').ins.map((i) => CG.insStr(i))), ['x = 3.25 + 10']);
+  assert.deepEqual(plain(CG.parseProgram('y = 7 * 0.5').ins.map((i) => CG.insStr(i))), ['y = 7 * 0.5']);
+  assert.throws(() => CG.parseProgram('x = 3.'), /Cannot read/);
+  const t = Date.now();
+  assert.throws(() => CG.parseProgram('x = ' + '1'.repeat(50000) + '.'));
+  assert.ok(Date.now() - t < 1000, 'long digit runs are tokenized in linear time');
+  const S = 'E -> E1 - T { E.val = E1.val - T.val }\nE -> T { E.val = T.val }\nT -> T1 / F { T.val = T1.val / F.val }\nT -> F { T.val = F.val }\nF -> digit { F.val = digit.lexval }';
+  assert.equal(rootVal(SDT.run(S, '8 - 6 / 3'), 'val'), '6');
+  assert.equal(rootVal(SDT.run(S, '8 / 0'), 'val'), 'NaN');
+});
+
+test('CI installs dependencies and runs the security lint before the tests', () => {
+  const ci = readRepoFile('.github/workflows/test.yml');
+  const i = ci.indexOf('npm ci'), l = ci.indexOf('npm run lint'), t = ci.indexOf('npm test');
+  assert.ok(i >= 0 && i < l && l < t, 'expected npm ci, then npm run lint, then npm test');
+});
+
 // Converter pages are generated from index.html; they must not drift from it.
 test('converter pages and sitemap are up to date (run node scripts/build-pages.js)', () => {
-  const { build, PAGES } = require('../scripts/build-pages.js');
+  const { build, PAGES } = BUILD;
   for (const [f, want] of Object.entries(build())) {
-    assert.equal(fs.readFileSync(path.join(__dirname, '..', f), 'utf8'), want, `${f} is stale`);
+    assert.equal(readRepoFile(f), want, `${f} is stale`);
   }
   for (const p of PAGES) {
-    const h = fs.readFileSync(path.join(__dirname, '..', p.slug, 'index.html'), 'utf8');
+    const h = readRepoFile(`${p.slug}/index.html`);
     assert.equal((h.match(/<h1[ >]/g) || []).length, 1, `${p.slug}: exactly one h1`);
     assert.ok(h.includes(`<link rel="canonical" href="https://drawtomata.vercel.app/${p.slug}/">`));
     assert.ok(!/(src|href)="(js|css|assets)\//.test(h), `${p.slug}: asset paths must be relative to the parent folder`);
@@ -410,9 +545,8 @@ test('converter pages and sitemap are up to date (run node scripts/build-pages.j
 // Security headers: every inline <script> must be allowed by a hash inside script-src,
 // and every external script must carry an SRI digest that matches the file it loads.
 const crypto = require('crypto');
-const root = path.join(__dirname, '..');
-const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const csp = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'))
+const html = readRepoFile('index.html');
+const csp = JSON.parse(readRepoFile('vercel.json'))
   .headers[0].headers.find((h) => h.key === 'Content-Security-Policy').value;
 const scriptSrc = (csp.split(';').map((d) => d.trim().split(/\s+/)).find((d) => d[0] === 'script-src') || []).slice(1);
 const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].map(([, attrs, body]) => ({ attrs, body }));

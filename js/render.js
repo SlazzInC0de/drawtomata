@@ -220,7 +220,9 @@
       if (kind === 'g') renderGraph(el, g); else renderTree(el, g);
     }
   };
-  ui.put = (el, html) => { el.innerHTML = DOMPurify.sanitize(D(html)); ui.flush(); };
+  // the only place generated markup reaches the page: sanitized into a detached
+  // fragment first, so no raw string is ever assigned to innerHTML
+  ui.put = (el, html) => { el.replaceChildren(DOMPurify.sanitize(D(html), { RETURN_DOM_FRAGMENT: true })); ui.flush(); };
 
   // tables
   ui.table = (head, rows, cls = '') =>

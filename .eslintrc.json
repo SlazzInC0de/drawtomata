@@ -1,0 +1,84 @@
+{
+  "root": true,
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "script"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2022": true
+  },
+  "globals": {
+    "DOMPurify": "readonly"
+  },
+  "ignorePatterns": [
+    "js/vendor/",
+    "node_modules/"
+  ],
+  "plugins": [
+    "security"
+  ],
+  "extends": [
+    "plugin:security/recommended"
+  ],
+  "rules": {
+    "security/detect-object-injection": "off",
+    "security/detect-unsafe-regex": "error",
+    "security/detect-non-literal-regexp": "error",
+    "security/detect-non-literal-fs-filename": "error",
+    "security/detect-eval-with-expression": "error",
+    "security/detect-child-process": "error",
+    "security/detect-non-literal-require": "error",
+    "security/detect-new-buffer": "error",
+    "security/detect-pseudoRandomBytes": "error",
+    "security/detect-possible-timing-attacks": "error",
+    "security/detect-buffer-noassert": "error",
+    "security/detect-disable-mustache-escape": "error",
+    "security/detect-no-csrf-before-method-override": "error",
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+    "no-proto": "error",
+    "no-restricted-properties": [
+      "error",
+      {
+        "property": "innerHTML",
+        "message": "Render markup with ui.put(), which sanitizes it with DOMPurify."
+      },
+      {
+        "property": "outerHTML",
+        "message": "Render markup with ui.put(), which sanitizes it with DOMPurify."
+      },
+      {
+        "property": "insertAdjacentHTML",
+        "message": "Render markup with ui.put(), which sanitizes it with DOMPurify."
+      },
+      {
+        "object": "document",
+        "property": "write",
+        "message": "Render markup with ui.put(), which sanitizes it with DOMPurify."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "js/**/*.js"
+      ],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "MemberExpression[computed=true][property.value=/^(innerHTML|outerHTML|insertAdjacentHTML|srcdoc)$/]",
+            "message": "Render markup with ui.put(), which sanitizes it with DOMPurify."
+          },
+          {
+            "selector": "Literal[value=/^(innerHTML|outerHTML|insertAdjacentHTML|srcdoc)$/]",
+            "message": "Do not name HTML sinks in strings; render markup with ui.put()."
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+---
+# Third-party code that is vendored as-is; its upstream project audits it.
+exclude_paths:
+  - "js/vendor/**"
+  - "node_modules/**"

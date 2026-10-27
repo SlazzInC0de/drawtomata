@@ -398,7 +398,7 @@
     ['nthright', 'k-th symbol from the right is x', ['k', 'x']]
   ];
   function condUI(el, n, def) {
-    el.innerHTML = `<span class="lbl">Condition ${n}</span>
+    ui.put(el, `<span class="lbl">Condition ${n}</span>
       <label class="chk small"><input type="checkbox" class="cNot"> NOT</label>
       <label class="sr" for="cType${n}">Type</label><select class="cType" id="cType${n}">${CONDS.map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select>
       <label class="small muted cf" data-f="w">w <input class="cW mono"></label>
@@ -406,7 +406,7 @@
       <label class="small muted cf" data-f="cmp"><select class="cCmp"><option value="eq">=</option><option value="ge">≥</option><option value="le">≤</option></select></label>
       <label class="small muted cf" data-f="k">k <input class="cK mono" type="number" min="0" max="12"></label>
       <label class="small muted cf" data-f="m">m <input class="cM mono" type="number" min="1" max="12"></label>
-      <label class="small muted cf" data-f="r">r <input class="cR mono" type="number" min="0" max="11"></label>`;
+      <label class="small muted cf" data-f="r">r <input class="cR mono" type="number" min="0" max="11"></label>`);
     const sel = el.querySelector('.cType');
     sel.value = def.type;
     el.querySelector('.cW').value = def.w || 'ab';
@@ -468,7 +468,8 @@
       const m = FA.minimize(target);
       // brute-force check against the description for all strings up to a length
       const preds = cs.map(condPred);
-      const pred = (s) => (op === 'and' ? preds[0](s) && preds[1](s) : op === 'or' ? preds[0](s) || preds[1](s) : preds[0](s));
+      const [p0, p1] = preds;
+      const pred = (s) => (op === 'and' ? p0(s) && p1(s) : op === 'or' ? p0(s) || p1(s) : p0(s));
       let maxL = 0, total = 1; while (maxL < 10 && total * A.length < 30000) { total *= A.length; maxL++; }
       let bad = null;
       const T = new Map(m.min.trans.map((t) => [t.from + '|' + t.sym, t.to]));
@@ -970,7 +971,7 @@
 
   // PUMPING LEMMA
   const pmLang = $('#pmLang');
-  pmLang.innerHTML = Object.entries(TH.LANGUAGES).map(([k, L]) => `<option value="${k}">${esc(L.name)}</option>`).join('');
+  pmLang.replaceChildren(...Object.entries(TH.LANGUAGES).map(([k, L]) => new Option(L.name, k)));
   const pmMode = () => ($$('input[name="pmMode"]').find((x) => x.checked) || {}).value || 'non';
   function syncPm() {
     const reg = pmMode() === 'reg';

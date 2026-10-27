@@ -5,7 +5,9 @@ const fs = require('fs');
 const path = require('path');
 
 const SITE = 'https://drawtomata.vercel.app';
-const root = path.join(__dirname, '..');
+const root = path.resolve(__dirname, '..');
+const INDEX_FILE = path.resolve(__dirname, '..', 'index.html');
+const SLUG = /^[a-z0-9-]+$/;
 
 const PAGES = [
   {
@@ -13,8 +15,8 @@ const PAGES = [
     title: 'NFA to DFA Converter, Step by Step (Subset Construction) | Drawtomata',
     description: 'Free NFA to DFA converter. Draw an NFA and get the subset construction table, the DFA diagram and its transition table, with every step shown.',
     h1: 'NFA to DFA converter',
-    lead: 'Draw or load an NFA above and press <b>NFA → DFA</b>. Drawtomata builds the DFA by subset construction and shows the full table of subsets, the resulting DFA and its transition table, then checks that both machines accept the same language.',
-    body: `
+    leadHtml: 'Draw or load an NFA above and press <b>NFA → DFA</b>. Drawtomata builds the DFA by subset construction and shows the full table of subsets, the resulting DFA and its transition table, then checks that both machines accept the same language.',
+    bodyHtml: `
 <h2>How the subset construction works</h2>
 <p>Each state of the DFA stands for a <em>set</em> of NFA states: the states the NFA could be in after reading the same input.</p>
 <ol>
@@ -44,8 +46,8 @@ const PAGES = [
     title: 'Regex to DFA Converter: RE to NFA to DFA, Step by Step | Drawtomata',
     description: 'Convert a regular expression to an NFA and a DFA with every step: Thompson construction, λ-closure, subset construction and the minimal DFA.',
     h1: 'Regular expression to DFA converter',
-    lead: 'Type a regular expression such as <b>(a+b)*abb</b> above. Drawtomata builds the λ-NFA by Thompson’s construction, removes λ-moves, converts to a DFA by subset construction and minimizes it, showing the table for each step.',
-    body: `
+    leadHtml: 'Type a regular expression such as <b>(a+b)*abb</b> above. Drawtomata builds the λ-NFA by Thompson’s construction, removes λ-moves, converts to a DFA by subset construction and minimizes it, showing the table for each step.',
+    bodyHtml: `
 <h2>The steps</h2>
 <ol>
 <li><b>RE → λ-NFA</b> (Thompson): one small NFA per symbol, joined with λ-moves for union (+), concatenation and star (*).</li>
@@ -67,8 +69,8 @@ const PAGES = [
     title: 'DFA Minimization Tool: Table Filling and Partition Method | Drawtomata',
     description: 'Minimize a DFA step by step with the table-filling (mark) method and the π-partition method, and get the minimal DFA with its diagram and table.',
     h1: 'DFA minimization',
-    lead: 'Draw a DFA above and press <b>Minimize</b>. Drawtomata removes unreachable states, then shows the marking table pass by pass and the π₀, π₁, … partitions, and draws the minimal DFA.',
-    body: `
+    leadHtml: 'Draw a DFA above and press <b>Minimize</b>. Drawtomata removes unreachable states, then shows the marking table pass by pass and the π₀, π₁, … partitions, and draws the minimal DFA.',
+    bodyHtml: `
 <h2>Table-filling (mark) method</h2>
 <ol>
 <li>Remove states that cannot be reached from the start state.</li>
@@ -91,8 +93,8 @@ const PAGES = [
     title: 'ε-NFA to NFA Converter (λ-closure), Step by Step | Drawtomata',
     description: 'Remove ε (λ) moves from an NFA step by step: λ-closure of every state, the new transition table and the equivalent NFA without ε-moves.',
     h1: 'ε-NFA to NFA converter',
-    lead: 'Draw an NFA with λ (ε) moves above and press <b>Remove λ</b>. Drawtomata computes the λ-closure of each state and builds the equivalent NFA without λ-moves.',
-    body: `
+    leadHtml: 'Draw an NFA with λ (ε) moves above and press <b>Remove λ</b>. Drawtomata computes the λ-closure of each state and builds the equivalent NFA without λ-moves.',
+    bodyHtml: `
 <h2>The method</h2>
 <ol>
 <li>For every state q, find λ-closure(q): q and every state reachable from q using only λ-moves.</li>
@@ -111,8 +113,8 @@ const PAGES = [
     title: 'DFA to Regular Expression Converter (State Elimination) | Drawtomata',
     description: 'Convert a DFA or NFA to a regular expression by state elimination, with the generalized transition graph after every removed state.',
     h1: 'Finite automaton to regular expression',
-    lead: 'Draw a DFA or NFA above and press <b>FA → RE</b>. Drawtomata turns it into a generalized transition graph and removes states one at a time, showing the new edge labels after each removal.',
-    body: `
+    leadHtml: 'Draw a DFA or NFA above and press <b>FA → RE</b>. Drawtomata turns it into a generalized transition graph and removes states one at a time, showing the new edge labels after each removal.',
+    bodyHtml: `
 <h2>State elimination</h2>
 <ol>
 <li>Make sure the start state has no incoming edges and there is a single final state, adding new ones joined by λ-moves if needed.</li>
@@ -129,8 +131,8 @@ const PAGES = [
     title: 'FIRST and FOLLOW Calculator, Step by Step | Drawtomata',
     description: 'Compute FIRST and FOLLOW sets for any context-free grammar, with FIRST of every production and the sets after each pass.',
     h1: 'FIRST and FOLLOW calculator',
-    lead: 'Type a grammar above, one production per line, such as <b>E -> E + T | T</b>. Drawtomata computes FIRST and FOLLOW for every nonterminal and shows how the sets grow pass by pass.',
-    body: `
+    leadHtml: 'Type a grammar above, one production per line, such as <b>E -> E + T | T</b>. Drawtomata computes FIRST and FOLLOW for every nonterminal and shows how the sets grow pass by pass.',
+    bodyHtml: `
 <h2>Rules</h2>
 <p><b>FIRST(X)</b> is the set of terminals that can begin a string derived from X, plus ε if X can derive ε.</p>
 <ul>
@@ -150,8 +152,8 @@ const PAGES = [
     title: 'LL(1) Parsing Table Generator and Parser, Step by Step | Drawtomata',
     description: 'Build the LL(1) parsing table for a grammar, see every conflict, and trace predictive parsing of an input string. Removes left recursion and left factors.',
     h1: 'LL(1) parsing table generator',
-    lead: 'Type a grammar above and Drawtomata builds the LL(1) table, marks conflicts and explains them, and traces a predictive parse of the input string. Left recursion removal and left factoring are one click away.',
-    body: `
+    leadHtml: 'Type a grammar above and Drawtomata builds the LL(1) table, marks conflicts and explains them, and traces a predictive parse of the input string. Left recursion removal and left factoring are one click away.',
+    bodyHtml: `
 <h2>Building the table</h2>
 <ol>
 <li>Compute <a href="../first-and-follow/">FIRST and FOLLOW</a>.</li>
@@ -170,8 +172,8 @@ const PAGES = [
     title: 'LR(0), SLR, CLR and LALR Parsing Table Generator | Drawtomata',
     description: 'Generate LR(0) items, the SLR(1), canonical LR(1) and LALR(1) parsing tables, see shift-reduce and reduce-reduce conflicts, and trace a parse.',
     h1: 'SLR, CLR and LALR parsing table generator',
-    lead: 'Type a grammar above and choose LR(0), SLR(1), CLR(1) or LALR(1). Drawtomata builds the canonical collection of items, draws the automaton, fills in ACTION and GOTO, marks every conflict and traces a shift-reduce parse.',
-    body: `
+    leadHtml: 'Type a grammar above and choose LR(0), SLR(1), CLR(1) or LALR(1). Drawtomata builds the canonical collection of items, draws the automaton, fills in ACTION and GOTO, marks every conflict and traces a shift-reduce parse.',
+    bodyHtml: `
 <h2>Which table is which</h2>
 <ul>
 <li><b>LR(0)</b>: reduce on every terminal whenever an item A → α· is complete.</li>
@@ -189,8 +191,8 @@ const PAGES = [
     title: 'CFG to PDA Converter and PDA to CFG, Step by Step | Drawtomata',
     description: 'Convert a context-free grammar to an NPDA (Greibach normal form or general method), simulate it, and convert an NPDA back to a grammar.',
     h1: 'CFG to PDA converter',
-    lead: 'Type a grammar above. Drawtomata builds an equivalent NPDA, lets you run it on any string with instantaneous descriptions, and converts an NPDA back to a context-free grammar with the [qᵢ A qⱼ] construction.',
-    body: `
+    leadHtml: 'Type a grammar above. Drawtomata builds an equivalent NPDA, lets you run it on any string with instantaneous descriptions, and converts an NPDA back to a context-free grammar with the [qᵢ A qⱼ] construction.',
+    bodyHtml: `
 <h2>Grammar to NPDA</h2>
 <p>If the grammar is in Greibach normal form, every production A → aX₁…Xₖ becomes one move: read a, pop A, push X₁…Xₖ. Otherwise the general method uses λ-moves to expand variables on the stack and plain moves to match terminals.</p>
 <h2>NPDA to grammar</h2>
@@ -202,8 +204,8 @@ const PAGES = [
     title: 'Pumping Lemma for Regular Languages, Interactive | Drawtomata',
     description: 'Play the pumping lemma game: pick a language and a string, see every split xyz with |xy| ≤ p and the i that pumps it out of the language.',
     h1: 'Pumping lemma for regular languages',
-    lead: 'Pick a language such as aⁿbⁿ above. Drawtomata lists every way to split w into xyz with |xy| ≤ p and |y| ≥ 1, and the i for which xyⁱz leaves the language, so you can see why the language is not regular.',
-    body: `
+    leadHtml: 'Pick a language such as aⁿbⁿ above. Drawtomata lists every way to split w into xyz with |xy| ≤ p and |y| ≥ 1, and the i for which xyⁱz leaves the language, so you can see why the language is not regular.',
+    bodyHtml: `
 <h2>The lemma</h2>
 <p>If L is regular, there is a p ≥ 1 such that every w in L with |w| ≥ p can be written w = xyz with |xy| ≤ p and |y| ≥ 1, and xyⁱz is in L for every i ≥ 0.</p>
 <h2>Using it as a game</h2>
@@ -222,8 +224,8 @@ const PAGES = [
     title: 'Three-Address Code, DAG and Code Generation Tool | Drawtomata',
     description: 'Generate three-address code, quadruples, triples and indirect triples, the DAG of a basic block, SSA form, basic blocks, flow graphs, register allocation and peephole optimization.',
     h1: 'Three-address code and code generation',
-    lead: 'Type an expression such as <b>a = b * -c + b * -c</b> or a short program above. Drawtomata produces three-address code with quadruples, triples and indirect triples, and goes on to DAGs, SSA, basic blocks, liveness, target code and peephole optimization.',
-    body: `
+    leadHtml: 'Type an expression such as <b>a = b * -c + b * -c</b> or a short program above. Drawtomata produces three-address code with quadruples, triples and indirect triples, and goes on to DAGs, SSA, basic blocks, liveness, target code and peephole optimization.',
+    bodyHtml: `
 <h2>Three-address code</h2>
 <p>Every instruction has at most one operator and three addresses, such as t2 = b * t1. Temporaries hold intermediate results, in the order the expression is evaluated. For a = b * -c + b * -c:</p>
 <table class="ex"><thead><tr><th>#</th><th>op</th><th>arg1</th><th>arg2</th><th>result</th></tr></thead><tbody>
@@ -251,8 +253,8 @@ const PAGES = [
     title: 'Annotated Parse Tree and SDD Tool: S- and L-Attributed | Drawtomata',
     description: 'Write a syntax-directed definition and an input string to get the annotated parse tree, the dependency graph with a topological evaluation order, S-attributed and L-attributed checks, and the syntax tree.',
     h1: 'Annotated parse tree and syntax-directed translation',
-    lead: 'Type a grammar with semantic rules, such as <b>E -> E1 + T { E.val = E1.val + T.val }</b>, and an input string. Drawtomata parses the string, evaluates every attribute and draws the annotated parse tree, the dependency graph and the syntax tree.',
-    body: `
+    leadHtml: 'Type a grammar with semantic rules, such as <b>E -> E1 + T { E.val = E1.val + T.val }</b>, and an input string. Drawtomata parses the string, evaluates every attribute and draws the annotated parse tree, the dependency graph and the syntax tree.',
+    bodyHtml: `
 <h2>Synthesized and inherited attributes</h2>
 <p>A <b>synthesized</b> attribute of a node is computed from its children, as in E.val = E1.val + T.val. An <b>inherited</b> attribute is computed from the parent and siblings, as in L.inh = T.type in a declaration. An SDD with only synthesized attributes is <b>S-attributed</b> and can be evaluated bottom-up during LR parsing. It is <b>L-attributed</b> when every inherited attribute of Xᵢ in A → X₁ … Xₙ uses only inherited attributes of A and attributes of X₁ … Xᵢ₋₁, so one depth-first, left-to-right pass evaluates it.</p>
 <h2>Example: 3 * 5 + 4 n</h2>
@@ -289,7 +291,9 @@ function homeFooter() {
 }
 
 function build() {
-  let html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  assertInsideRepo(INDEX_FILE);
+  // INDEX_FILE is a constant path inside the repository
+  let html = fs.readFileSync(INDEX_FILE, 'utf8'); // nosemgrep
   // keep the link list on the home page current
   html = html.replace(/<!-- converter pages: generated[\s\S]*?<!-- \/converter pages -->/, homeFooter());
   const out = { 'index.html': html };
@@ -313,8 +317,8 @@ function build() {
     const article = `<article class="seo" id="how">
 <p class="seoCrumb"><a href="../">Drawtomata</a> / ${esc(p.h1)}</p>
 <h1>${p.h1.charAt(0).toUpperCase() + p.h1.slice(1)}</h1>
-<p class="seoLead">${p.lead}</p>
-${p.body.trim()}
+<p class="seoLead">${p.leadHtml}</p>
+${p.bodyHtml.trim()}
 </article>`;
     rep(/<!-- converter pages: generated[\s\S]*?<!-- \/converter pages -->/, `<!-- converter pages: generated by scripts/build-pages.js -->\n${article}\n<footer class="seo">${toolLinks('../', p.slug)}<p class="seoMeta">Drawtomata is free and runs in your browser. <a href="https://github.com/SlazzInC0de/drawtomata">Source on GitHub</a>.</p></footer>\n<!-- /converter pages -->`);
     out[`${p.slug}/index.html`] = h;
@@ -331,16 +335,51 @@ ${['', ...PAGES.map((p) => p.slug + '/')].map((u) => `  <url>
   return out;
 }
 
-module.exports = { build, PAGES };
+// Every file the build may write, fixed by the PAGES list above.
+function allowedOutputs() {
+  return new Set(['index.html', 'sitemap.xml', ...PAGES.map((p) => `${p.slug}/index.html`)]);
+}
+
+// Throws unless p, after following symlinks in every existing part of it, is inside
+// the repository. A path that does not exist yet is judged by its nearest existing parent.
+function assertInsideRepo(p) {
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- repository root
+  const realRoot = fs.realpathSync(root); // nosemgrep
+  let probe = p;
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- only checks existence
+  while (!fs.existsSync(probe)) probe = path.dirname(probe); // nosemgrep
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- only resolves the path
+  const real = fs.realpathSync(probe); // nosemgrep
+  if (real !== realRoot && !real.startsWith(realRoot + path.sep)) throw new Error(`refusing to touch a path outside the repository: ${p}`);
+}
+
+// Checks an output name against the allowlist and returns its absolute path.
+function outputPath(name) {
+  if (!allowedOutputs().has(name)) throw new Error(`refusing to write unexpected file ${name}`);
+  const full = path.resolve(root, ...name.split('/')); // nosemgrep
+  if (!full.startsWith(root + path.sep)) throw new Error(`refusing to write outside the repository: ${name}`);
+  return full;
+}
+
+function writeOutput(name, text) {
+  const full = outputPath(name);
+  assertInsideRepo(full);
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- checked by outputPath() and assertInsideRepo()
+  fs.mkdirSync(path.dirname(full), { recursive: true }); // nosemgrep
+  assertInsideRepo(path.dirname(full));
+  let st = null;
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- checked by outputPath() and assertInsideRepo()
+  try { st = fs.lstatSync(full); } catch (e) { if (e.code !== 'ENOENT') throw e; } // nosemgrep
+  if (st && !st.isFile()) throw new Error(`refusing to write ${name}: it is not a regular file (symlink?)`);
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- checked by outputPath() and assertInsideRepo()
+  fs.writeFileSync(full, text); // nosemgrep
+}
+
+for (const p of PAGES) if (!SLUG.test(p.slug)) throw new Error(`bad page slug ${p.slug}`);
+
+module.exports = { build, PAGES, outputPath, assertInsideRepo };
 if (require.main === module) {
   const out = build();
-  for (const [f, s] of Object.entries(out)) {
-    // output names come only from the fixed PAGES list above, never from input
-    const full = path.join(root, f);
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
-    fs.mkdirSync(path.dirname(full), { recursive: true });
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
-    fs.writeFileSync(full, s);
-  }
+  for (const [name, text] of Object.entries(out)) writeOutput(name, text);
   console.log(`wrote ${Object.keys(out).length} files`);
 }
