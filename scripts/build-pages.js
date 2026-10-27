@@ -292,7 +292,8 @@ function homeFooter() {
 
 function build() {
   assertInsideRepo(INDEX_FILE);
-  let html = fs.readFileSync(INDEX_FILE, 'utf8'); // nosemgrep: INDEX_FILE is a constant path inside the repository
+  // INDEX_FILE is a constant path inside the repository
+  let html = fs.readFileSync(INDEX_FILE, 'utf8'); // nosemgrep
   // keep the link list on the home page current
   html = html.replace(/<!-- converter pages: generated[\s\S]*?<!-- \/converter pages -->/, homeFooter());
   const out = { 'index.html': html };
@@ -342,7 +343,8 @@ function allowedOutputs() {
 // Throws unless p, after following symlinks in every existing part of it, is inside
 // the repository. A path that does not exist yet is judged by its nearest existing parent.
 function assertInsideRepo(p) {
-  const realRoot = fs.realpathSync(root);
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- repository root
+  const realRoot = fs.realpathSync(root); // nosemgrep
   let probe = p;
   // eslint-disable-next-line security/detect-non-literal-fs-filename -- only checks existence
   while (!fs.existsSync(probe)) probe = path.dirname(probe); // nosemgrep
@@ -354,7 +356,7 @@ function assertInsideRepo(p) {
 // Checks an output name against the allowlist and returns its absolute path.
 function outputPath(name) {
   if (!allowedOutputs().has(name)) throw new Error(`refusing to write unexpected file ${name}`);
-  const full = path.resolve(root, ...name.split('/')); // nosemgrep: name is one of the fixed outputs above
+  const full = path.resolve(root, ...name.split('/')); // nosemgrep
   if (!full.startsWith(root + path.sep)) throw new Error(`refusing to write outside the repository: ${name}`);
   return full;
 }

@@ -15,7 +15,7 @@ const READABLE = new Set([
 ]);
 function readRepoFile(name) {
   if (!READABLE.has(name)) throw new Error(`not an allowed file: ${name}`);
-  const full = path.resolve(ROOT, ...name.split('/')); // nosemgrep: name is one of the fixed files above
+  const full = path.resolve(ROOT, ...name.split('/')); // nosemgrep
   if (!full.startsWith(ROOT + path.sep)) throw new Error(`outside the repository: ${name}`);
   BUILD.assertInsideRepo(full);
   // eslint-disable-next-line security/detect-non-literal-fs-filename -- allowlisted and checked above
