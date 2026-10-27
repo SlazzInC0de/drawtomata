@@ -95,8 +95,8 @@
     const cl = range(fa.n).map((q) => closure(d, [q]));
     const nd = [], finals = new Set(), rows = [];
     for (let q = 0; q < fa.n; q++) {
-      const row = { q, closure: sortNum(cl[q]), next: {}, final: false };
-      nd[q] = {};
+      const row = { q, closure: sortNum(cl[q]), next: Object.create(null), final: false };
+      nd[q] = Object.create(null);
       for (const a of A) { const m = closure(d, move(d, cl[q], a)); nd[q][a] = m; row.next[a] = sortNum(m); }
       if ([...cl[q]].some((x) => fa.finals.has(x))) { finals.add(q); row.final = true; }
       rows.push(row);
@@ -180,7 +180,7 @@
     if (cm.added) notes.push(`DFA was incomplete, so trap state ${cm.added} was added.`);
     fa = cm.fa;
     const n = fa.n, F = fa.finals, L = fa.labels;
-    const nx = range(n).map(() => ({}));
+    const nx = range(n).map(() => Object.create(null));
     fa.trans.forEach((t) => (nx[t.from][t.sym] = t.to));
 
     // mark procedure (table filling)
@@ -413,7 +413,7 @@
   function product(A, B, op, alpha) {
     const a = complete(isDFA(A) ? A : subset(A, alpha).fa, alpha).fa;
     const b = complete(isDFA(B) ? B : subset(B, alpha).fa, alpha).fa;
-    const na = range(a.n).map(() => ({})), nb = range(b.n).map(() => ({}));
+    const na = range(a.n).map(() => Object.create(null)), nb = range(b.n).map(() => Object.create(null));
     a.trans.forEach((t) => (na[t.from][t.sym] = t.to));
     b.trans.forEach((t) => (nb[t.from][t.sym] = t.to));
     const ids = new Map(), pairs = [], trans = [];

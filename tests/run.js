@@ -5,9 +5,20 @@ const path = require('path');
 const vm = require('vm');
 const assert = require('assert/strict');
 
+const ROOT = path.resolve(__dirname, '..');
+// Reads a file of this repository. Names come from fixed lists in this file and
+// are checked to stay inside the repository folder.
+function readRepoFile(name) {
+  if (!/^[a-z0-9./-]+$/.test(name) || name.split('/').includes('..')) throw new Error(`bad file name ${name}`);
+  const full = path.resolve(ROOT, ...name.split('/'));
+  if (!full.startsWith(ROOT + path.sep)) throw new Error(`outside the repository: ${name}`);
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated above
+  return fs.readFileSync(full, 'utf8'); // nosemgrep
+}
+
 const ctx = vm.createContext({ console });
 for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js']) {
-  vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'), ctx, { filename: f });
+  vm.runInContext(readRepoFile(`js/${f}`), ctx, { filename: f });
 }
 const { regex, fa, grammar, parsing: P, theory: TH } = ctx.DT;
 
@@ -393,14 +404,26 @@ test('SDT: every evaluation order respects the dependency graph', () => {
   assert.ok(cyc.res.error && /cycle/.test(cyc.res.error));
 });
 
+// Markup reaches the page only through ui.put(), which sanitizes it with DOMPurify.
+test('no raw HTML sinks or dynamic code outside the sanitizer', () => {
+  const sinks = /\.(innerHTML|outerHTML|insertAdjacentHTML)\b|document\.write|\beval\s*\(|new Function\s*\(/;
+  for (const f of ['app.js', 'automata.js', 'codegen.js', 'editor.js', 'grammar.js', 'parsing.js', 'regex.js', 'render.js', 'sdt.js', 'theory.js']) {
+    readRepoFile(`js/${f}`).split('\n').forEach((line, i) => {
+      const code = line.replace(/\/\/.*$/, '');
+      assert.ok(!sinks.test(code), `js/${f}:${i + 1} writes raw HTML or runs dynamic code: ${line.trim()}`);
+    });
+  }
+  assert.ok(readRepoFile('js/render.js').includes('RETURN_DOM_FRAGMENT: true'), 'ui.put must sanitize into a DOM fragment');
+});
+
 // Converter pages are generated from index.html; they must not drift from it.
 test('converter pages and sitemap are up to date (run node scripts/build-pages.js)', () => {
   const { build, PAGES } = require('../scripts/build-pages.js');
   for (const [f, want] of Object.entries(build())) {
-    assert.equal(fs.readFileSync(path.join(__dirname, '..', f), 'utf8'), want, `${f} is stale`);
+    assert.equal(readRepoFile(f), want, `${f} is stale`);
   }
   for (const p of PAGES) {
-    const h = fs.readFileSync(path.join(__dirname, '..', p.slug, 'index.html'), 'utf8');
+    const h = readRepoFile(`${p.slug}/index.html`);
     assert.equal((h.match(/<h1[ >]/g) || []).length, 1, `${p.slug}: exactly one h1`);
     assert.ok(h.includes(`<link rel="canonical" href="https://drawtomata.vercel.app/${p.slug}/">`));
     assert.ok(!/(src|href)="(js|css|assets)\//.test(h), `${p.slug}: asset paths must be relative to the parent folder`);
@@ -410,9 +433,8 @@ test('converter pages and sitemap are up to date (run node scripts/build-pages.j
 // Security headers: every inline <script> must be allowed by a hash inside script-src,
 // and every external script must carry an SRI digest that matches the file it loads.
 const crypto = require('crypto');
-const root = path.join(__dirname, '..');
-const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const csp = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'))
+const html = readRepoFile('index.html');
+const csp = JSON.parse(readRepoFile('vercel.json'))
   .headers[0].headers.find((h) => h.key === 'Content-Security-Policy').value;
 const scriptSrc = (csp.split(';').map((d) => d.trim().split(/\s+/)).find((d) => d[0] === 'script-src') || []).slice(1);
 const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].map(([, attrs, body]) => ({ attrs, body }));

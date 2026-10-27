@@ -4,7 +4,7 @@
    the old and new code on the same random inputs. */
 (function (DT) {
   'use strict';
-  const isNum = (s) => typeof s === 'string' && /^-?\d+(\.\d+)?$/.test(s);
+  const isNum = (s) => typeof s === 'string' && /^-?(?:\d+|\d+\.\d+)$/.test(s);
   const REL = ['<', '<=', '>', '>=', '==', '!='];
   const NOT_REL = { '<': '>=', '<=': '>', '>': '<=', '>=': '<', '==': '!=', '!=': '==' };
   const ARITH = ['+', '-', '*', '/', '%'];
@@ -16,7 +16,7 @@
   // ---------- parsing ----------
   function tokenize(s) {
     const out = [];
-    const re = /\s*(?:(\d+(?:\.\d+)?)|([A-Za-z_][A-Za-z0-9_]*)|(:=|<=|>=|==|!=|[-+*/%<>=()[\]!,]))/y;
+    const re = /\s*(?:(\d+\.\d+|\d+)|([A-Za-z_][A-Za-z0-9_]*)|(:=|<=|>=|==|!=|[-+*/%<>=()[\]!,]))/y;
     let i = 0;
     while (i < s.length) {
       if (/^\s*$/.test(s.slice(i))) break;
@@ -231,7 +231,7 @@
   }
   // what the outside world sees: every non-temporary scalar and every array cell
   function observe(M, names, seed) {
-    const o = {};
+    const o = Object.create(null);
     for (const v of names) o[v] = M.env.has(v) ? M.env.get(v) : rnd(seed, v);
     for (const [k, v] of M.mem) o[k] = v;
     return o;
@@ -379,7 +379,7 @@
     for (let i = insList.length - 1; i >= 0; i--) {
       const x = insList[i];
       after[i] = new Map([...state].map(([k, v]) => [k, { ...v }]));
-      const info = {};
+      const info = Object.create(null);
       const d = defOf(x);
       if (d) info[d] = { ...state.get(d) };
       for (const u of usesOf(x)) info[u] = { ...state.get(u) };

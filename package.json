@@ -5,8 +5,13 @@
   "private": true,
   "scripts": {
     "test": "node tests/run.js",
-    "start": "python3 -m http.server 8000"
+    "start": "python3 -m http.server 8000",
+    "lint": "eslint js scripts tests"
   },
   "author": "Suryansh Verma",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "8.57.1",
+    "eslint-plugin-security": "1.7.1"
+  }
 }
