@@ -83,7 +83,7 @@
     }
     el.replaceChildren(fallback());
   }
-  function renderGraph(el, g) { return renderDot(el, toDot(g), () => fallbackSVG(g)); }
+  function renderGraph(el, g) { return renderDot(el, g.dot || toDot(g), () => fallbackSVG(g)); }
   function renderTree(el, root) {
     return renderDot(el, treeDot(root), () => {
       const pre = document.createElement('pre');

@@ -6,7 +6,7 @@ const vm = require('vm');
 const assert = require('assert/strict');
 
 const ctx = vm.createContext({ console });
-for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js']) {
+for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'), ctx, { filename: f });
 }
 const { regex, fa, grammar, parsing: P, theory: TH } = ctx.DT;
@@ -338,6 +338,59 @@ test('peephole keeps the results and lowers the cost', () => {
   assert.ok(r.after.log.some((l) => l.rule === 'Machine idiom'));
   const st = CG.peepholeMachine(CG.naiveCode(CG.parseProgram('a = b + c\nd = a + e').ins));
   assert.ok(st.log.some((l) => l.rule === 'Redundant load'), 'ST a, R0; LD R0, a');
+});
+
+// ---------- syntax-directed translation ----------
+const SDT = ctx.DT.sdt;
+const SDD = {
+  calc: 'L -> E n { L.val = E.val }\nE -> E1 + T { E.val = E1.val + T.val }\nE -> T { E.val = T.val }\nT -> T1 * F { T.val = T1.val * F.val }\nT -> F { T.val = F.val }\nF -> ( E ) { F.val = E.val }\nF -> digit { F.val = digit.lexval }',
+  inh: "T -> F T' { T'.inh = F.val ; T.val = T'.syn }\nT' -> * F T1' { T1'.inh = T'.inh * F.val ; T'.syn = T1'.syn }\nT' -> ε { T'.syn = T'.inh }\nF -> digit { F.val = digit.lexval }",
+  decl: 'D -> T L { L.inh = T.type }\nT -> int { T.type = integer }\nT -> float { T.type = float }\nL -> L1 , id { L1.inh = L.inh ; addType(id.entry, L.inh) }\nL -> id { addType(id.entry, L.inh) }',
+  tree: "E -> E1 + T { E.node = new Node('+', E1.node, T.node) }\nE -> E1 - T { E.node = new Node('-', E1.node, T.node) }\nE -> T { E.node = T.node }\nT -> ( E ) { T.node = E.node }\nT -> id { T.node = new Leaf(id, id.entry) }\nT -> num { T.node = new Leaf(num, num.val) }",
+  postfix: "E -> E1 + T { E.t = E1.t || T.t || '+' }\nE -> E1 - T { E.t = E1.t || T.t || '-' }\nE -> T { E.t = T.t }\nT -> digit { T.t = digit.lexval }",
+  notL: 'A -> B C { A.s = B.b ; B.i = C.c + A.s }\nB -> b { B.b = 1 }\nC -> c { C.c = 2 }'
+};
+const rootVal = (r, attr) => { const I = [...r.res.inst.values()].find((x) => x.node === r.root && x.attr === attr); return I && r.res.show(I.value); };
+
+test('SDT: annotated parse trees match Aho chapter 5', () => {
+  const calc = SDT.run(SDD.calc, '3 * 5 + 4 n');
+  assert.equal(rootVal(calc, 'val'), '19');
+  assert.ok(calc.yieldOk && calc.respects && calc.check.ok);
+  assert.equal(rootVal(SDT.run(SDD.calc, '( 1 + 2 ) * 3 n'), 'val'), '9');
+  const inh = SDT.run(SDD.inh, '3 * 5');
+  assert.equal(rootVal(inh, 'val'), '15');
+  assert.ok(inh.check.ok && inh.check.kind === 'dfs');
+  assert.equal(rootVal(SDT.run(SDD.postfix, '9 - 5 + 2'), 't'), '95-2+');
+  const decl = SDT.run(SDD.decl, 'float a , b , c');
+  assert.deepEqual(plain(decl.res.actions.slice().sort()), ['addType(a, float)', 'addType(b, float)', 'addType(c, float)']);
+});
+
+test('SDT: syntax tree construction matches Aho figure 5.11', () => {
+  const r = SDT.run(SDD.tree, 'a - 4 + c');
+  assert.deepEqual(plain(r.res.tree.map((n) => n.call)), ['Leaf(id, a)', 'Leaf(num, 4)', 'Node(-, p1, p2)', 'Leaf(id, c)', 'Node(+, p3, p4)']);
+});
+
+test('SDT: S-attributed and L-attributed checks', () => {
+  const k = (t) => SDT.classify(SDT.parseSDD(t));
+  assert.ok(k(SDD.calc).S && k(SDD.calc).L);
+  assert.ok(!k(SDD.inh).S && k(SDD.inh).L);
+  assert.ok(!k(SDD.decl).S && k(SDD.decl).L);
+  const n = k(SDD.notL);
+  assert.ok(!n.S && !n.L && /right of B/.test(n.lFails[0].why));
+  const r = SDT.run(SDD.notL, 'b c');
+  assert.equal(rootVal(r, 's'), '1');
+  assert.ok(!r.check.ok && r.check.stuck, 'one left-to-right pass must not be enough');
+});
+
+test('SDT: every evaluation order respects the dependency graph', () => {
+  for (const [t, w] of [[SDD.calc, '1 + 2 * 3 + 4 n'], [SDD.inh, '2 * 3 * 4'], [SDD.decl, 'int x , y'], [SDD.tree, '( a + 1 ) - b']]) {
+    const r = SDT.run(t, w);
+    assert.ok(r.respects && r.check.ok && r.yieldOk, w);
+  }
+  assert.throws(() => SDT.run(SDD.calc, '3 + n'), /not in the language/);
+  assert.throws(() => SDT.run('A -> B { A.x = B.y }\nB -> b { B.z = 1 }', 'b'), /no rule gives it a value/);
+  const cyc = SDT.run('A -> B { B.i = B.s ; A.v = B.s }\nB -> b { B.s = B.i }', 'b');
+  assert.ok(cyc.res.error && /cycle/.test(cyc.res.error));
 });
 
 // Converter pages are generated from index.html; they must not drift from it.

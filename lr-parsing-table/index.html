@@ -63,6 +63,7 @@
       <button role="tab" data-tab="rg" aria-selected="false">Grammar ⇄ FA</button>
       <button role="tab" data-tab="cfg" aria-selected="false">CFG &amp; PDA</button>
       <button role="tab" data-tab="parse" aria-selected="false">Parsing</button>
+      <button role="tab" data-tab="sdt" aria-selected="false">SDT</button>
       <button role="tab" data-tab="cg" aria-selected="false">Code gen</button>
       <button role="tab" data-tab="pump" aria-selected="false">Pumping lemma</button>
     </nav>
@@ -293,6 +294,47 @@ B -> aA | bb</textarea>
       <div class="board"><div class="boardInner" id="cfgOut"></div></div>
     </section>
 
+    <!-- ===================== SYNTAX-DIRECTED TRANSLATION ===================== -->
+    <section class="panel split" id="tab-sdt" role="tabpanel" hidden>
+      <aside class="side">
+        <div class="sideHead"><h2>Syntax-directed translation</h2><p>Annotated parse trees, dependency graphs and evaluation order, S- and L-attributed checks, and syntax trees built by semantic rules.</p></div>
+        <div class="field">
+          <label for="sdIn" class="lbl">Grammar with semantic rules</label>
+          <textarea id="sdIn" class="mono" rows="8" spellcheck="false">L -> E n        { L.val = E.val }
+E -> E1 + T     { E.val = E1.val + T.val }
+E -> T          { E.val = T.val }
+T -> T1 * F     { T.val = T1.val * F.val }
+T -> F          { T.val = F.val }
+F -> ( E )      { F.val = E.val }
+F -> digit      { F.val = digit.lexval }</textarea>
+          <div class="examples" data-for="sdIn">
+            <button type="button" data-w="3 * 5 + 4 n" data-v="L -> E n        { L.val = E.val }&#10;E -> E1 + T     { E.val = E1.val + T.val }&#10;E -> T          { E.val = T.val }&#10;T -> T1 * F     { T.val = T1.val * F.val }&#10;T -> F          { T.val = F.val }&#10;F -> ( E )      { F.val = E.val }&#10;F -> digit      { F.val = digit.lexval }">desk calculator</button>
+            <button type="button" data-w="3 * 5" data-v="T -> F T'        { T'.inh = F.val ; T.val = T'.syn }&#10;T' -> * F T1'   { T1'.inh = T'.inh * F.val ; T'.syn = T1'.syn }&#10;T' -> ε          { T'.syn = T'.inh }&#10;F -> digit       { F.val = digit.lexval }">inherited (T')</button>
+            <button type="button" data-w="float a , b , c" data-v="D -> T L          { L.inh = T.type }&#10;T -> int          { T.type = integer }&#10;T -> float        { T.type = float }&#10;L -> L1 , id      { L1.inh = L.inh ; addType(id.entry, L.inh) }&#10;L -> id           { addType(id.entry, L.inh) }">declarations</button>
+            <button type="button" data-w="a - 4 + c" data-op="st" data-v="E -> E1 + T   { E.node = new Node('+', E1.node, T.node) }&#10;E -> E1 - T   { E.node = new Node('-', E1.node, T.node) }&#10;E -> T        { E.node = T.node }&#10;T -> ( E )    { T.node = E.node }&#10;T -> id       { T.node = new Leaf(id, id.entry) }&#10;T -> num      { T.node = new Leaf(num, num.val) }">syntax tree</button>
+            <button type="button" data-w="9 - 5 + 2" data-v="E -> E1 + T   { E.t = E1.t || T.t || '+' }&#10;E -> E1 - T   { E.t = E1.t || T.t || '-' }&#10;E -> T        { E.t = T.t }&#10;T -> digit    { T.t = digit.lexval }">infix to postfix</button>
+            <button type="button" data-w="b c" data-op="cls" data-v="A -> B C   { A.s = B.b ; B.i = C.c + A.s }&#10;B -> b     { B.b = 1 }&#10;C -> c     { C.c = 2 }">not L-attributed</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="sdW" class="lbl">Input string</label>
+          <input id="sdW" class="mono" value="3 * 5 + 4 n" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="field">
+          <span class="lbl">Show</span>
+          <div class="opGrid">
+            <button type="button" class="op" data-sd="tree">Annotated parse tree</button>
+            <button type="button" class="op" data-sd="dep">Dependency graph</button>
+            <button type="button" class="op" data-sd="cls">S / L-attributed</button>
+            <button type="button" class="op" data-sd="st">Syntax tree</button>
+          </div>
+        </div>
+        <div class="err" id="sdErr" hidden></div>
+        <p class="hint">One production per line, rules in braces: <b>E -> E1 + T { E.val = E1.val + T.val }</b>. Separate symbols with spaces; write <b>E1</b>, <b>T1'</b> for a second copy of a nonterminal. Tokens: numbers match <b>digit</b> or <b>num</b> (attribute <b>lexval</b>), names match <b>id</b> (attribute <b>entry</b>). Functions: <b>Node</b>, <b>Leaf</b>, <b>addType</b>, <b>gen</b>, <b>print</b>, and <b>||</b> joins strings.</p>
+      </aside>
+      <div class="board"><div class="boardInner" id="sdOut"></div></div>
+    </section>
+
     <!-- ===================== CODE GENERATION ===================== -->
     <section class="panel split" id="tab-cg" role="tabpanel" hidden>
       <aside class="side">
@@ -457,7 +499,7 @@ F -> ( E ) | id</textarea>
 <h2>Classic examples</h2>
 <p>S → CC, C → cC | d is LR(0) and so in every class. S → L = R | R, L → *R | id, R → L is LALR(1) but not SLR(1). Both are in the example list above.</p>
 </article>
-<footer class="seo"><nav class="seoNav" aria-label="All converters"><h2>All converters</h2><ul><li><a href="../nfa-to-dfa/">NFA to DFA</a></li><li><a href="../regex-to-dfa/">Regex to DFA</a></li><li><a href="../dfa-minimization/">DFA minimization</a></li><li><a href="../epsilon-nfa-to-nfa/">ε-NFA to NFA</a></li><li><a href="../fa-to-regex/">FA to regex</a></li><li><a href="../first-and-follow/">FIRST and FOLLOW</a></li><li><a href="../ll1-parser/">LL(1) table</a></li><li><span aria-current="page">SLR, CLR, LALR</span></li><li><a href="../cfg-to-pda/">CFG to PDA</a></li><li><a href="../pumping-lemma/">Pumping lemma</a></li><li><a href="../three-address-code/">Three-address code</a></li></ul></nav><p class="seoMeta">Drawtomata is free and runs in your browser. <a href="https://github.com/SlazzInC0de/drawtomata">Source on GitHub</a>.</p></footer>
+<footer class="seo"><nav class="seoNav" aria-label="All converters"><h2>All converters</h2><ul><li><a href="../nfa-to-dfa/">NFA to DFA</a></li><li><a href="../regex-to-dfa/">Regex to DFA</a></li><li><a href="../dfa-minimization/">DFA minimization</a></li><li><a href="../epsilon-nfa-to-nfa/">ε-NFA to NFA</a></li><li><a href="../fa-to-regex/">FA to regex</a></li><li><a href="../first-and-follow/">FIRST and FOLLOW</a></li><li><a href="../ll1-parser/">LL(1) table</a></li><li><span aria-current="page">SLR, CLR, LALR</span></li><li><a href="../cfg-to-pda/">CFG to PDA</a></li><li><a href="../pumping-lemma/">Pumping lemma</a></li><li><a href="../syntax-directed-translation/">Annotated parse tree</a></li><li><a href="../three-address-code/">Three-address code</a></li></ul></nav><p class="seoMeta">Drawtomata is free and runs in your browser. <a href="https://github.com/SlazzInC0de/drawtomata">Source on GitHub</a>.</p></footer>
 <!-- /converter pages -->
 <script src="../js/regex.js"></script>
 <script src="../js/automata.js"></script>
@@ -465,6 +507,7 @@ F -> ( E ) | id</textarea>
 <script src="../js/parsing.js"></script>
 <script src="../js/theory.js"></script>
 <script src="../js/codegen.js"></script>
+<script src="../js/sdt.js"></script>
 <script src="../js/vendor/purify.min.js"></script>
 <script src="../js/render.js"></script>
 <script src="../js/editor.js"></script>

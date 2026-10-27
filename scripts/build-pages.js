@@ -245,6 +245,31 @@ const PAGES = [
 <li>Peephole optimization of both three-address and target code.</li>
 </ul>
 <p>Every optimized program is run against the original on random inputs before it is shown.</p>`
+  },
+  {
+    slug: 'syntax-directed-translation', tab: 'sdt', op: 'tree',
+    title: 'Annotated Parse Tree and SDD Tool: S- and L-Attributed | Drawtomata',
+    description: 'Write a syntax-directed definition and an input string to get the annotated parse tree, the dependency graph with a topological evaluation order, S-attributed and L-attributed checks, and the syntax tree.',
+    h1: 'Annotated parse tree and syntax-directed translation',
+    lead: 'Type a grammar with semantic rules, such as <b>E -> E1 + T { E.val = E1.val + T.val }</b>, and an input string. Drawtomata parses the string, evaluates every attribute and draws the annotated parse tree, the dependency graph and the syntax tree.',
+    body: `
+<h2>Synthesized and inherited attributes</h2>
+<p>A <b>synthesized</b> attribute of a node is computed from its children, as in E.val = E1.val + T.val. An <b>inherited</b> attribute is computed from the parent and siblings, as in L.inh = T.type in a declaration. An SDD with only synthesized attributes is <b>S-attributed</b> and can be evaluated bottom-up during LR parsing. It is <b>L-attributed</b> when every inherited attribute of Xᵢ in A → X₁ … Xₙ uses only inherited attributes of A and attributes of X₁ … Xᵢ₋₁, so one depth-first, left-to-right pass evaluates it.</p>
+<h2>Example: 3 * 5 + 4 n</h2>
+<p>With the desk-calculator SDD loaded above, the annotated parse tree has F.val = 3 and F.val = 5 at the bottom, T.val = 15 above them, then E.val = 19 and finally L.val = 19 at the root.</p>
+<table class="ex"><thead><tr><th>Production</th><th>Semantic rule</th></tr></thead><tbody>
+<tr><td>L → E n</td><td>L.val = E.val</td></tr>
+<tr><td>E → E1 + T</td><td>E.val = E1.val + T.val</td></tr>
+<tr><td>E → T</td><td>E.val = T.val</td></tr>
+<tr><td>T → T1 * F</td><td>T.val = T1.val * F.val</td></tr>
+<tr><td>T → F</td><td>T.val = F.val</td></tr>
+<tr><td>F → ( E )</td><td>F.val = E.val</td></tr>
+<tr><td>F → digit</td><td>F.val = digit.lexval</td></tr>
+</tbody></table>
+<h2>Dependency graph and evaluation order</h2>
+<p>Each attribute of each parse-tree node is a node of the dependency graph, with an edge from X.a to Y.b whenever the rule for Y.b reads X.a. Any topological sort of the graph is a valid evaluation order; if the graph has a cycle, no order exists. The tool numbers one order and lists the value computed at each step.</p>
+<h2>Syntax trees</h2>
+<p>Rules such as E.node = new Node('+', E1.node, T.node) and T.node = new Leaf(id, id.entry) build a syntax tree while the attributes are evaluated. For a - 4 + c the tool shows the five steps p1 … p5 and draws the tree.</p>`
   }
 ];
 
@@ -253,7 +278,7 @@ const NAV = [
   ['nfa-to-dfa', 'NFA to DFA'], ['regex-to-dfa', 'Regex to DFA'], ['dfa-minimization', 'DFA minimization'],
   ['epsilon-nfa-to-nfa', 'ε-NFA to NFA'], ['fa-to-regex', 'FA to regex'], ['first-and-follow', 'FIRST and FOLLOW'],
   ['ll1-parser', 'LL(1) table'], ['lr-parsing-table', 'SLR, CLR, LALR'], ['cfg-to-pda', 'CFG to PDA'],
-  ['pumping-lemma', 'Pumping lemma'], ['three-address-code', 'Three-address code']
+  ['pumping-lemma', 'Pumping lemma'], ['syntax-directed-translation', 'Annotated parse tree'], ['three-address-code', 'Three-address code']
 ];
 const toolLinks = (prefix, current) => `<nav class="seoNav" aria-label="All converters"><h2>All converters</h2><ul>${NAV.map(([s, t]) => `<li>${s === current ? `<span aria-current="page">${t}</span>` : `<a href="${prefix}${s}/">${t}</a>`}</li>`).join('')}</ul></nav>`;
 

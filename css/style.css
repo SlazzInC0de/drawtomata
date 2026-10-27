@@ -232,6 +232,12 @@ table.mark sub { font-size: 10px; }
 .gv .edge polygon { fill: var(--edge); stroke: var(--edge); }
 .gv .startarrow path { stroke: var(--accent); stroke-width: 1.6; }
 .gv .startarrow polygon { fill: var(--accent); stroke: var(--accent); }
+/* dependency graphs: parse-tree nodes as dashed boxes, the tree dotted, dependencies as arrows */
+.gv .cluster path, .gv .cluster polygon { fill: none; stroke: var(--line-strong); }
+.gv .cluster text { fill: var(--muted); font-family: var(--mono); }
+.gv .edge.treeedge path { stroke: var(--muted); stroke-dasharray: 3 3; }
+.gv .edge.dep path { stroke: var(--accent); }
+.gv .edge.dep polygon { fill: var(--accent); stroke: var(--accent); }
 .gv.tree .node.tvar text { fill: var(--accent); font-weight: 600; }
 .gv.tree .node.tleaf text { fill: var(--rose-ink); font-weight: 600; }
 .gv.tree .edge path { stroke: var(--line-strong); }
