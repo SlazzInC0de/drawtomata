@@ -1,11 +1,27 @@
 {
   "root": true,
-  "parserOptions": { "ecmaVersion": 2022, "sourceType": "script" },
-  "env": { "browser": true, "node": true, "es2022": true },
-  "globals": { "DOMPurify": "readonly" },
-  "ignorePatterns": ["js/vendor/", "node_modules/"],
-  "plugins": ["security"],
-  "extends": ["plugin:security/recommended"],
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "script"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2022": true
+  },
+  "globals": {
+    "DOMPurify": "readonly"
+  },
+  "ignorePatterns": [
+    "js/vendor/",
+    "node_modules/"
+  ],
+  "plugins": [
+    "security"
+  ],
+  "extends": [
+    "plugin:security/recommended"
+  ],
   "rules": {
     "security/detect-object-injection": "off",
     "security/detect-unsafe-regex": "error",
@@ -24,11 +40,45 @@
     "no-implied-eval": "error",
     "no-new-func": "error",
     "no-proto": "error",
-    "no-restricted-properties": ["error",
-      { "property": "innerHTML", "message": "Render markup with ui.put(), which sanitizes it with DOMPurify." },
-      { "property": "outerHTML", "message": "Render markup with ui.put(), which sanitizes it with DOMPurify." },
-      { "property": "insertAdjacentHTML", "message": "Render markup with ui.put(), which sanitizes it with DOMPurify." },
-      { "object": "document", "property": "write", "message": "Render markup with ui.put(), which sanitizes it with DOMPurify." }
+    "no-restricted-properties": [
+      "error",
+      {
+        "property": "innerHTML",
+        "message": "Render markup with ui.put(), which sanitizes it with DOMPurify."
+      },
+      {
+        "property": "outerHTML",
+        "message": "Render markup with ui.put(), which sanitizes it with DOMPurify."
+      },
+      {
+        "property": "insertAdjacentHTML",
+        "message": "Render markup with ui.put(), which sanitizes it with DOMPurify."
+      },
+      {
+        "object": "document",
+        "property": "write",
+        "message": "Render markup with ui.put(), which sanitizes it with DOMPurify."
+      }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "js/**/*.js"
+      ],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "MemberExpression[computed=true][property.value=/^(innerHTML|outerHTML|insertAdjacentHTML|srcdoc)$/]",
+            "message": "Render markup with ui.put(), which sanitizes it with DOMPurify."
+          },
+          {
+            "selector": "Literal[value=/^(innerHTML|outerHTML|insertAdjacentHTML|srcdoc)$/]",
+            "message": "Do not name HTML sinks in strings; render markup with ui.put()."
+          }
+        ]
+      }
+    }
+  ]
 }

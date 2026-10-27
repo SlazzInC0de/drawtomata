@@ -291,7 +291,8 @@ function homeFooter() {
 }
 
 function build() {
-  let html = fs.readFileSync(INDEX_FILE, 'utf8');
+  assertInsideRepo(INDEX_FILE);
+  let html = fs.readFileSync(INDEX_FILE, 'utf8'); // nosemgrep: INDEX_FILE is a constant path inside the repository
   // keep the link list on the home page current
   html = html.replace(/<!-- converter pages: generated[\s\S]*?<!-- \/converter pages -->/, homeFooter());
   const out = { 'index.html': html };
@@ -333,27 +334,50 @@ ${['', ...PAGES.map((p) => p.slug + '/')].map((u) => `  <url>
   return out;
 }
 
-// Every file the build may write, fixed by the PAGES list above. Output paths are
-// checked against this list and must resolve inside the repository folder.
+// Every file the build may write, fixed by the PAGES list above.
+function allowedOutputs() {
+  return new Set(['index.html', 'sitemap.xml', ...PAGES.map((p) => `${p.slug}/index.html`)]);
+}
+
+// Throws unless p, after following symlinks in every existing part of it, is inside
+// the repository. A path that does not exist yet is judged by its nearest existing parent.
+function assertInsideRepo(p) {
+  const realRoot = fs.realpathSync(root);
+  let probe = p;
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- only checks existence
+  while (!fs.existsSync(probe)) probe = path.dirname(probe); // nosemgrep
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- only resolves the path
+  const real = fs.realpathSync(probe); // nosemgrep
+  if (real !== realRoot && !real.startsWith(realRoot + path.sep)) throw new Error(`refusing to touch a path outside the repository: ${p}`);
+}
+
+// Checks an output name against the allowlist and returns its absolute path.
 function outputPath(name) {
-  const allowed = new Set(['index.html', 'sitemap.xml', ...PAGES.map((p) => `${p.slug}/index.html`)]);
-  if (!allowed.has(name)) throw new Error(`refusing to write unexpected file ${name}`);
-  const full = path.resolve(root, ...name.split('/'));
+  if (!allowedOutputs().has(name)) throw new Error(`refusing to write unexpected file ${name}`);
+  const full = path.resolve(root, ...name.split('/')); // nosemgrep: name is one of the fixed outputs above
   if (!full.startsWith(root + path.sep)) throw new Error(`refusing to write outside the repository: ${name}`);
   return full;
 }
 
+function writeOutput(name, text) {
+  const full = outputPath(name);
+  assertInsideRepo(full);
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- checked by outputPath() and assertInsideRepo()
+  fs.mkdirSync(path.dirname(full), { recursive: true }); // nosemgrep
+  assertInsideRepo(path.dirname(full));
+  let st = null;
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- checked by outputPath() and assertInsideRepo()
+  try { st = fs.lstatSync(full); } catch (e) { if (e.code !== 'ENOENT') throw e; } // nosemgrep
+  if (st && !st.isFile()) throw new Error(`refusing to write ${name}: it is not a regular file (symlink?)`);
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- checked by outputPath() and assertInsideRepo()
+  fs.writeFileSync(full, text); // nosemgrep
+}
+
 for (const p of PAGES) if (!SLUG.test(p.slug)) throw new Error(`bad page slug ${p.slug}`);
 
-module.exports = { build, PAGES, outputPath };
+module.exports = { build, PAGES, outputPath, assertInsideRepo };
 if (require.main === module) {
   const out = build();
-  for (const [name, text] of Object.entries(out)) {
-    const full = outputPath(name);
-    // eslint-disable-next-line security/detect-non-literal-fs-filename -- checked by outputPath()
-    fs.mkdirSync(path.dirname(full), { recursive: true }); // nosemgrep
-    // eslint-disable-next-line security/detect-non-literal-fs-filename -- checked by outputPath()
-    fs.writeFileSync(full, text); // nosemgrep
-  }
+  for (const [name, text] of Object.entries(out)) writeOutput(name, text);
   console.log(`wrote ${Object.keys(out).length} files`);
 }
