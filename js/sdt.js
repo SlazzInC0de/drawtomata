@@ -7,6 +7,9 @@
   const isNTName = (s) => /^[A-Z]/.test(s);
   // E1 and T1' stand for occurrences of E and T'
   const baseOf = (s) => { const m = s.match(/^([A-Za-z][A-Za-z_]*?)(\d+)('*)$/); return m ? m[1] + m[3] : s; };
+  // position 0 is the head of a production, 1..n its body symbols
+  const occAt = (node, pos) => (pos === 0 ? node : node.kids[pos - 1]);
+  const ARITH = { '+': (a, b) => a + b, '-': (a, b) => a - b, '*': (a, b) => a * b, '/': (a, b) => (b === 0 ? NaN : a / b) };
 
   // ---------- expressions inside { … } ----------
   function lexExpr(s) {
@@ -38,19 +41,18 @@
       if (t.t === 'attr') return { k: 'attr', sym: t.sym, attr: t.attr };
       if (t.t === 'op' && t.v === '(') { const e = cat(); eat(')'); return e; }
       if (t.t === 'op' && t.v === '-') return { k: 'neg', a: primary() };
-      if (t.t === 'name') {
-        let name = t.v;
-        if (name === 'new' && peek() && peek().t === 'name') name = toks[p++].v;
-        if (isOp('(')) {
-          p++;
-          const args = [];
-          if (!isOp(')')) { args.push(cat()); while (isOp(',')) { p++; args.push(cat()); } }
-          eat(')');
-          return { k: 'call', f: name, args };
-        }
-        return { k: 'lit', v: name };
-      }
+      if (t.t === 'name') return nameOrCall(t.v);
       throw new Error(`Unexpected "${t.v}" in a semantic rule.`);
+    }
+    // a bare name, a call f(a, b), or new Node(...)
+    function nameOrCall(first) {
+      const name = first === 'new' && peek() && peek().t === 'name' ? toks[p++].v : first;
+      if (!isOp('(')) return { k: 'lit', v: name };
+      p++;
+      const args = [];
+      if (!isOp(')')) { args.push(cat()); while (isOp(',')) { p++; args.push(cat()); } }
+      eat(')');
+      return { k: 'call', f: name, args };
     }
     function mul() { let l = primary(); while (isOp('*') || isOp('/')) { const op = toks[p++].v; l = { k: 'bin', op, l, r: primary() }; } return l; }
     function add() { let l = mul(); while (isOp('+') || isOp('-')) { const op = toks[p++].v; l = { k: 'bin', op, l, r: mul() }; } return l; }
@@ -72,13 +74,14 @@
       case 'neg': return `-${exprStr(e.a)}`;
       case 'bin': return `${exprStr(e.l)} ${e.op} ${exprStr(e.r)}`;
       case 'call': return `${e.f}(${e.args.map(exprStr).join(', ')})`;
+      default: return '?';
     }
-    return '?';
   };
 
   // ---------- the SDD ----------
   // E -> E1 + T { E.val = E1.val + T.val }   alternatives may be split with |
-  function parseSDD(text) {
+  // join continuation lines (starting with | or ->, or without an arrow) onto the production above
+  function joinLines(text) {
     const lines = [];
     for (const raw of text.split('\n')) {
       const s = raw.replace(/\/\/.*$/, '').trim();
@@ -88,42 +91,49 @@
         lines[lines.length - 1] += ' ' + s;
       } else lines.push(s);
     }
+    return lines;
+  }
+  // split alternatives on | outside braces
+  function splitAlts(rhs) {
+    const alts = [];
+    let depth = 0, cur = '';
+    for (const ch of rhs) {
+      if (ch === '{') depth++;
+      if (ch === '}') depth--;
+      if (ch === '|' && depth === 0) { alts.push(cur); cur = ''; } else cur += ch;
+    }
+    alts.push(cur);
+    return alts;
+  }
+  function parseRule(r) {
+    const toks = lexExpr(r);
+    if (toks.length > 2 && toks[0].t === 'attr' && toks[1].t === 'op' && toks[1].v === '=') {
+      return { target: { sym: toks[0].sym, attr: toks[0].attr }, expr: parseExpr(toks.slice(2)), text: r };
+    }
+    return { target: null, expr: parseExpr(toks), text: r }; // an action such as addType(id.entry, L.inh)
+  }
+  function parseAlt(line, lhs, alt) {
+    const b = alt.indexOf('{');
+    if (b >= 0 && alt.lastIndexOf('}') < b) throw new Error(`"${line}": a { has no matching }.`);
+    const body = (b < 0 ? alt : alt.slice(0, b)).trim();
+    const ruleText = b < 0 ? '' : alt.slice(b + 1, alt.lastIndexOf('}'));
+    const rhs = body.split(/\s+/).filter((x) => x && !EPSW.has(x));
+    const rules = ruleText.split(';').map((r) => r.trim()).filter(Boolean).map(parseRule);
+    return { lhs, rhs, rules };
+  }
+  function parseSDD(text) {
     const prods = [];
-    for (const line of lines) {
+    for (const line of joinLines(text)) {
       const m = line.match(/^(\S+)\s*(?:->|→|::=)\s*([\s\S]*)$/);
       if (!m || !isNTName(m[1])) throw new Error(`"${line}": the left side must be a nonterminal (capital letter).`);
-      const lhs = m[1];
-      // split alternatives on | outside braces
-      const alts = [];
-      let depth = 0, cur = '';
-      for (const ch of m[2]) {
-        if (ch === '{') depth++;
-        if (ch === '}') depth--;
-        if (ch === '|' && depth === 0) { alts.push(cur); cur = ''; } else cur += ch;
-      }
-      alts.push(cur);
-      for (const alt of alts) {
-        const b = alt.indexOf('{');
-        const body = (b < 0 ? alt : alt.slice(0, b)).trim();
-        const ruleText = b < 0 ? '' : alt.slice(b + 1, alt.lastIndexOf('}'));
-        if (b >= 0 && alt.lastIndexOf('}') < b) throw new Error(`"${line}": a { has no matching }.`);
-        const rhs = body.split(/\s+/).filter((x) => x && !EPSW.has(x));
-        const rules = ruleText.split(';').map((r) => r.trim()).filter(Boolean).map((r) => {
-          const toks = lexExpr(r);
-          if (toks.length > 2 && toks[0].t === 'attr' && toks[1].t === 'op' && toks[1].v === '=') {
-            return { target: { sym: toks[0].sym, attr: toks[0].attr }, expr: parseExpr(toks.slice(2)), text: r };
-          }
-          return { target: null, expr: parseExpr(toks), text: r }; // an action such as addType(id.entry, L.inh)
-        });
-        prods.push({ lhs, rhs, rules });
-      }
+      for (const alt of splitAlts(m[2])) prods.push(parseAlt(line, m[1], alt));
     }
     if (!prods.length) throw new Error('Write at least one production.');
     const nts = [...new Set(prods.map((p) => p.lhs))];
     const ntSet = new Set(nts);
     // name every occurrence: the LHS is position 0, RHS symbols 1..n; E1 means an occurrence of E
     prods.forEach((p, pi) => {
-      p.sym = p.rhs.map((s) => (ntSet.has(s) ? s : ntSet.has(baseOf(s)) && !ntSet.has(s) ? baseOf(s) : s));
+      p.sym = p.rhs.map((s) => (!ntSet.has(s) && ntSet.has(baseOf(s)) ? baseOf(s) : s));
       const occ = new Map([[p.lhs, 0]]);
       const dup = new Set();
       p.rhs.forEach((s, i) => { if (occ.has(s)) dup.add(s); else occ.set(s, i + 1); });
@@ -144,6 +154,24 @@
   const prodStr = (p) => `${p.lhs} → ${p.rhs.join(' ') || 'ε'}`;
 
   // ---------- S- and L-attributed ----------
+  function ruleKind(r) {
+    if (r.pos > 0) return 'inherited';
+    return r.target ? 'synthesized' : 'action';
+  }
+  // why an inherited rule breaks the L-attributed condition, or '' if it does not
+  function refViolation(p, r, ref, inh) {
+    if (ref.pos === 0 && !(inh.get(p.lhs) || new Set()).has(ref.attr)) return `uses ${ref.name}, a synthesized attribute of the head`;
+    if (ref.pos > r.pos) return `uses ${ref.name}, which is to the right of ${p.rhs[r.pos - 1]}`;
+    if (ref.pos === r.pos && ref.attr === r.attr) return `${r.target.sym}.${r.attr} depends on itself`;
+    return '';
+  }
+  function lViolation(p, r, inh) {
+    for (const ref of r.refs) {
+      const why = refViolation(p, r, ref, inh);
+      if (why) return why;
+    }
+    return '';
+  }
   function classify(sdd) {
     const syn = new Map(), inh = new Map();
     const add = (m, s, a) => { if (!m.has(s)) m.set(s, new Set()); m.get(s).add(a); };
@@ -155,17 +183,9 @@
     const lFails = [];
     const rows = [];
     for (const p of sdd.prods) for (const r of p.rules) {
-      const kind = r.pos === 0 ? (r.target ? 'synthesized' : 'action') : 'inherited';
-      let why = '';
-      if (r.pos > 0) {
-        for (const ref of r.refs) {
-          if (ref.pos === 0 && !(inh.get(p.lhs) || new Set()).has(ref.attr)) { why = `uses ${ref.name}, a synthesized attribute of the head`; break; }
-          if (ref.pos > r.pos) { why = `uses ${ref.name}, which is to the right of ${p.rhs[r.pos - 1]}`; break; }
-          if (ref.pos === r.pos && ref.attr === r.attr) { why = `${r.target.sym}.${r.attr} depends on itself`; break; }
-        }
-        if (why) lFails.push({ p, r, why });
-      }
-      rows.push({ p, r, kind, ok: !why, why });
+      const why = r.pos > 0 ? lViolation(p, r, inh) : '';
+      if (why) lFails.push({ p, r, why });
+      rows.push({ p, r, kind: ruleKind(r), ok: !why, why });
     }
     const S = rows.every((x) => x.kind !== 'inherited');
     return { syn, inh, rows, S, L: !lFails.length, lFails };
@@ -186,51 +206,52 @@
       throw new Error(`"${t}" does not match any terminal of the grammar (${sdd.terms.join(', ')}).`);
     });
   }
+  const addItem = (set, it) => { const k = `${it.p},${it.d},${it.o}`; if (set.has(k)) return false; set.set(k, it); return true; };
+  const advance = (it, kid) => ({ ...it, d: it.d + 1, kids: [...it.kids, kid] });
+  // nullable nonterminals, each with a function building one ε-tree for it
+  function nullableTrees(prods) {
+    const epsTree = new Map();
+    const canAdd = (p) => !epsTree.has(p.lhs) && p.sym.every((s) => epsTree.has(s));
+    let p = prods.find(canAdd);
+    while (p) {
+      const prod = p, i = prods.indexOf(p);
+      epsTree.set(prod.lhs, () => ({ sym: prod.lhs, prod: i, kids: prod.sym.map((s) => epsTree.get(s)()) }));
+      p = prods.find(canAdd);
+    }
+    return epsTree;
+  }
+  function predict(it, X, i, byLhs, epsTree, push) {
+    for (const pi of byLhs.get(X) || []) push({ p: pi, d: 0, o: i, kids: [] });
+    if (epsTree.has(X)) push(advance(it, epsTree.get(X)()));
+  }
+  function complete(origin, pr, node, push) {
+    for (const w of [...origin.values()]) {
+      if (pr(w.p).sym[w.d] === node.sym) push(advance(w, node));
+    }
+  }
   function parse(sdd, toks) {
     const { prods, ntSet } = sdd;
     const byLhs = new Map();
     prods.forEach((p, i) => { if (!byLhs.has(p.lhs)) byLhs.set(p.lhs, []); byLhs.get(p.lhs).push(i); });
     // nullable nonterminals and one ε-tree for each
-    const epsTree = new Map();
-    let changed = true;
-    while (changed) {
-      changed = false;
-      prods.forEach((p, i) => {
-        if (epsTree.has(p.lhs) || !p.sym.every((s) => epsTree.has(s))) return;
-        epsTree.set(p.lhs, () => ({ sym: p.lhs, prod: i, kids: p.sym.map((s) => epsTree.get(s)()) }));
-        changed = true;
-      });
-    }
+    const epsTree = nullableTrees(prods);
     const S = [new Map()];
-    const addItem = (set, it) => { const k = `${it.p},${it.d},${it.o}`; if (!set.has(k)) { set.set(k, it); return true; } return false; };
     const START = -1;
     const pr = (i) => (i === START ? { lhs: "S'", sym: [sdd.start] } : prods[i]);
     addItem(S[0], { p: START, d: 0, o: 0, kids: [] });
-    for (let i = 0; i <= toks.length; i++) {
+    for (let i = 0; i <= toks.length && S[i]; i++) {
       const set = S[i];
-      if (!set) break;
       const queue = [...set.values()];
+      const push = (n) => { if (addItem(set, n)) queue.push(n); };
       while (queue.length) {
         const it = queue.shift();
         const P = pr(it.p);
-        if (it.d < P.sym.length) {
-          const X = P.sym[it.d];
-          if (ntSet.has(X)) {
-            for (const pi of byLhs.get(X) || []) { const n = { p: pi, d: 0, o: i, kids: [] }; if (addItem(set, n)) queue.push(n); }
-            if (epsTree.has(X)) { const n = { ...it, d: it.d + 1, kids: [...it.kids, epsTree.get(X)()] }; if (addItem(set, n)) queue.push(n); }
-          } else if (i < toks.length && toks[i].term === X) {
-            if (!S[i + 1]) S[i + 1] = new Map();
-            addItem(S[i + 1], { ...it, d: it.d + 1, kids: [...it.kids, { sym: X, tok: toks[i], kids: null }] });
-          }
-        } else {
-          const node = { sym: P.lhs, prod: it.p, kids: it.kids };
-          for (const w of [...S[it.o].values()]) {
-            const W = pr(w.p);
-            if (w.d < W.sym.length && W.sym[w.d] === P.lhs) {
-              const n = { ...w, d: w.d + 1, kids: [...w.kids, node] };
-              if (addItem(set, n)) queue.push(n);
-            }
-          }
+        const X = P.sym[it.d];
+        if (X === undefined) complete(S[it.o], pr, { sym: P.lhs, prod: it.p, kids: it.kids }, push);
+        else if (ntSet.has(X)) predict(it, X, i, byLhs, epsTree, push);
+        else if (i < toks.length && toks[i].term === X) {
+          if (!S[i + 1]) S[i + 1] = new Map();
+          addItem(S[i + 1], advance(it, { sym: X, tok: toks[i], kids: null }));
         }
       }
     }
@@ -262,14 +283,12 @@
     const nodes = preorder(root);
     const inst = new Map(); // key "nodeId.attr"
     const key = (n, a) => `${n.id}.${a}`;
-    const get = (n, a) => inst.get(key(n, a));
     const order = [];
     for (const n of nodes) {
       if (n.tok) continue;
       const p = sdd.prods[n.prod];
-      const at = (pos) => (pos === 0 ? n : n.kids[pos - 1]);
       p.rules.forEach((r) => {
-        const owner = at(r.pos);
+        const owner = occAt(n, r.pos);
         const k = key(owner, r.attr);
         if (inst.has(k) && inst.get(k).rule) throw new Error(`${owner.sym}.${r.attr} is defined twice for the same node.`);
         inst.set(k, { key: k, node: owner, attr: r.attr, rule: r, at: n, deps: [], action: !r.target });
@@ -280,9 +299,8 @@
     for (const k of order) {
       const I = inst.get(k);
       const p = sdd.prods[I.at.prod];
-      const at = (pos) => (pos === 0 ? I.at : I.at.kids[pos - 1]);
       for (const ref of I.rule.refs) {
-        const owner = at(ref.pos);
+        const owner = occAt(I.at, ref.pos);
         const rk = key(owner, ref.attr);
         if (!inst.has(rk)) {
           if (owner.tok && tokenAttr(owner, ref.attr) !== undefined) inst.set(rk, { key: rk, node: owner, attr: ref.attr, deps: [], token: true, value: tokenAttr(owner, ref.attr) });
@@ -296,7 +314,7 @@
   function topoOrder(inst) {
     const keys = [...inst.keys()];
     const rank = (k) => { const [n, a] = k.split('.'); return [+n, a]; };
-    keys.sort((a, b) => { const [n1, a1] = rank(a), [n2, a2] = rank(b); return n1 - n2 || (a1 < a2 ? -1 : a1 > a2 ? 1 : 0); });
+    keys.sort((a, b) => { const [n1, a1] = rank(a), [n2, a2] = rank(b); return n1 - n2 || a1.localeCompare(a2); });
     const indeg = new Map(keys.map((k) => [k, inst.get(k).deps.length]));
     const users = new Map(keys.map((k) => [k, []]));
     keys.forEach((k) => inst.get(k).deps.forEach((d) => users.get(d).push(k)));
@@ -315,38 +333,46 @@
   function evaluator() {
     const tree = [];
     const actions = [];
-    const show = (v) => (v && typeof v === 'object' && v.sn !== undefined ? `p${v.sn + 1}` : typeof v === 'number' ? String(Math.round(v * 1e6) / 1e6) : String(v));
-    const isNode = (v) => v && typeof v === 'object' && v.sn !== undefined;
+    const isNode = (v) => Boolean(v) && typeof v === 'object' && v.sn !== undefined;
+    const show = (v) => {
+      if (isNode(v)) return `p${v.sn + 1}`;
+      if (typeof v === 'number') return String(Math.round(v * 1e6) / 1e6);
+      return String(v);
+    };
+    const callText = (e, args) => `${e.f}(${args.map(show).join(', ')})`;
+    function makeNode(e, f, args) {
+      const rest = args.slice(1);
+      const leaf = f === 'leaf' || f === 'mkleaf' || !rest.some(isNode);
+      const n = { sn: tree.length, label: show(args[0]), leaf, kids: leaf ? [] : rest.filter(isNode), extra: leaf ? rest.map(show) : [], call: callText(e, args) };
+      tree.push(n);
+      return n;
+    }
+    const NODE_FNS = new Set(['node', 'mknode', 'leaf', 'mkleaf']);
+    const ACTION_FNS = new Set(['gen', 'emit', 'print', 'addtype', 'enter', 'add_type']);
+    function evCall(e, look) {
+      const args = e.args.map((x) => ev(x, look));
+      const f = e.f.toLowerCase();
+      if (NODE_FNS.has(f)) return makeNode(e, f, args);
+      if (ACTION_FNS.has(f)) { const text = callText(e, args); actions.push(text); return text; }
+      if (f === 'max') return Math.max(...args);
+      if (f === 'min') return Math.min(...args);
+      throw new Error(`Unknown function ${e.f}(). Supported: Node, Leaf, mknode, mkleaf, addType, gen, print, max, min.`);
+    }
+    function evBin(e, look) {
+      const a = ev(e.l, look), b = ev(e.r, look);
+      if (e.op === '||') return show(a) + show(b);
+      if (typeof a !== 'number' || typeof b !== 'number') throw new Error(`Cannot compute ${show(a)} ${e.op} ${show(b)}: both sides must be numbers.`);
+      return ARITH[e.op](a, b);
+    }
     function ev(e, look) {
       switch (e.k) {
         case 'lit': return e.v;
         case 'attr': return look(e);
         case 'neg': { const a = ev(e.a, look); if (typeof a !== 'number') throw new Error(`Cannot negate "${show(a)}".`); return -a; }
-        case 'bin': {
-          const a = ev(e.l, look), b = ev(e.r, look);
-          if (e.op === '||') return show(a) + show(b);
-          if (typeof a !== 'number' || typeof b !== 'number') throw new Error(`Cannot compute ${show(a)} ${e.op} ${show(b)}: both sides must be numbers.`);
-          return e.op === '+' ? a + b : e.op === '-' ? a - b : e.op === '*' ? a * b : b === 0 ? NaN : a / b;
-        }
-        case 'call': {
-          const args = e.args.map((x) => ev(x, look));
-          const f = e.f.toLowerCase();
-          if (['node', 'mknode', 'leaf', 'mkleaf'].includes(f)) {
-            const leaf = f === 'leaf' || f === 'mkleaf' || !args.slice(1).some(isNode);
-            const n = { sn: tree.length, label: show(args[0]), leaf, kids: leaf ? [] : args.slice(1).filter(isNode), extra: leaf ? args.slice(1).map(show) : [], call: `${e.f}(${args.map(show).join(', ')})` };
-            tree.push(n);
-            return n;
-          }
-          if (f === 'gen' || f === 'emit' || f === 'print' || f === 'addtype' || f === 'enter' || f === 'add_type') {
-            const text = `${e.f}(${args.map(show).join(', ')})`;
-            actions.push(text);
-            return text;
-          }
-          if (f === 'max' || f === 'min') return Math[f](...args);
-          throw new Error(`Unknown function ${e.f}(). Supported: Node, Leaf, mknode, mkleaf, addType, gen, print, max, min.`);
-        }
+        case 'bin': return evBin(e, look);
+        case 'call': return evCall(e, look);
+        default: throw new Error('bad expression');
       }
-      throw new Error('bad expression');
     }
     return { ev, tree, actions, show };
   }
@@ -362,10 +388,9 @@
     for (const k of order) {
       const I = inst.get(k);
       if (I.token) { steps.push({ k, I, value: I.value }); continue; }
-      const at = (pos) => (pos === 0 ? I.at : I.at.kids[pos - 1]);
       const refs = I.rule.refs;
       let ri = 0;
-      const look = () => { const ref = refs[ri++]; return inst.get(`${at(ref.pos).id}.${ref.attr}`).value; };
+      const look = () => { const ref = refs[ri++]; return inst.get(`${occAt(I.at, ref.pos).id}.${ref.attr}`).value; };
       I.value = E.ev(I.rule.expr, look);
       steps.push({ k, I, value: I.value });
     }
@@ -379,13 +404,11 @@
     const E = evaluator();
     const val = new Map();
     for (const [k, I] of inst) if (I.token) val.set(k, I.value);
-    let stuck = null;
-    const run = (I) => {
-      const at = (pos) => (pos === 0 ? I.at : I.at.kids[pos - 1]);
+    const evalRule = (I) => {
       let ri = 0;
       const look = () => {
         const ref = I.rule.refs[ri++];
-        const rk = `${at(ref.pos).id}.${ref.attr}`;
+        const rk = `${occAt(I.at, ref.pos).id}.${ref.attr}`;
         if (!val.has(rk)) throw Object.assign(new Error('too early'), { early: `${I.node.sym}.${I.attr} needs ${ref.name} before it is known` });
         return val.get(rk);
       };
@@ -397,7 +420,13 @@
       let pending = list, last = null;
       while (pending.length) {
         const next = [];
-        for (const I of pending) { try { run(I); } catch (e) { if (!e.early) throw e; last = e; next.push(I); } }
+        for (const I of pending) {
+          try { evalRule(I); } catch (e) {
+            if (!e.early) throw e;
+            last = e;
+            next.push(I);
+          }
+        }
         if (next.length === pending.length) throw last;
         pending = next;
       }
@@ -411,7 +440,7 @@
       });
       group(mine.filter((I) => postOnly || I.rule.pos === 0));
     };
-    try { visit(root); } catch (e) { if (e.early) { stuck = e.early; return { ok: false, stuck }; } throw e; }
+    try { visit(root); } catch (e) { if (e.early) return { ok: false, stuck: e.early }; throw e; }
     return { ok: true, val, actions: E.actions };
   }
   function sameValues(res, pass) {
@@ -437,8 +466,9 @@
     }
     let check = null;
     if (!res.error) {
+      const kind = cls.S ? 'post' : 'dfs';
       const pass = onePass(sdd, root, cls.S);
-      check = pass.ok ? { ...sameValues(res, pass), kind: cls.S ? 'post' : 'dfs' } : { ok: false, stuck: pass.stuck, kind: cls.S ? 'post' : 'dfs' };
+      check = pass.ok ? { ...sameValues(res, pass), kind } : { ok: false, stuck: pass.stuck, kind };
     }
     return { sdd, cls, toks, root, res, yieldOk, respects, check };
   }

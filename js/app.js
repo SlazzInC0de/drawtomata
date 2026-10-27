@@ -1301,7 +1301,7 @@
   const SD = DT.sdt;
   let lastSdOp = 'tree';
   const dq = (s) => '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
-  const nodeName = (n) => (n.tok ? (n.tok.text === n.sym ? n.sym : `${n.sym} (${n.tok.text})`) : n.sym);
+  const nodeName = (n) => (n.tok && n.tok.text !== n.sym ? `${n.sym} (${n.tok.text})` : n.sym);
   function sddTable(sdd) {
     const rows = sdd.prods.map((p) => [esc(SD.prodStr(p)), p.rules.map((r) => esc(r.text)).join('<br>') || '<span class="muted">none</span>']);
     return grid(['Production', 'Semantic rules'], rows.map((r) => r.map((v) => ({ v, cls: 'l' }))));
@@ -1313,7 +1313,7 @@
     const nodes = SD.preorder(r.root).map((n) => {
       const lines = r.res.error ? [] : attrsAt(r.res, n);
       if (n.tok && !lines.length) return { id: n.id, label: n.tok.text === n.sym ? n.sym : `${n.sym} ${n.tok.text}`, shape: 'plaintext' };
-      if (n.tok) return { id: n.id, label: n.sym, lines: n.tok.text === n.sym ? lines : lines.length ? lines : [n.tok.text] };
+      if (n.tok) return { id: n.id, label: n.sym, lines: n.tok.text === n.sym || lines.length ? lines : [n.tok.text] };
       return lines.length ? { id: n.id, label: n.sym, lines } : { id: n.id, label: n.sym, shape: 'plaintext' };
     });
     const edges = [];
@@ -1330,18 +1330,24 @@
     let dot = 'digraph D{rankdir=TB;compound=true;bgcolor="transparent";pad=0.15;nodesep=0.22;ranksep=0.42;newrank=true;';
     dot += 'node[fontname="JetBrains Mono",fontsize=11,shape=ellipse,height=0.32,margin="0.06,0.02"];edge[arrowsize=0.6];';
     const plain = { nodes: [], edges: [] };
-    for (const n of all) {
+    const instDot = (I) => {
+      const k = num.get(I.key);
+      plain.nodes.push({ id: I.key, label: `${k}: ${I.attr}` });
+      return `a${I.key.replace('.', '_')}[label=${dq(`${k ? k + ': ' : ''}${I.action ? I.rule.expr.f : I.attr}`)},class="${I.action ? 'action' : ''}"];`;
+    };
+    const clusterDot = (n) => {
       const mine = [...res.inst.values()].filter((I) => I.node === n);
-      dot += `subgraph cluster_${n.id}{label=${dq(nodeName(n))};fontname="JetBrains Mono";fontsize=12;style="rounded,dashed";class="ptnode";`;
+      let body;
       if (mine.length) {
-        mine.forEach((I) => { const k = num.get(I.key); dot += `a${I.key.replace('.', '_')}[label=${dq(`${k ? k + ': ' : ''}${I.action ? I.rule.expr.f : I.attr}`)},class="${I.action ? 'action' : ''}"];`; plain.nodes.push({ id: I.key, label: `${k}: ${I.attr}` }); });
+        body = mine.map(instDot).join('');
         anchor.set(n.id, 'a' + mine[0].key.replace('.', '_'));
       } else {
-        dot += `p${n.id}[label="",shape=point,width=0.04,style=invis];`;
+        body = `p${n.id}[label="",shape=point,width=0.04,style=invis];`;
         anchor.set(n.id, `p${n.id}`);
       }
-      dot += '}';
-    }
+      return `subgraph cluster_${n.id}{label=${dq(nodeName(n))};fontname="JetBrains Mono";fontsize=12;style="rounded,dashed";class="ptnode";${body}}`;
+    };
+    dot += all.map(clusterDot).join('');
     for (const n of all) for (const c of n.kids || []) dot += `${anchor.get(n.id)}->${anchor.get(c.id)}[ltail=cluster_${n.id},lhead=cluster_${c.id},class="treeedge",arrowhead=none,weight=4];`;
     for (const [k, I] of res.inst) for (const d of I.deps) { dot += `a${d.replace('.', '_')}->a${k.replace('.', '_')}[class="dep",constraint=false];`; plain.edges.push({ from: d, to: k, label: '' }); }
     return { dot: dot + '}', ...plain };
@@ -1387,10 +1393,14 @@
   function sdCls(r) {
     const c = r.cls;
     const symRows = [...new Set([...c.syn.keys(), ...c.inh.keys()])].map((s) => [esc(s), esc([...(c.syn.get(s) || [])].join(', ')) || '—', esc([...(c.inh.get(s) || [])].join(', ')) || '—']);
-    const rows = c.rows.map((x) => [esc(SD.prodStr(x.p)), { v: esc(x.r.text), cls: 'l' }, x.kind, x.kind !== 'inherited' ? '<span class="muted">always fine</span>' : x.ok ? '<span class="chip ok">✓ allowed</span>' : `<span class="chip bad">✗ ${esc(x.why)}</span>`]);
-    const verdict = c.S ? 'Every attribute is synthesized, so the SDD is <b>S-attributed</b>, and therefore also L-attributed. It can be evaluated bottom-up, for example during LR parsing.'
-      : c.L ? 'It has inherited attributes, so it is not S-attributed, but every inherited attribute uses only the head’s inherited attributes and symbols to its left: it is <b>L-attributed</b>. One depth-first, left-to-right pass evaluates it, as in a recursive-descent parser.'
-        : `It is <b>neither S- nor L-attributed</b>: ${esc(c.lFails[0].why)} in ${esc(SD.prodStr(c.lFails[0].p))}. A single left-to-right pass cannot evaluate it; it needs the full dependency graph.`;
+    const lCell = (x) => {
+      if (x.kind !== 'inherited') return '<span class="muted">always fine</span>';
+      return x.ok ? '<span class="chip ok">✓ allowed</span>' : `<span class="chip bad">✗ ${esc(x.why)}</span>`;
+    };
+    const rows = c.rows.map((x) => [esc(SD.prodStr(x.p)), { v: esc(x.r.text), cls: 'l' }, x.kind, lCell(x)]);
+    let verdict = `It is <b>neither S- nor L-attributed</b>: ${esc(c.lFails.length ? c.lFails[0].why : '')} in ${esc(c.lFails.length ? SD.prodStr(c.lFails[0].p) : '')}. A single left-to-right pass cannot evaluate it; it needs the full dependency graph.`;
+    if (c.S) verdict = 'Every attribute is synthesized, so the SDD is <b>S-attributed</b>, and therefore also L-attributed. It can be evaluated bottom-up, for example during LR parsing.';
+    else if (c.L) verdict = 'It has inherited attributes, so it is not S-attributed, but every inherited attribute uses only the head’s inherited attributes and symbols to its left: it is <b>L-attributed</b>. One depth-first, left-to-right pass evaluates it, as in a recursive-descent parser.';
     return stage('sd-cls', '', 'S-attributed and L-attributed', (c.S ? okChip('S-attributed') : badChip('not S-attributed')) + (c.L ? okChip('L-attributed') : badChip('not L-attributed')) + checkChip(r),
       `<div class="formula" style="white-space:normal">Synthesized: the rule defines an attribute of the head A. Inherited: it defines an attribute of a body symbol Xᵢ. S-attributed: synthesized only. L-attributed: an inherited Xᵢ.b may use only inherited attributes of A and attributes of X₁ … Xᵢ₋₁.</div>
        <p>${verdict}</p>
@@ -1414,13 +1424,16 @@
     let r;
     try { r = SD.run($('#sdIn').value, $('#sdW').value); } catch (e) {
       showErr($('#sdErr'), e.message);
-      try { const sdd = SD.parseSDD($('#sdIn').value); if (lastSdOp === 'cls') ui.put($('#sdOut'), sdCls({ cls: SD.classify(sdd), sdd })); } catch (e2) { /* keep the error */ }
+      try { const sdd = SD.parseSDD($('#sdIn').value); if (lastSdOp === 'cls') ui.put($('#sdOut'), sdCls({ cls: SD.classify(sdd), sdd })); } catch { /* the SDD itself has an error: keep the message shown above */ }
       return;
     }
     store.set('sd', $('#sdIn').value); store.set('sdw', $('#sdW').value);
-    let html = `<div class="summary">${chip('productions', r.sdd.prods.length)}${chip('tokens', r.toks.length)}${r.cls.S ? '<span class="chip ok">S-attributed</span>' : r.cls.L ? '<span class="chip ok">L-attributed</span>' : '<span class="chip bad">not L-attributed</span>'}</div>`;
-    const o = lastSdOp;
-    html += o === 'dep' ? sdDep(r) : o === 'cls' ? sdCls(r) : o === 'st' ? sdSyntax(r) : sdTree(r);
+    let clsChip = '<span class="chip bad">not L-attributed</span>';
+    if (r.cls.S) clsChip = '<span class="chip ok">S-attributed</span>';
+    else if (r.cls.L) clsChip = '<span class="chip ok">L-attributed</span>';
+    const views = { dep: sdDep, cls: sdCls, st: sdSyntax };
+    const view = views[lastSdOp] || sdTree;
+    const html = `<div class="summary">${chip('productions', r.sdd.prods.length)}${chip('tokens', r.toks.length)}${clsChip}</div>${view(r)}`;
     ui.put($('#sdOut'), html);
   }
   rerenders.sdt = () => runSD();
