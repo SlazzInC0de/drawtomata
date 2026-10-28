@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Only the latest version on the `main` branch, which is what https://drawtomata.vercel.app/ serves, receives security fixes.
+Only the latest version on the `main` branch, which is what <https://drawtomata.vercel.app/> serves, receives security fixes.
 
 ## Reporting a vulnerability
 
