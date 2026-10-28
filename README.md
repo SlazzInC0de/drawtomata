@@ -15,6 +15,8 @@ Drawtomata converts between regular expressions, finite automata and grammars, a
 
 ![Draw FA screen](docs/screenshot.png)
 
+**Contents:** [Features](#features) · [Input format](#input-format) · [Keyboard](#keyboard-draw-fa) · [Running it](#running-it) · [Layout](#layout) · [Roadmap](#roadmap) · [Security and privacy](#security-and-privacy) · [License](#license)
+
 ## Features
 
 **RE → FA.** Thompson construction to a λ-NFA, λ-closure method to an NFA, subset construction to a DFA, then minimization with both the mark (table-filling) procedure and the π-partition method.
@@ -116,6 +118,12 @@ tests/run.js     conversion tests
 | 25 Oct 2026 | Code generation: three-address code, quadruples and triples, DAGs, SSA, basic blocks and flow graphs, liveness, code generator, peephole |
 | 27 Oct 2026 | Syntax-directed translation: annotated parse trees, dependency graphs and evaluation order, S/L-attributed checks, syntax trees |
 | 29 Oct 2026 | Lexical analysis: token recognition, lexer playground, input buffering, Lex/Yacc specs |
+
+## Security and privacy
+
+Drawtomata runs entirely in your browser. There are no accounts, no backend and no analytics, and your diagrams are autosaved only to this browser's `localStorage`. The site ships with a strict Content Security Policy and security headers (`vercel.json`).
+
+Found a vulnerability? Please report it privately as described in [SECURITY.md](SECURITY.md).
 
 ## License
 
