@@ -1697,25 +1697,16 @@
 
   const FILL_RUN = { re: runRE, rg: runRG, cfg: () => { runCFG(lastCfgOp || 'derive'); runPDA(); }, parse: () => runPS(), sdt: () => runSD(), cg: () => runCG(), lex: () => runLx(), pump: () => runPump() };
 
-  // boot
-  // restore what the visitor typed last time, but not one of the old built-in examples
-  const restore = (key, id) => { const v = store.get(key); if (v && v !== ui.D($('#' + id).dataset.example || '')) $('#' + id).value = v; };
-  restore('re', 'reIn'); restore('rg', 'rgIn'); restore('cfg', 'cfgIn');
+  // boot: every input starts blank, so nothing is converted until the visitor types something
+  // (clearing here also undoes the browser's own form restore on reload)
+  $$('[data-example], #cgLive').forEach((el) => { el.value = ''; });
+  $('#pmLang').value = '';
   setEps(ui.eps);
-  restore('ps', 'psIn'); restore('psw', 'psW');
-  const savedPP = store.get('psprec'); if (savedPP !== null) $('#psPrec').value = savedPP;
   runRE(); runRG(); runCFG('derive'); runPDA(); runPS('ff');
   emptyState($('#langOut'), 'Describe a language', 'Choose Σ and one or two conditions above, then press Build DFA.');
-  const savedPL = store.get('pmlang'); if (savedPL && savedPL !== 'anbn' && DT.theory.LANGUAGES[savedPL]) $('#pmLang').value = savedPL;
-  restore('pmre', 'pmRe');
   runPump();
-  restore('cg', 'cgIn');
-  const savedCL = store.get('cglive'); if (savedCL) $('#cgLive').value = savedCL;
   runCG('tac');
-  restore('sd', 'sdIn'); restore('sdw', 'sdW');
   runSD('tree');
-  ['lxLexeme', 'lxPats', 'lxPatIn', 'lxCode', 'lxL', 'lxY', 'lxLyIn', 'lxStmt'].forEach((k) => restore(k, k));
-  { const n = store.get('lxN'); if (n) $('#lxN').value = n; }
   runLx(store.get('lxop') || 'ph');
   showTab((location.hash || '#' + (PAGE.tab || 're')).slice(1), false);
   if (!location.hash && PAGE.op) {
