@@ -16,6 +16,8 @@ Notation follows Peter Linz (An Introduction to Formal Languages and Automata) f
 - [SDT](https://drawtomata.vercel.app/#sdt): syntax-directed definitions with synthesized and inherited attributes, annotated parse tree for an input string, dependency graph and topological evaluation order, S-attributed and L-attributed check, syntax tree construction with Node and Leaf
 - [Code gen](https://drawtomata.vercel.app/#cg): three-address code, quadruples, triples and indirect triples, DAG by value numbers, SSA with φ-functions, leaders, basic blocks, flow graph and loops, live variables and next-use tables, DAG-based block optimization, the getReg code generator with register and address descriptors and costs, peephole optimization
 - [Pumping lemma](https://drawtomata.vercel.app/#pump): adversary game for non-regular languages such as aⁿbⁿ, wwᴿ, ww, aⁿbⁿcⁿ and balanced parentheses, and the pigeonhole argument for a regular language given as an RE
+- [Verified against the textbook](https://drawtomata.vercel.app/verified/): worked examples from Aho, Lam, Sethi and Ullman and from Linz, with the book's answer next to the tool's output
+- Learning mode: subset construction, the minimization mark table, the LL(1) predictive parse and the LR parse can be stepped through one rule at a time
 
 ## Input format
 
