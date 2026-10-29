@@ -82,6 +82,16 @@
     <button role="tab" data-tab="lex" data-group="comp" aria-selected="false" hidden>Lexer</button>
     <button role="tab" data-tab="cg" data-group="comp" aria-selected="false" hidden>Code gen</button>
   </nav>
+  <div class="welcome" id="welcome" role="region" aria-label="Getting started" hidden>
+    <p><b>New here?</b> Pick a tool above and type your own input, or try one:</p>
+    <div class="welcomeBtns">
+      <button type="button" class="ghost" data-try="re">Regex → minimal DFA</button>
+      <button type="button" class="ghost" data-try="fa">NFA → DFA</button>
+      <button type="button" class="ghost" data-try="parse">LL(1) table</button>
+      <button type="button" class="ghost" data-try="lex">Compiler phases</button>
+    </div>
+    <button type="button" class="iconBtn welcomeX" id="welcomeX" aria-label="Dismiss">×</button>
+  </div>
 
   <main class="main">
     <!-- ===================== RE → FA ===================== -->

@@ -94,6 +94,12 @@ kbd { font: 500 10px var(--ui); color: var(--muted); }
 .subModes::-webkit-scrollbar { display: none; }
 .subModes button { flex: none; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font-weight: 500; font-size: 13.5px; padding: 0 10px; cursor: pointer; white-space: nowrap; transition: color 0.15s, border-color 0.15s; }
 .subModes button[hidden] { display: none; }
+.welcome { flex: none; position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 8px 48px 8px max(16px, env(safe-area-inset-left, 0px)); background: var(--accent-soft); border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.welcome[hidden] { display: none; }
+.welcome p { margin: 0; }
+.welcomeBtns { display: flex; flex-wrap: wrap; gap: 6px; }
+.welcomeBtns button { padding: 4px 10px; font-size: 13px; }
+.welcomeX { position: absolute; top: 50%; right: 8px; transform: translateY(-50%); font-size: 18px; }
 .subModes button:hover { color: var(--fg); }
 .subModes button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
 .topRight { display: flex; align-items: center; gap: 8px; flex: none; }

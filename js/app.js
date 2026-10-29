@@ -1712,6 +1712,23 @@
   });
   ['#lxLexeme', '#lxPatIn', '#lxLyIn', '#lxN'].forEach((s) => $(s).addEventListener('keydown', (e) => { if (e.key === 'Enter') runLx(); }));
 
+  // first-visit banner: examples run only when asked, inputs stay blank otherwise
+  const welcome = $('#welcome');
+  const closeWelcome = () => { welcome.hidden = true; store.set('welcomed', '1'); };
+  if (!store.get('welcomed')) welcome.hidden = false;
+  $('#welcomeX').addEventListener('click', closeWelcome);
+  const fillTab = (t) => $$(`#tab-${t} [data-example]`).forEach((el) => { if (!el.value.trim()) el.value = ui.D(el.dataset.example); });
+  const TRY = {
+    re: () => { showTab('re'); fillTab('re'); runRE(); },
+    fa: () => { showTab('fa'); editor.load(exFA(EX.endsab), { rename: false }); runOp('dfa'); },
+    parse: () => { showTab('parse'); fillTab('parse'); runPS('ll1'); },
+    lex: () => { showTab('lex'); fillTab('lex'); runLx('ph'); }
+  };
+  welcome.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-try]');
+    if (!b) return;
+    closeWelcome(); TRY[b.dataset.try](); window.scrollTo(0, 0);
+  });
   const FILL_RUN = { re: runRE, rg: runRG, cfg: () => { runCFG(lastCfgOp || 'derive'); runPDA(); }, parse: () => runPS(), sdt: () => runSD(), cg: () => runCG(), lex: () => runLx(), pump: () => runPump() };
 
   // boot: every input starts blank, so nothing is converted until the visitor types something
