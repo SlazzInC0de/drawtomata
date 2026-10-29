@@ -12,7 +12,7 @@ Notation follows Peter Linz (An Introduction to Formal Languages and Automata) f
 - [Grammar ⇄ FA](https://drawtomata.vercel.app/#rg): right-linear and left-linear regular grammars to NFA
 - [CFG & PDA](https://drawtomata.vercel.app/#cfg): leftmost and rightmost derivations, parse trees, bounded ambiguity search, strings of L(G) up to a length, CFG → NPDA (GNF or general method), NPDA simulator with instantaneous descriptions, NPDA → CFG, grammar simplification and Chomsky normal form
 - [Parsing](https://drawtomata.vercel.app/#parse): FIRST and FOLLOW sets, left recursion removal, left factoring, LL(1) table and trace, recursive descent, LR(0) items, SLR(1), canonical LR(1) and LALR(1) tables with shift-reduce traces, %left / %right precedence, operator precedence parsing
-- [Lexer](https://drawtomata.vercel.app/#lex): token stream with attributes and symbol table for C code, token counts by class, relop / id / number transition diagrams, token patterns combined into one NFA and DFA, input buffering with sentinels, Lex and Yacc files run end to end
+- [Lexer](https://drawtomata.vercel.app/#lex): the phases of a compiler on a statement such as position = initial + rate * 60 (tokens, syntax tree, inttofloat, three-address code, optimized and target code), token stream with attributes and symbol table for C code, token counts by class, relop / id / number transition diagrams, token patterns combined into one NFA and DFA, input buffering with sentinels, Lex and Yacc files run end to end
 - [SDT](https://drawtomata.vercel.app/#sdt): syntax-directed definitions with synthesized and inherited attributes, annotated parse tree for an input string, dependency graph and topological evaluation order, S-attributed and L-attributed check, syntax tree construction with Node and Leaf
 - [Code gen](https://drawtomata.vercel.app/#cg): three-address code, quadruples, triples and indirect triples, DAG by value numbers, SSA with φ-functions, leaders, basic blocks, flow graph and loops, live variables and next-use tables, DAG-based block optimization, the getReg code generator with register and address descriptors and costs, peephole optimization
 - [Pumping lemma](https://drawtomata.vercel.app/#pump): adversary game for non-regular languages such as aⁿbⁿ, wwᴿ, ww, aⁿbⁿcⁿ and balanced parentheses, and the pigeonhole argument for a regular language given as an RE
@@ -23,7 +23,7 @@ Notation follows Peter Linz (An Introduction to Formal Languages and Automata) f
 - Grammar: one production per line, e.g. `S -> aSb | λ`; variables are capitals like `S` or `A1`
 - Parsing grammar: `E -> E + T | T`, `F -> ( E ) | id`; words like `id`, `if`, `num` are single terminals
 - NPDA: `δ(q0, a, z) = {(q0, az), (q1, λ)}` with the stack top written first
-- Lex / Yacc: standard .l and .y files with %% sections, %token, %left and %right
+- Lex / Yacc: standard .l and .y files with %% sections, trailing context r/s, %token, %left, %right and %prec
 - SDD: `E -> E1 + T { E.val = E1.val + T.val }`, one production per line with rules in braces
 - Program: `x = a + b * c`, `a[i] = x`, `if i <= 10 goto (3)`, `goto L1`; lines may be numbered `(3)`; `t1`, `t2` are temporaries
 

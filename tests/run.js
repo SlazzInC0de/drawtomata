@@ -6,7 +6,7 @@ const vm = require('vm');
 const assert = require('assert/strict');
 
 const ctx = vm.createContext({ console });
-for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js', 'lex.js']) {
+for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js', 'lex.js', 'phases.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'), ctx, { filename: f });
 }
 const { regex, fa, grammar, parsing: P, theory: TH } = ctx.DT;
@@ -468,6 +468,40 @@ test('Lex and Yacc files run end to end', () => {
   assert.ok(trace.indexOf('Expr * Expr') < trace.indexOf('Expr + Expr'));
 });
 
+// ---------- phases of a compiler, %prec, trailing context ----------
+test('compiler phases reproduce Aho figure 1.7', () => {
+  const PH = ctx.DT.phases;
+  const r = PH.run('position = initial + rate * 60');
+  assert.equal(r.tokens.map((t) => (t.token === 'id' ? `<id,${t.attr}>` : `<${t.lexeme}>`)).join(' '), '<id,1> <=> <id,2> <+> <id,3> <*> <60>');
+  assert.deepEqual(plain(r.tac.map(PH.tacStr)), ['t1 = inttofloat(60)', 't2 = id3 * t1', 't3 = id2 + t2', 'id1 = t3']);
+  assert.deepEqual(plain(r.opt.code.map(PH.tacStr)), ['t1 = id3 * 60.0', 'id1 = id2 + t1']);
+  assert.deepEqual(plain(r.prog.map((m) => m.op)), ['LDF', 'MULF', 'LDF', 'ADDF', 'STF']);
+  assert.ok(r.check.ok);
+  for (const src of ['int i, n\nfloat avg, sum\navg = sum / n\ni = i + 1', 'x = -(a + 2 * 3) * b', 'int k\nk = 2.5 * 4', 'y = (a + b) * (c - 1)\nz = y / 2']) {
+    assert.ok(PH.run(src).check.ok, src);
+  }
+  assert.equal(PH.run('int k\nk = 2.5 * 4').opt.code.map(PH.tacStr).join(), 'id1 = 10');
+  assert.throws(() => PH.run('x = a +'), /Syntax error/);
+  assert.throws(() => PH.run('x = a @ b'), /Lexical error/);
+});
+
+test('yacc %prec makes unary minus bind tighter than *', () => {
+  const LX = ctx.DT.lex, P = ctx.DT.parsing;
+  const ys = "%token NUM\n%left '+' '-'\n%left '*' '/'\n%right UMINUS\n%%\ne : e '+' e | e '-' e | e '*' e | e '/' e | '-' e %prec UMINUS | NUM ;\n%%";
+  const handles = (text) => { const y = LX.parseYacc(text), t = LX.yaccTable(y); assert.equal(t.table.conflicts.length, 0); return P.lrParse(t.GA, t.table, ['-', 'num', '*', 'num']).rows.filter((r) => r.handle).map((r) => r.handle); };
+  const withPrec = handles(ys), without = handles(ys.replace(' %prec UMINUS', ''));
+  assert.ok(withPrec.indexOf('- E') < withPrec.indexOf('E * E'), '(-2) * 3');
+  assert.ok(without.indexOf('E * E') < without.indexOf('- E'), '-(2 * 3)');
+});
+
+test('lex trailing context r/s (Aho: DO5I=1,25 vs DO5I=1.25)', () => {
+  const LX = ctx.DT.lex;
+  const spec = LX.parseLex('%%\nDO/[A-Z0-9]*=[A-Z0-9]*,  { return DO; }\n[A-Z][A-Z0-9]*  { return ID; }\n[0-9.]+  { return NUM; }\n[=,]  { return yytext[0]; }\n%%');
+  const run = (w) => LX.runLex(spec, w).map((t) => `${t.lexeme}:${t.token}`).join(' ');
+  assert.equal(run('DO5I=1,25'), "DO:DO 5:NUM I:ID =:'=' 1:NUM ,:',' 25:NUM");
+  assert.equal(run('DO5I=1.25'), "DO5I:ID =:'=' 1.25:NUM");
+});
+
 // Converter pages are generated from index.html; they must not drift from it.
 test('converter pages and sitemap are up to date (run node scripts/build-pages.js)', () => {
   const { build, PAGES } = require('../scripts/build-pages.js');
@@ -506,6 +540,19 @@ test('CDN scripts declare SRI and CORS', () => {
     assert.match(e.integrity || '', /^sha384-[A-Za-z0-9+/]+=*$/, `missing SRI on ${e.src}`);
     assert.ok(e.cors, `missing crossorigin on ${e.src}`);
     assert.ok(scriptSrc.some((s) => e.src.startsWith(s)), `${e.src} is not allowed by script-src`);
+  }
+});
+
+// vendored libraries are served by the site itself; their SRI pins the exact bytes
+test('vendored scripts match their SRI hash', () => {
+  const local = scripts.map((x) => x.attrs).filter((a) => /\bsrc\s*=\s*"js\/vendor\//i.test(a));
+  assert.ok(local.length, 'expected vendored scripts in index.html');
+  for (const a of local) {
+    const src = a.match(/src\s*=\s*"([^"]+)"/i)[1];
+    const want = (a.match(/integrity\s*=\s*"([^"]+)"/i) || [])[1];
+    if (!want) continue;
+    const got = 'sha384-' + crypto.createHash('sha384').update(fs.readFileSync(path.join(root, src))).digest('base64');
+    assert.equal(want, got, `${src} does not match its integrity hash`);
   }
 });
 

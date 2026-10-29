@@ -46,7 +46,9 @@ The canvas has pan and zoom, undo/redo, autosave, auto-layout, and PNG / SVG / J
 
 **More grammar tools.** NPDA → CFG with Linz's [qᵢ A qⱼ] construction (the NPDA is normalized first, and the grammar is checked against the simulator), and grammar simplification (λ-productions, unit productions, useless symbols) with conversion to Chomsky normal form.
 
-**Lexical analysis.** Paste C code to get the token stream with lexemes, token names and attributes (`<id, 1> <relop, LE> <number, 42>`), counts by class and the symbol table. Trace Aho's relop, id, number and white-space transition diagrams move by move, combine token patterns into one NFA and DFA that announces the winning pattern in each state (Aho fig. 3.54), and step through input buffering with two halves and sentinels. Lex and Yacc files run for real: yylex takes the longest match, the `.y` grammar becomes an LALR(1) table with conflicts settled by `%left` / `%right`, and the tokens are parsed step by step. The DFA scanner is checked against trying every pattern on its own, and every lexeme is read back through the buffers.
+**Phases of a compiler.** Type `position = initial + rate * 60` (or your own statements, with optional `int` / `float` declarations) to see the output of every phase, as in the Dragon Book's figure 1.7: tokens and symbol table, syntax tree, type checking with `inttofloat`, three-address code, optimized code and target machine code. The optimized and machine code are run against the three-address code on random inputs.
+
+**Lexical analysis.** Paste C code to get the token stream with lexemes, token names and attributes (`<id, 1> <relop, LE> <number, 42>`), counts by class and the symbol table. Trace Aho's relop, id, number and white-space transition diagrams move by move, combine token patterns into one NFA and DFA that announces the winning pattern in each state (Aho fig. 3.54), and step through input buffering with two halves and sentinels. Lex and Yacc files run for real: yylex takes the longest match (trailing context `r/s` included), the `.y` grammar becomes an LALR(1) table with conflicts settled by `%left` / `%right` and `%prec`, and the tokens are parsed step by step. The DFA scanner is checked against trying every pattern on its own, and every lexeme is read back through the buffers.
 
 **Syntax-directed translation.** Write a grammar with semantic rules (`E -> E1 + T { E.val = E1.val + T.val }`) and an input string to get the annotated parse tree, the dependency graph with a topological evaluation order, an S-attributed and L-attributed check that names the rule breaking it, and the syntax tree built by `Node` and `Leaf` calls. Inherited attributes, actions such as `addType`, and string translations with `||` all work. The values are checked by evaluating a second way: one postorder pass for S-attributed definitions, one depth-first left-to-right pass for L-attributed ones.
 
@@ -65,7 +67,7 @@ Notation follows Peter Linz, *An Introduction to Formal Languages and Automata*,
 | Parsing grammar | `E -> E + T \| T`, `F -> ( E ) \| id`; words like `id`, `if`, `num` are single terminals |
 | Precedence | `%left + -` then `%left * /`, lowest precedence first |
 | NPDA | `δ(q0, a, z) = {(q0, az), (q1, λ)}` with the stack top written first |
-| Lex / Yacc | standard `.l` and `.y` files: definitions, `%%`, rules with actions; `%token`, `%left`, `%right`, `%start` |
+| Lex / Yacc | standard `.l` and `.y` files: definitions, `%%`, rules with actions, trailing context `r/s`; `%token`, `%left`, `%right`, `%nonassoc`, `%prec`, `%start` |
 | SDD | `T' -> * F T1' { T1'.inh = T'.inh * F.val ; T'.syn = T1'.syn }`; write `E1`, `T1'` for a second copy of a nonterminal |
 | Program | `x = a + b * c`, `a[i] = x`, `if i <= 10 goto (3)`, `L1: goto L2`; lines may be numbered `(3)` or `3)`; `t1`, `t2`, … are temporaries |
 
@@ -89,7 +91,7 @@ npm start        # python3 -m http.server 8000
 npm test         # node tests/run.js
 ```
 
-Diagrams use [viz.js](https://github.com/mdaines/viz-js) (Graphviz in WebAssembly) from jsDelivr, with a plain SVG layout as fallback.
+Diagrams use [viz.js](https://github.com/mdaines/viz-js) 3.2.4 (Graphviz in WebAssembly), served from `js/vendor` with its SRI hash pinned, so the site needs no CDN; a plain SVG layout is the fallback.
 
 To deploy, push the folder to GitHub and enable Pages on the root of `main`, or import the repo into Vercel or Netlify with no build command.
 
@@ -103,6 +105,7 @@ js/automata.js   Thompson, λ-removal, subset, minimization, state elimination, 
 js/grammar.js    grammar parsing, CFG derivations, ambiguity, NPDA
 js/parsing.js    FIRST/FOLLOW, LL(1), recursive descent, LR(0)/SLR/CLR/LALR, precedence
 js/theory.js     pumping lemma, NPDA → CFG, simplification and CNF
+js/phases.js     the phases of a compiler on one statement
 js/lex.js        transition diagrams, patterns to DFA, C lexer, input buffering, Lex/Yacc
 js/sdt.js        semantic rules, annotated parse trees, dependency graphs, S/L-attributed checks
 js/codegen.js    three-address code, DAGs, SSA, blocks, liveness, code generator, peephole

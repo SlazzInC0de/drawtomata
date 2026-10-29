@@ -78,6 +78,7 @@
     if (x.dataset.for === 'rgIn') runRG();
     if (x.dataset.for === 'cfgIn') runCFG(lastCfgOp);
     if (x.dataset.for === 'psIn') runPS();
+    if (x.dataset.for === 'lxStmt') runLx('ph');
     if (x.dataset.for === 'lxPats') { if (b.dataset.in) $('#lxPatIn').value = b.dataset.in; runLx('re'); }
     if (x.dataset.for === 'sdIn') { if (b.dataset.w) $('#sdW').value = b.dataset.w; runSD(b.dataset.op || (lastSdOp === 'st' || lastSdOp === 'cls' ? 'tree' : lastSdOp)); }
     if (x.dataset.for === 'cgIn') { $('#cgLive').value = b.dataset.live || ''; runCG(); }
@@ -1567,7 +1568,8 @@
     const trace = pr ? traceTable(['Stack', 'Input', 'Action'], pr.rows.map((r) => [esc(r.stack), inputCell(r.input), esc(r.action)]), pr.accepted) : '';
     psLoad = { g: y.grammarText, prec: y.precText, w: toks.error ? '' : toks.toks.join(' ') };
     html += stage('lx-y', '2', 'Yacc file → LALR(1) table', chip('LALR states', t.coll.states.length) + (conflictsBefore ? chip('conflicts', `${conflictsBefore} → ${t.table.conflicts.length}`) : okChip('no conflicts')) + (pr ? (pr.accepted ? okChip('the tokens from yylex parse') : badChip('syntax error')) : ''),
-      `<p>Yacc builds an LALR(1) table. Shift/reduce conflicts are settled by the %left / %right declarations, or by shifting; reduce/reduce conflicts by the rule listed first.</p>
+      `<p>Yacc builds an LALR(1) table. Shift/reduce conflicts are settled by the %left / %right declarations, or by shifting; reduce/reduce conflicts by the rule listed first. A rule with <b>%prec</b> takes the precedence of the token named after it, which is how unary minus binds tighter than *.</p>
+       ${y.overrides.length ? `<p class="small muted">%prec: ${y.overrides.map(([k, v]) => esc(`${k.replace('|', ' → ')} uses ${v}`)).join('; ')}. The Parsing tab has no %prec, so these rules fall back to their last terminal there.</p>` : ''}
        ${y.warnings.map((w) => `<p class="small muted">${esc(w)}</p>`).join('')}
        <div class="cols"><div><div class="sub">Grammar as the parser sees it</div>${gramBlock(t.G)}</div><div><div class="sub">Precedence</div><div class="prods">${esc(y.precText || 'none')}</div></div></div>
        ${decisions ? `<div class="sub">How the conflicts were settled</div><ul class="steps" style="font-family:inherit;font-size:14px">${decisions}</ul>${t.table.resolved.length > 12 ? `<p class="small muted">${t.table.resolved.length - 12} more settled the same way.</p>` : ''}` : ''}
@@ -1581,15 +1583,67 @@
     $('#psIn').value = psLoad.g; $('#psPrec').value = psLoad.prec; $('#psUsePrec').checked = true; if (psLoad.w) $('#psW').value = psLoad.w;
     showTab('parse'); runPS('lalr');
   });
+  // PHASES OF A COMPILER (lexer tab)
+  function astGraph(tree) {
+    const nodes = [], edges = [];
+    const label = (n) => {
+      switch (n.k) {
+        case 'assign': return '=';
+        case 'id': return `⟨id, ${n.entry}⟩`;
+        case 'num': return n.text;
+        case 'neg': return 'minus';
+        case 'conv': return n.to === 'float' ? 'inttofloat' : 'floattoint';
+        default: return n.op;
+      }
+    };
+    const walk = (n) => {
+      const id = nodes.length;
+      nodes.push({ id, label: label(n), shape: n.k === 'id' || n.k === 'num' ? 'plaintext' : n.k === 'conv' ? 'box' : 'circle' });
+      const kids = n.k === 'assign' ? [n.target, n.e] : n.k === 'bin' ? [n.l, n.r] : n.a ? [n.a] : [];
+      kids.forEach((c) => edges.push({ from: id, to: walk(c), label: '' }));
+      return id;
+    };
+    walk(tree);
+    return { nodes, edges, rankdir: 'TB', ordering: true };
+  }
+  function lxPhases() {
+    const PH = DT.phases;
+    const r = PH.run($('#lxStmt').value);
+    const stream = r.tokens.map((t) => `&lt;${esc(t.token === 'number' ? t.lexeme : t.token)}${t.token === 'id' ? `, ${t.attr}` : ''}&gt;`).join(' ');
+    const listing = (code) => `<div class="prods">${code.map((x) => esc(PH.tacStr(x))).join('\n')}</div>`;
+    const trees = (list) => list.map((t) => ui.slot(astGraph(t))).join('');
+    const symRows = r.symtab.map((e, i) => [String(i + 1), esc(e.name), e.type]);
+    const verdict = r.check.ok ? okChip('the optimized code and the machine code compute the same values as the three-address code on 30 random inputs') : badChip(`${r.check.phase} gives a different ${r.check.v}`);
+    return stage('ph-0', '', 'The phases of a compiler', verdict,
+      `<p>The statement goes through each phase in turn; the symbol table is shared by all of them. This is Aho, Lam, Sethi and Ullman, figure 1.7.</p>
+       <div class="sub">Character stream</div><div class="prods">${esc(r.source)}</div>
+       <div class="sub">Symbol table</div>${grid(['Entry', 'Name', 'Type'], symRows)}`)
+      + stage('ph-1', '1', 'Lexical analyzer', chip('tokens', r.tokens.length),
+        `<p>Groups characters into lexemes and emits a token for each. An identifier becomes ⟨id, n⟩, where n is its symbol-table entry; operators and numbers stand for themselves. White space is dropped.</p><div class="prods" style="white-space:normal">${stream}</div>`)
+      + stage('ph-2', '2', 'Syntax analyzer', '',
+        `<p>Builds the syntax tree from the tokens. Operators are interior nodes and their operands are children; * sits below + because it binds tighter.</p>${trees(r.trees)}`)
+      + stage('ph-3', '3', 'Semantic analyzer', r.notes.length ? chip('conversions', r.notes.length) : okChip('types agree'),
+        `<p>Checks types against the symbol table. Where an int meets a float, it inserts a conversion node, drawn as a box.</p>
+         ${r.notes.length ? `<ul class="steps" style="font-family:inherit;font-size:14px">${r.notes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}${trees(r.typed)}`)
+      + stage('ph-4', '4', 'Intermediate code generator', chip('instructions', r.tac.length),
+        `<p>Walks the tree and writes three-address code, one temporary for each operator.</p>${listing(r.tac)}`)
+      + stage('ph-5', '5', 'Code optimizer', chip('instructions', `${r.tac.length} → ${r.opt.code.length}`),
+        `<p>Does at compile time what it can: conversions and arithmetic on constants are folded, and a copy into the target is merged with the instruction that computes it.</p>
+         ${r.opt.log.length ? `<ul class="steps" style="font-family:inherit;font-size:14px">${r.opt.log.map((n) => `<li class="mono">${esc(n)}</li>`).join('')}</ul>` : '<p class="small muted">Nothing to improve.</p>'}${listing(r.opt.code)}`)
+      + stage('ph-6', '6', 'Code generator', chip('instructions', r.prog.length),
+        `<p>Maps each instruction onto the target machine: LD loads a register, ST stores it, and the F suffix marks floating-point operations. # marks an immediate constant.</p>
+         <div class="prods">${r.prog.map((m) => esc(m.text)).join('\n')}</div>`);
+  }
+
   function runLx(op) {
     lastLx = op || lastLx;
     syncLx();
     showErr($('#lxErr'), '');
     let html;
     try {
-      html = lastLx === 're' ? lxPatterns() : lastLx === 'play' ? lxPlay() : lastLx === 'buf' ? lxBuffer() : lastLx === 'ly' ? lxLexYacc() : lxDiagrams();
+      html = lastLx === 'ph' ? lxPhases() : lastLx === 're' ? lxPatterns() : lastLx === 'play' ? lxPlay() : lastLx === 'buf' ? lxBuffer() : lastLx === 'ly' ? lxLexYacc() : lxDiagrams();
     } catch (e) { showErr($('#lxErr'), e.message); return; }
-    ['lxLexeme', 'lxPats', 'lxPatIn', 'lxCode', 'lxN', 'lxL', 'lxY', 'lxLyIn'].forEach((k) => store.set(k, $('#' + k).value));
+    ['lxLexeme', 'lxPats', 'lxPatIn', 'lxCode', 'lxN', 'lxL', 'lxY', 'lxLyIn', 'lxStmt'].forEach((k) => store.set(k, $('#' + k).value));
     store.set('lxop', lastLx);
     ui.put($('#lxOut'), html);
   }
@@ -1620,7 +1674,7 @@
   const savedSD = store.get('sd'); if (savedSD) $('#sdIn').value = savedSD;
   const savedSW = store.get('sdw'); if (savedSW) $('#sdW').value = savedSW;
   runSD('tree');
-  ['lxLexeme', 'lxPats', 'lxPatIn', 'lxCode', 'lxN', 'lxL', 'lxY', 'lxLyIn'].forEach((k) => { const v = store.get(k); if (v !== null) $('#' + k).value = v; });
+  ['lxLexeme', 'lxPats', 'lxPatIn', 'lxCode', 'lxN', 'lxL', 'lxY', 'lxLyIn', 'lxStmt'].forEach((k) => { const v = store.get(k); if (v !== null) $('#' + k).value = v; });
   runLx(store.get('lxop') || 'td');
   showTab((location.hash || '#' + (PAGE.tab || 're')).slice(1), false);
   if (!location.hash && PAGE.op) {

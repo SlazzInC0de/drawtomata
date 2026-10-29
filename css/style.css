@@ -408,7 +408,7 @@ article.seo + footer.seo { margin-top: 24px; }
 .seo a:link, .seo a:visited { color: var(--accent); }
 .seoLead { font-size: 16.5px; color: var(--fg); }
 .seoCrumb, .seoMeta { font-size: 13px; color: var(--muted); margin: 0; }
-.seo table { border-collapse: collapse; font-family: var(--mono); font-size: 13.5px; margin: 8px 0 16px; }
+.seo table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; font-family: var(--mono); font-size: 13.5px; margin: 8px 0 16px; }
 .seo table.ex tr th, .seo table.ex tr td { border: 1px solid var(--line); padding: 6px 12px; text-align: left; }
 .seo table.ex tr th { background: var(--bg); color: var(--muted); font-weight: 600; }
 .seoNav h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 10px; }

@@ -531,6 +531,9 @@
   }
   function prodPrec(GA, pi, prec) {
     const rhs = GA.prods[pi].rhs;
+    // yacc's %prec: a production can borrow the precedence of a named token
+    const forced = prec.prodOverride && prec.prodOverride.get(`${GA.prods[pi].lhs}|${rhs.join(' ')}`);
+    if (forced && prec.tokPrec.has(forced)) return { ...prec.tokPrec.get(forced), tok: forced };
     for (let k = rhs.length - 1; k >= 0; k--) if (prec.tokPrec.has(rhs[k])) return { ...prec.tokPrec.get(rhs[k]), tok: rhs[k] };
     return null;
   }

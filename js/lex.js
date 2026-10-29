@@ -297,7 +297,6 @@
         }
       }
       if (c === '.') { out += '[^\\n]'; i++; continue; }
-      if (c === '/') throw new Error('Trailing context (/) is not supported.');
       out += c; i++;
     }
     return out;
@@ -318,6 +317,29 @@
     }
     return rules;
   }
+  // split r/s (trailing context) at a / outside quotes, brackets and escapes
+  function splitTrailing(p) {
+    let q = false, br = false;
+    for (let i = 0; i < p.length; i++) {
+      const c = p[i];
+      if (c === '\\') { i++; continue; }
+      if (c === '"' && !br) q = !q;
+      else if (!q && c === '[') br = true;
+      else if (!q && c === ']') br = false;
+      else if (!q && !br && c === '/') return { r: p.slice(0, i), s: p.slice(i + 1) };
+    }
+    return { r: p, s: null };
+  }
+  // r/s matches r only when s follows; the lookahead counts for the longest match but is not consumed
+  function compileRule(pattern, defs) {
+    const { r, s } = splitTrailing(pattern);
+    const src = lexToJS(r, defs);
+    const trail = s === null ? null : lexToJS(s, defs);
+    const full = trail === null ? src : `(?:${src})(?=(?<lexTrail>${trail}))`;
+    // the pattern is the user's own Lex rule, run only in their own browser
+    // eslint-disable-next-line security/detect-non-literal-regexp
+    return { src: full, re: new RegExp(full, 'y'), trailing: trail !== null };
+  }
   function parseLex(text) {
     const s = splitSections(text);
     const defs = new Map();
@@ -327,11 +349,9 @@
       if (m) defs.set(m[1], m[2].trim());
     }
     const rules = readRules(stripCodeBlocks(s.rules)).map((r, i) => {
-      let src, re;
-      // the pattern is the user's own Lex rule, run only in their own browser
-      // eslint-disable-next-line security/detect-non-literal-regexp
-      try { src = lexToJS(r.pattern, defs); re = new RegExp(src, 'y'); } catch (err) { throw new Error(`Rule ${i + 1} (${r.pattern}): ${err.message}`); }
-      return { ...r, src, re, returns: returnsOf(r.action) };
+      let c;
+      try { c = compileRule(r.pattern, defs); } catch (err) { throw new Error(`Rule ${i + 1} (${r.pattern}): ${err.message}`); }
+      return { ...r, ...c, returns: returnsOf(r.action) };
     });
     if (!rules.length) throw new Error('The rules section has no patterns.');
     return { defs, rules, code: s.code.trim() };
@@ -349,7 +369,8 @@
       spec.rules.forEach((r, k) => {
         r.re.lastIndex = pos;
         const m = r.re.exec(input);
-        if (m && m[0].length && (!best || m[0].length > best.len)) best = { k, len: m[0].length };
+        const total = m ? m[0].length + (r.trailing && m.groups ? m.groups.lexTrail.length : 0) : 0;
+        if (m && m[0].length && (!best || total > best.total)) best = { k, len: m[0].length, total };
       });
       if (!best) { out.push({ lexeme: input[pos], rule: null, start: pos }); pos++; continue; }
       const r = spec.rules[best.k];
@@ -393,8 +414,9 @@
       if (!m) { if (chunk.trim()) throw new Error(`Cannot read the rule "${chunk.trim().slice(0, 40)}". Write  lhs : alternative | alternative ;`); continue; }
       for (const alt of m[2].split('|')) {
         let syms = alt.trim().split(/\s+/).filter(Boolean);
-        if (syms.includes('%prec')) { warnings.push(`%prec in ${m[1]} : ${alt.trim()} is ignored; the last terminal's precedence is used.`); syms = syms.slice(0, syms.indexOf('%prec')); }
-        prods.push({ lhs: m[1], rhs: syms });
+        let precTok = null;
+        if (syms.includes('%prec')) { precTok = syms[syms.indexOf('%prec') + 1] || null; syms = syms.slice(0, syms.indexOf('%prec')); }
+        prods.push({ lhs: m[1], rhs: syms, precTok });
       }
     }
     if (!prods.length) throw new Error('The rules section has no grammar rules.');
@@ -418,7 +440,9 @@
     const precText = y.prec.map((l) => `%${l.assoc} ${l.toks.map(name).join(' ')}`).join('\n');
     const undeclared = [...new Set(y.prods.flatMap((p) => p.rhs))].filter((t) => !nts.has(t) && !/^'/.test(t) && !y.tokens.has(t));
     if (undeclared.length) y.warnings.push(`Not declared with %token: ${undeclared.join(', ')}.`);
-    return { ...y, map, grammarText: lines.join('\n'), precText, name };
+    // %prec overrides, keyed the way the parsing engine names a production
+    const overrides = y.prods.filter((p) => p.precTok).map((p) => [`${name(p.lhs)}|${p.rhs.map(name).join(' ')}`, name(p.precTok)]);
+    return { ...y, map, grammarText: lines.join('\n'), precText, name, overrides };
   }
   // build the LALR(1) table the way yacc does, conflicts resolved by precedence
   function yaccTable(y) {
@@ -427,7 +451,9 @@
     const GA = P.augment(G), ff = P.firstFollow(GA);
     const la = P.lalrFromLr1(GA, P.lr1Collection(GA, ff));
     const raw = P.lrTable(GA, la, 'lalr');
-    const table = P.resolveConflicts(GA, raw, P.parsePrecedence(y.precText));
+    const prec = P.parsePrecedence(y.precText);
+    prec.prodOverride = new Map(y.overrides || []);
+    const table = P.resolveConflicts(GA, raw, prec);
     return { G, GA, coll: la, raw, table };
   }
   // tokens from yylex, in the names the grammar uses

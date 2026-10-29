@@ -125,6 +125,32 @@ const PAGES = [
 <p>Different elimination orders give different, equally correct expressions. If the language matches, the answer is right.</p>`
   },
   {
+    slug: 'phases-of-compiler', tab: 'lex', op: 'ph',
+    title: 'Phases of a Compiler with Example: position = initial + rate * 60 | Drawtomata',
+    description: 'See every phase of a compiler on your own statement: tokens and symbol table, syntax tree, type checking with inttofloat, three-address code, optimized code and target machine code.',
+    h1: 'Phases of a compiler, step by step',
+    lead: 'Type an assignment such as <b>position = initial + rate * 60</b> above. Drawtomata passes it through the lexical analyzer, syntax analyzer, semantic analyzer, intermediate code generator, code optimizer and code generator, and shows the output of each, as in figure 1.7 of the Dragon Book.',
+    body: `
+<h2>The six phases</h2>
+<ol>
+<li><b>Lexical analyzer</b>: groups characters into tokens. position, initial and rate become ⟨id, 1⟩, ⟨id, 2⟩, ⟨id, 3⟩, pointing at the symbol table.</li>
+<li><b>Syntax analyzer</b>: builds the syntax tree; * sits below + because it binds tighter.</li>
+<li><b>Semantic analyzer</b>: checks types. The variables are float and 60 is an int, so an inttofloat node converts 60.</li>
+<li><b>Intermediate code generator</b>: writes three-address code with one temporary per operator.</li>
+<li><b>Code optimizer</b>: folds inttofloat(60) into 60.0 and merges the final copy.</li>
+<li><b>Code generator</b>: produces machine instructions with registers.</li>
+</ol>
+<p>The symbol table is shared by every phase, and errors can be reported by any of them.</p>
+<h2>Output for position = initial + rate * 60</h2>
+<table class="ex"><thead><tr><th>Phase</th><th>Output</th></tr></thead><tbody>
+<tr><td>Lexical</td><td>⟨id,1⟩ ⟨=⟩ ⟨id,2⟩ ⟨+⟩ ⟨id,3⟩ ⟨*⟩ ⟨60⟩</td></tr>
+<tr><td>Intermediate code</td><td>t1 = inttofloat(60)<br>t2 = id3 * t1<br>t3 = id2 + t2<br>id1 = t3</td></tr>
+<tr><td>Optimized code</td><td>t1 = id3 * 60.0<br>id1 = id2 + t1</td></tr>
+<tr><td>Target code</td><td>LDF R1, id3<br>MULF R1, R1, #60.0<br>LDF R2, id2<br>ADDF R2, R2, R1<br>STF id1, R2</td></tr>
+</tbody></table>
+<p>The book uses R2 and R1 the other way round; the instructions are the same. The tool checks that the optimized code and the machine code compute the same values as the three-address code before showing them.</p>`
+  },
+  {
     slug: 'lexical-analysis', tab: 'lex', op: 'play',
     title: 'Lexical Analyzer Online: Tokens, Symbol Table, Lex and Yacc | Drawtomata',
     description: 'Split C code into tokens with their attributes and a symbol table, trace the relop, id and number transition diagrams, combine token patterns into one DFA, simulate input buffering with sentinels, and run Lex and Yacc files.',
@@ -297,7 +323,7 @@ const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g
 const NAV = [
   ['nfa-to-dfa', 'NFA to DFA'], ['regex-to-dfa', 'Regex to DFA'], ['dfa-minimization', 'DFA minimization'],
   ['epsilon-nfa-to-nfa', 'ε-NFA to NFA'], ['fa-to-regex', 'FA to regex'], ['first-and-follow', 'FIRST and FOLLOW'],
-  ['lexical-analysis', 'Lexical analyzer'], ['ll1-parser', 'LL(1) table'], ['lr-parsing-table', 'SLR, CLR, LALR'], ['cfg-to-pda', 'CFG to PDA'],
+  ['phases-of-compiler', 'Compiler phases'], ['lexical-analysis', 'Lexical analyzer'], ['ll1-parser', 'LL(1) table'], ['lr-parsing-table', 'SLR, CLR, LALR'], ['cfg-to-pda', 'CFG to PDA'],
   ['pumping-lemma', 'Pumping lemma'], ['syntax-directed-translation', 'Annotated parse tree'], ['three-address-code', 'Three-address code']
 ];
 const toolLinks = (prefix, current) => `<nav class="seoNav" aria-label="All converters"><h2>All converters</h2><ul>${NAV.map(([s, t]) => `<li>${s === current ? `<span aria-current="page">${t}</span>` : `<a href="${prefix}${s}/">${t}</a>`}</li>`).join('')}</ul></nav>`;
