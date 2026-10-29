@@ -125,6 +125,26 @@ const PAGES = [
 <p>Different elimination orders give different, equally correct expressions. If the language matches, the answer is right.</p>`
   },
   {
+    slug: 'lexical-analysis', tab: 'lex', op: 'play',
+    title: 'Lexical Analyzer Online: Tokens, Symbol Table, Lex and Yacc | Drawtomata',
+    description: 'Split C code into tokens with their attributes and a symbol table, trace the relop, id and number transition diagrams, combine token patterns into one DFA, simulate input buffering with sentinels, and run Lex and Yacc files.',
+    h1: 'Lexical analyzer and token counter',
+    lead: 'Paste a piece of C code above. Drawtomata lists every token with its lexeme, token name and attribute, counts them by class (keywords, identifiers, constants, operators, separators, string literals), and builds the symbol table. The other views trace the transition diagrams, combine token patterns into one DFA, simulate the two-buffer input scheme and run Lex and Yacc files.',
+    body: `
+<h2>Tokens, lexemes and attributes</h2>
+<p>A <b>lexeme</b> is the text that was matched, a <b>token</b> its class, and the <b>attribute</b> what the parser needs to know about it. For <span class="mono">if (x1 &lt;= rate)</span> the stream is &lt;if&gt; &lt;(&gt; &lt;id, 1&gt; &lt;relop, LE&gt; &lt;id, 2&gt; &lt;)&gt;: the identifiers point at symbol-table entries 1 and 2, and relop carries which comparison it is. White space, comments and preprocessor lines are skipped and are not tokens.</p>
+<h2>Counting tokens</h2>
+<p>A common exam question asks how many tokens a statement has. <span class="mono">printf("sum = %d", x);</span> has 7: printf, (, the whole string literal, the comma, x, ) and the semicolon. A string literal is one token however long it is.</p>
+<h2>Transition diagrams</h2>
+<p>Aho draws relational operators, identifiers and unsigned numbers as transition diagrams. States marked * have read one character past the lexeme, so the forward pointer retracts before the token is returned. The tool runs each diagram on your input and shows every move.</p>
+<h2>Patterns to one DFA</h2>
+<p>Lex combines all token patterns into one NFA with a new start state, converts it to a DFA, and lets each DFA state announce the first-listed pattern among its final states. Scanning then takes the longest match. For the patterns a, abb and a*b+ the tool reproduces Aho's figure 3.54.</p>
+<h2>Input buffering</h2>
+<p>Two halves of N characters each end in a sentinel eof, so the scanner tests for the end of a buffer only when it reads eof instead of on every character. A lexeme longer than N can be lost when the half holding its start is reloaded; try a small N to see it happen.</p>
+<h2>Lex and Yacc</h2>
+<p>Paste a .l file and a .y file: yylex takes the longest match (the earlier rule on a tie), and the grammar becomes an LALR(1) table with conflicts settled by %left and %right, the way yacc does it. The tokens from yylex are then parsed step by step.</p>`
+  },
+  {
     slug: 'first-and-follow', tab: 'parse', op: 'ff',
     title: 'FIRST and FOLLOW Calculator, Step by Step | Drawtomata',
     description: 'Compute FIRST and FOLLOW sets for any context-free grammar, with FIRST of every production and the sets after each pass.',
@@ -277,7 +297,7 @@ const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g
 const NAV = [
   ['nfa-to-dfa', 'NFA to DFA'], ['regex-to-dfa', 'Regex to DFA'], ['dfa-minimization', 'DFA minimization'],
   ['epsilon-nfa-to-nfa', 'ε-NFA to NFA'], ['fa-to-regex', 'FA to regex'], ['first-and-follow', 'FIRST and FOLLOW'],
-  ['ll1-parser', 'LL(1) table'], ['lr-parsing-table', 'SLR, CLR, LALR'], ['cfg-to-pda', 'CFG to PDA'],
+  ['lexical-analysis', 'Lexical analyzer'], ['ll1-parser', 'LL(1) table'], ['lr-parsing-table', 'SLR, CLR, LALR'], ['cfg-to-pda', 'CFG to PDA'],
   ['pumping-lemma', 'Pumping lemma'], ['syntax-directed-translation', 'Annotated parse tree'], ['three-address-code', 'Three-address code']
 ];
 const toolLinks = (prefix, current) => `<nav class="seoNav" aria-label="All converters"><h2>All converters</h2><ul>${NAV.map(([s, t]) => `<li>${s === current ? `<span aria-current="page">${t}</span>` : `<a href="${prefix}${s}/">${t}</a>`}</li>`).join('')}</ul></nav>`;

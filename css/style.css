@@ -384,6 +384,18 @@ svg.canvas[data-tool="delete"] .fnode:hover .ncircle, svg.canvas[data-tool="dele
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 
+/* input buffering: two halves of cells, each ending in a sentinel */
+.bframe { margin: 0 0 14px; }
+.buf { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.bhalf { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 6px; overflow: hidden; }
+.bhalf.empty { padding: 4px 10px; color: var(--muted); font-size: 12.5px; }
+.bc { display: inline-block; min-width: 24px; padding: 3px 4px; text-align: center; font-family: var(--mono); font-size: 13px; border-right: 1px solid var(--line); }
+.bc:last-child { border-right: 0; }
+.bc.eof { color: var(--muted); font-size: 11px; }
+.bc.lexeme { background: var(--blue); }
+.bc.lb { box-shadow: inset 3px 0 0 var(--accent); }
+.bc.fw { box-shadow: inset 0 -3px 0 var(--green-ink); }
+
 /* ---------- converter pages: explanation and links below the tool ---------- */
 .seo { max-width: 760px; margin: 0 auto; padding: 40px 20px 8px; color: var(--fg); font-size: 15px; line-height: 1.7; }
 footer.seo { padding: 24px 20px 48px; border-top: 1px solid var(--line); }

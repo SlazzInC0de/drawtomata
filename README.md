@@ -46,6 +46,8 @@ The canvas has pan and zoom, undo/redo, autosave, auto-layout, and PNG / SVG / J
 
 **More grammar tools.** NPDA → CFG with Linz's [qᵢ A qⱼ] construction (the NPDA is normalized first, and the grammar is checked against the simulator), and grammar simplification (λ-productions, unit productions, useless symbols) with conversion to Chomsky normal form.
 
+**Lexical analysis.** Paste C code to get the token stream with lexemes, token names and attributes (`<id, 1> <relop, LE> <number, 42>`), counts by class and the symbol table. Trace Aho's relop, id, number and white-space transition diagrams move by move, combine token patterns into one NFA and DFA that announces the winning pattern in each state (Aho fig. 3.54), and step through input buffering with two halves and sentinels. Lex and Yacc files run for real: yylex takes the longest match, the `.y` grammar becomes an LALR(1) table with conflicts settled by `%left` / `%right`, and the tokens are parsed step by step. The DFA scanner is checked against trying every pattern on its own, and every lexeme is read back through the buffers.
+
 **Syntax-directed translation.** Write a grammar with semantic rules (`E -> E1 + T { E.val = E1.val + T.val }`) and an input string to get the annotated parse tree, the dependency graph with a topological evaluation order, an S-attributed and L-attributed check that names the rule breaking it, and the syntax tree built by `Node` and `Leaf` calls. Inherited attributes, actions such as `addType`, and string translations with `||` all work. The values are checked by evaluating a second way: one postorder pass for S-attributed definitions, one depth-first left-to-right pass for L-attributed ones.
 
 **Code generation.** Three-address code with quadruples, triples and indirect triples; DAGs by the value-number method; SSA form with φ-functions placed at dominance frontiers; leaders, basic blocks, flow graphs and natural loops; live variables and next-use tables; block optimization through the DAG (common subexpressions, constant folding, dead code); the getReg code generator with register and address descriptors and instruction costs; and a peephole optimizer on both three-address and target code. Every transformed program is run against the original on random inputs, and the target code on a small simulated machine.
@@ -63,6 +65,7 @@ Notation follows Peter Linz, *An Introduction to Formal Languages and Automata*,
 | Parsing grammar | `E -> E + T \| T`, `F -> ( E ) \| id`; words like `id`, `if`, `num` are single terminals |
 | Precedence | `%left + -` then `%left * /`, lowest precedence first |
 | NPDA | `δ(q0, a, z) = {(q0, az), (q1, λ)}` with the stack top written first |
+| Lex / Yacc | standard `.l` and `.y` files: definitions, `%%`, rules with actions; `%token`, `%left`, `%right`, `%start` |
 | SDD | `T' -> * F T1' { T1'.inh = T'.inh * F.val ; T'.syn = T1'.syn }`; write `E1`, `T1'` for a second copy of a nonterminal |
 | Program | `x = a + b * c`, `a[i] = x`, `if i <= 10 goto (3)`, `L1: goto L2`; lines may be numbered `(3)` or `3)`; `t1`, `t2`, … are temporaries |
 
@@ -100,6 +103,7 @@ js/automata.js   Thompson, λ-removal, subset, minimization, state elimination, 
 js/grammar.js    grammar parsing, CFG derivations, ambiguity, NPDA
 js/parsing.js    FIRST/FOLLOW, LL(1), recursive descent, LR(0)/SLR/CLR/LALR, precedence
 js/theory.js     pumping lemma, NPDA → CFG, simplification and CNF
+js/lex.js        transition diagrams, patterns to DFA, C lexer, input buffering, Lex/Yacc
 js/sdt.js        semantic rules, annotated parse trees, dependency graphs, S/L-attributed checks
 js/codegen.js    three-address code, DAGs, SSA, blocks, liveness, code generator, peephole
 scripts/build-pages.js  one page per converter (/nfa-to-dfa/, /ll1-parser/, …) and the sitemap, built from index.html
@@ -117,7 +121,7 @@ tests/run.js     conversion tests
 | 23 Oct 2026 | Pumping lemma game, NPDA → CFG, grammar simplification and CNF |
 | 25 Oct 2026 | Code generation: three-address code, quadruples and triples, DAGs, SSA, basic blocks and flow graphs, liveness, code generator, peephole |
 | 27 Oct 2026 | Syntax-directed translation: annotated parse trees, dependency graphs and evaluation order, S/L-attributed checks, syntax trees |
-| 29 Oct 2026 | Lexical analysis: token recognition, lexer playground, input buffering, Lex/Yacc specs |
+| 29 Oct 2026 | Lexical analysis: transition diagrams, patterns to one DFA, lexer and symbol table, input buffering, Lex/Yacc files |
 
 ## Security and privacy
 

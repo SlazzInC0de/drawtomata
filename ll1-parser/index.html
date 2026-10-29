@@ -62,6 +62,7 @@
       <button role="tab" data-tab="lang" aria-selected="false">Language → DFA</button>
       <button role="tab" data-tab="rg" aria-selected="false">Grammar ⇄ FA</button>
       <button role="tab" data-tab="cfg" aria-selected="false">CFG &amp; PDA</button>
+      <button role="tab" data-tab="lex" aria-selected="false">Lexer</button>
       <button role="tab" data-tab="parse" aria-selected="false">Parsing</button>
       <button role="tab" data-tab="sdt" aria-selected="false">SDT</button>
       <button role="tab" data-tab="cg" aria-selected="false">Code gen</button>
@@ -416,6 +417,88 @@ F -> digit      { F.val = digit.lexval }</textarea>
       <div class="board"><div class="boardInner" id="pmOut"></div></div>
     </section>
 
+    <!-- ===================== LEXICAL ANALYSIS ===================== -->
+    <section class="panel split" id="tab-lex" role="tabpanel" hidden>
+      <aside class="side">
+        <div class="sideHead"><h2>Lexical analysis</h2><p>Transition diagrams, token patterns to one DFA, a lexer with a symbol table, input buffering with sentinels, and Lex / Yacc files.</p></div>
+        <div class="field">
+          <span class="lbl">Show</span>
+          <div class="opGrid">
+            <button type="button" class="op" data-lx="td">Transition diagrams</button>
+            <button type="button" class="op" data-lx="re">Patterns → DFA</button>
+            <button type="button" class="op" data-lx="play">Lexer + symbol table</button>
+            <button type="button" class="op" data-lx="buf">Input buffering</button>
+            <button type="button" class="op" data-lx="ly">Lex / Yacc</button>
+          </div>
+        </div>
+        <div class="fieldRow" data-show="td">
+          <div class="field"><label for="lxDiag" class="lbl">Diagram</label><select id="lxDiag"><option value="relop">relop</option><option value="id">id</option><option value="number">number</option><option value="ws">white space</option></select></div>
+          <div class="field grow"><label for="lxLexeme" class="lbl">Input</label><input id="lxLexeme" class="mono" value="&lt;= x" autocomplete="off" spellcheck="false"></div>
+        </div>
+        <div class="field" data-show="re">
+          <label for="lxPats" class="lbl">Token patterns (first listed wins a tie)</label>
+          <textarea id="lxPats" class="mono" rows="4" spellcheck="false">a     a
+abb   abb
+ab+   a*bb*</textarea>
+          <div class="examples" data-for="lxPats">
+            <button type="button" data-in="aaba abb" data-v="a     a&#10;abb   abb&#10;ab+   a*bb*">a | abb | a*b+ (Aho 3.52)</button>
+            <button type="button" data-in="if ifx fi" data-v="if    if&#10;id    (i+f+x)(i+f+x)*">keyword vs id</button>
+            <button type="button" data-in="then the thenn" data-v="then  then&#10;the   the&#10;id    (t+h+e+n)(t+h+e+n)*">longest match vs priority</button>
+          </div>
+          <label for="lxPatIn" class="lbl" style="margin-top:10px">Input to scan</label>
+          <input id="lxPatIn" class="mono" value="aaba abb" autocomplete="off" spellcheck="false">
+          <p class="hint">Regular expressions use + for union, * for star and λ for the empty string. A space in the input is skipped between tokens.</p>
+        </div>
+        <div class="field" data-show="play buf">
+          <label for="lxCode" class="lbl">Code</label>
+          <textarea id="lxCode" class="mono" rows="9" spellcheck="false">#include &lt;stdio.h&gt;
+int main() {
+  float rate = 3.14E+2, x1;
+  /* compute */
+  if (x1 &lt;= rate &amp;&amp; x1 != 0) x1 = x1 + 1; // bump
+  printf(&quot;sum = %d\n&quot;, x1);
+  return 0;
+}</textarea>
+        </div>
+        <div class="field" data-show="buf"><label for="lxN" class="lbl">Buffer half size N</label><input id="lxN" class="mono tiny" type="number" min="2" max="64" value="16"><p class="hint">Make N smaller than the longest lexeme (try 8) to see a lexeme lost when its half is reloaded.</p></div>
+        <div class="field" data-show="ly">
+          <label for="lxL" class="lbl">Lex file (.l)</label>
+          <textarea id="lxL" class="mono" rows="9" spellcheck="false">%{
+#include &quot;y.tab.h&quot;
+%}
+digit   [0-9]
+letter  [a-zA-Z]
+%%
+[ \t\n]+                     ;
+&quot;if&quot;                         { return IF; }
+{letter}({letter}|{digit})*  { yylval = install_id(); return ID; }
+{digit}+                     { yylval = atoi(yytext); return NUM; }
+&quot;+&quot;|&quot;-&quot;|&quot;*&quot;|&quot;/&quot;|&quot;(&quot;|&quot;)&quot;      { return yytext[0]; }
+.                            { printf(&quot;unexpected %s\n&quot;, yytext); }
+%%
+int yywrap(void) { return 1; }</textarea>
+          <label for="lxY" class="lbl" style="margin-top:10px">Yacc file (.y)</label>
+          <textarea id="lxY" class="mono" rows="9" spellcheck="false">%token NUM
+%left &#x27;+&#x27; &#x27;-&#x27;
+%left &#x27;*&#x27; &#x27;/&#x27;
+%%
+expr : expr &#x27;+&#x27; expr   { $$ = $1 + $3; }
+     | expr &#x27;-&#x27; expr   { $$ = $1 - $3; }
+     | expr &#x27;*&#x27; expr   { $$ = $1 * $3; }
+     | expr &#x27;/&#x27; expr   { $$ = $1 / $3; }
+     | &#x27;(&#x27; expr &#x27;)&#x27;    { $$ = $2; }
+     | NUM
+     ;
+%%</textarea>
+          <label for="lxLyIn" class="lbl" style="margin-top:10px">Input</label>
+          <input id="lxLyIn" class="mono" value="2 + 3 * ( 4 - 1 )" autocomplete="off" spellcheck="false">
+        </div>
+        <button class="primary block" type="button" id="lxGo">Run</button>
+        <div class="err" id="lxErr" hidden></div>
+      </aside>
+      <div class="board"><div class="boardInner" id="lxOut"></div></div>
+    </section>
+
     <!-- ===================== PARSING ===================== -->
     <section class="panel split" id="tab-parse" role="tabpanel" hidden>
       <aside class="side">
@@ -500,7 +583,7 @@ F -> ( E ) | id</textarea>
 <h3>What does the parse trace show?</h3>
 <p>The stack, the remaining input and the action at every step: match a terminal, or expand a nonterminal with the production from the table.</p>
 </article>
-<footer class="seo"><nav class="seoNav" aria-label="All converters"><h2>All converters</h2><ul><li><a href="../nfa-to-dfa/">NFA to DFA</a></li><li><a href="../regex-to-dfa/">Regex to DFA</a></li><li><a href="../dfa-minimization/">DFA minimization</a></li><li><a href="../epsilon-nfa-to-nfa/">ε-NFA to NFA</a></li><li><a href="../fa-to-regex/">FA to regex</a></li><li><a href="../first-and-follow/">FIRST and FOLLOW</a></li><li><span aria-current="page">LL(1) table</span></li><li><a href="../lr-parsing-table/">SLR, CLR, LALR</a></li><li><a href="../cfg-to-pda/">CFG to PDA</a></li><li><a href="../pumping-lemma/">Pumping lemma</a></li><li><a href="../syntax-directed-translation/">Annotated parse tree</a></li><li><a href="../three-address-code/">Three-address code</a></li></ul></nav><p class="seoMeta">Drawtomata is free and runs in your browser. <a href="https://github.com/SlazzInC0de/drawtomata">Source on GitHub</a>.</p></footer>
+<footer class="seo"><nav class="seoNav" aria-label="All converters"><h2>All converters</h2><ul><li><a href="../nfa-to-dfa/">NFA to DFA</a></li><li><a href="../regex-to-dfa/">Regex to DFA</a></li><li><a href="../dfa-minimization/">DFA minimization</a></li><li><a href="../epsilon-nfa-to-nfa/">ε-NFA to NFA</a></li><li><a href="../fa-to-regex/">FA to regex</a></li><li><a href="../first-and-follow/">FIRST and FOLLOW</a></li><li><a href="../lexical-analysis/">Lexical analyzer</a></li><li><span aria-current="page">LL(1) table</span></li><li><a href="../lr-parsing-table/">SLR, CLR, LALR</a></li><li><a href="../cfg-to-pda/">CFG to PDA</a></li><li><a href="../pumping-lemma/">Pumping lemma</a></li><li><a href="../syntax-directed-translation/">Annotated parse tree</a></li><li><a href="../three-address-code/">Three-address code</a></li></ul></nav><p class="seoMeta">Drawtomata is free and runs in your browser. <a href="https://github.com/SlazzInC0de/drawtomata">Source on GitHub</a>.</p></footer>
 <!-- /converter pages -->
 <script src="../js/regex.js"></script>
 <script src="../js/automata.js"></script>
@@ -509,6 +592,7 @@ F -> ( E ) | id</textarea>
 <script src="../js/theory.js"></script>
 <script src="../js/codegen.js"></script>
 <script src="../js/sdt.js"></script>
+<script src="../js/lex.js"></script>
 <script src="../js/vendor/purify.min.js"></script>
 <script src="../js/render.js"></script>
 <script src="../js/editor.js"></script>

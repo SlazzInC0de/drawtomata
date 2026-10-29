@@ -6,7 +6,7 @@ const vm = require('vm');
 const assert = require('assert/strict');
 
 const ctx = vm.createContext({ console });
-for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js']) {
+for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js', 'lex.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'), ctx, { filename: f });
 }
 const { regex, fa, grammar, parsing: P, theory: TH } = ctx.DT;
@@ -391,6 +391,81 @@ test('SDT: every evaluation order respects the dependency graph', () => {
   assert.throws(() => SDT.run('A -> B { A.x = B.y }\nB -> b { B.z = 1 }', 'b'), /no rule gives it a value/);
   const cyc = SDT.run('A -> B { B.i = B.s ; A.v = B.s }\nB -> b { B.s = B.i }', 'b');
   assert.ok(cyc.res.error && /cycle/.test(cyc.res.error));
+});
+
+// ---------- lexical analysis, Lex and Yacc ----------
+const LX = ctx.DT.lex;
+test('transition diagrams follow Aho figures 3.13 to 3.17', () => {
+  const r = (k, w) => LX.runDiagram(k, w);
+  assert.deepEqual([r('relop', '<=').attr, r('relop', '<>').attr, r('relop', '<a').attr, r('relop', '>=').attr, r('relop', '>1').attr, r('relop', '=').attr], ['LE', 'NE', 'LT', 'GE', 'GT', 'EQ']);
+  assert.ok(r('relop', '<a').retract && !r('relop', '<=').retract);
+  assert.equal(r('id', 'x12+y').lexeme, 'x12');
+  assert.equal(r('number', '3.14E+5;').lexeme, '3.14E+5');
+  assert.equal(r('number', '42)').state, 20);
+  assert.equal(r('number', '6.0)').state, 21);
+  assert.equal(r('number', '1E-3 ').state, 19);
+  assert.ok(r('number', '1.x').fail && r('relop', 'x').fail);
+});
+
+test('patterns combine into the DFA of Aho figure 3.54', () => {
+  const pats = LX.parsePatterns('a  a\nabb  abb\nab+  a*bb*');
+  const c = LX.combine(pats);
+  const got = c.names.map((n, i) => `${n}:${c.announce[i] === null ? '-' : pats[c.announce[i]].name}`);
+  assert.deepEqual(plain(got.filter((x) => !x.startsWith('∅')).sort()), ['{0,1,3,7}:-', '{2,4,7}:a', '{5,8}:ab+', '{6,8}:abb', '{7}:-', '{8}:ab+']);
+  for (const [text, inputs] of [['a  a\nabb  abb\nab+  a*bb*', ['abb', 'aaba', 'abbb', 'babb', 'aabbbab']], ['then  then\nthe  the\nid  (t+h+e+n)(t+h+e+n)*', ['then', 'the', 'thenn', 'tht', 'nethe']]]) {
+    const P = LX.parsePatterns(text), C = LX.combine(P);
+    for (const w of inputs) {
+      const a = LX.scanDFA(C, w), b = LX.scanBrute(P, w);
+      assert.equal(JSON.stringify(a.tokens.map((t) => [t.lexeme, t.pat])), JSON.stringify(b.tokens.map((t) => [t.lexeme, t.pat])), w);
+    }
+  }
+  const kw = LX.combine(LX.parsePatterns('then  then\nid  (t+h+e+n)(t+h+e+n)*'));
+  assert.equal(LX.scanDFA(kw, 'then').tokens[0].pat, 0, 'a keyword beats an identifier of the same length');
+  assert.equal(LX.scanDFA(kw, 'thenn').tokens[0].pat, 1, 'the longer match wins');
+});
+
+const C_CODE = '#include <stdio.h>\nint main() {\n  float rate = 3.14E+2, x1; /* c */\n  if (x1 <= rate && x1 != 0) x1 = x1 + 1; // bump\n  printf("sum = %d\\n", x1);\n  return 0;\n}';
+test('lexer: token stream and symbol table', () => {
+  const r = LX.lexC(C_CODE);
+  assert.ok(LX.covers(C_CODE, r));
+  assert.equal(r.tokens.length, 39);
+  assert.deepEqual(plain(r.symtab.map((s) => s.name)), ['main', 'rate', 'x1', 'printf']);
+  assert.equal(r.symtab[2].uses, 6);
+  const le = r.tokens.find((t) => t.lexeme === '<=');
+  assert.equal(le.token + ',' + le.attr, 'relop,LE');
+  assert.equal(r.tokens.filter((t) => t.cat === 'keyword').length, 4); // int, float, if, return
+  assert.equal(r.tokens.find((t) => t.cat === 'string literal').lexeme, '"sum = %d\\n"');
+  const bad = LX.lexC('x = 1 @ 2;');
+  assert.equal(bad.tokens.filter((t) => t.token === 'error').length, 1);
+});
+
+test('input buffering: lexemes read back through the two halves', () => {
+  for (const N of [4, 8, 16, 64]) {
+    const b = LX.buffering(C_CODE, N);
+    for (const f of b.frames) if (!f.lost) assert.equal(f.fromBuffer, f.lexeme, `N=${N}`);
+    const longest = Math.max(...LX.lexC(C_CODE).tokens.map((t) => t.lexeme.length));
+    if (N >= longest) assert.equal(b.tooLong.length, 0, `N=${N}`);
+  }
+  assert.ok(LX.buffering(C_CODE, 4).tooLong.length > 0);
+});
+
+const L_SPEC = '%{\n#include "y.tab.h"\n%}\ndigit   [0-9]\nletter  [a-zA-Z]\n%%\n[ \\t\\n]+  ;\n"if"   { return IF; }\n{letter}({letter}|{digit})*  { return ID; }\n{digit}+  { yylval = atoi(yytext); return NUM; }\n"+"|"-"|"*"|"/"|"("|")"  { return yytext[0]; }\n.  { printf("?"); }\n%%\nint yywrap(void) { return 1; }';
+const Y_SPEC = "%token NUM\n%left '+' '-'\n%left '*' '/'\n%%\nexpr : expr '+' expr { $$ = $1 + $3; }\n     | expr '-' expr\n     | expr '*' expr\n     | expr '/' expr\n     | '(' expr ')' { $$ = $2; }\n     | NUM\n     ;\n%%";
+test('Lex and Yacc files run end to end', () => {
+  const spec = LX.parseLex(L_SPEC);
+  const out = LX.runLex(spec, 'if ifx 42 + y');
+  assert.deepEqual(plain(out.filter((t) => t.token).map((t) => `${t.lexeme}:${t.token}`)), ['if:IF', 'ifx:ID', '42:NUM', "+:'+'", 'y:ID']);
+  const y = LX.parseYacc(Y_SPEC);
+  const t = LX.yaccTable(y);
+  assert.equal(t.raw.conflicts.length, 16);
+  assert.equal(t.table.conflicts.length, 0);
+  const P = ctx.DT.parsing;
+  const good = LX.lexToYacc(y, LX.runLex(spec, '2 + 3 * ( 4 - 1 )'));
+  assert.ok(P.lrParse(t.GA, t.table, good.toks).accepted);
+  assert.ok(!P.lrParse(t.GA, t.table, LX.lexToYacc(y, LX.runLex(spec, '2 + * 3')).toks).accepted);
+  // with precedence, 2 + 3 * 4 reduces * first: the handle 3 * 4 appears before 2 + E
+  const trace = P.lrParse(t.GA, t.table, LX.lexToYacc(y, LX.runLex(spec, '2 + 3 * 4')).toks).rows.filter((r) => r.handle).map((r) => r.handle);
+  assert.ok(trace.indexOf('Expr * Expr') < trace.indexOf('Expr + Expr'));
 });
 
 // Converter pages are generated from index.html; they must not drift from it.
