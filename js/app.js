@@ -728,6 +728,15 @@
   }
 
   function psDisambiguate(G, prec) {
+    // only the E → E op E | … shape can be rewritten by precedence levels
+    const head = G.prods.filter((p) => p.lhs === G.start);
+    if (!head.some((p) => p.rhs.length === 3 && p.rhs[0] === G.start && p.rhs[2] === G.start)) {
+      const GA0 = PS.augment(G), ff0 = PS.firstFollow(GA0);
+      const n = PS.lrTable(GA0, PS.lalrFromLr1(GA0, PS.lr1Collection(GA0, ff0)), 'lalr').conflicts.length;
+      return stage('ps-amb', '', 'Make the expression grammar unambiguous', n ? badChip(`${n} LALR conflicts`) : okChip('already unambiguous: LALR(1) with no conflicts'),
+        `<p>This rewrite works on the classic ambiguous form <b class="mono">${esc(G.start)} → ${esc(G.start)} op ${esc(G.start)} | …</b>, turning each precedence level into its own nonterminal. ${esc(G.start)} has no production of that form, so there is nothing to rewrite${n ? '; the conflicts come from elsewhere in the grammar' : ', and the grammar already parses without conflicts'}.</p>
+         <p class="small muted">Try the “ambiguous E” example.</p>`);
+    }
     const r = PS.disambiguate(G, prec);
     const GA = PS.augment(r.G), ff = PS.firstFollow(GA);
     const t = PS.lrTable(GA, PS.lalrFromLr1(GA, PS.lr1Collection(GA, ff)), 'lalr');
