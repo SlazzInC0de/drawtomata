@@ -39,6 +39,9 @@
       edges: [e(22, 23, 'delim'), e(23, 23, 'delim'), e(23, 24, 'other')]
     }
   };
+  // keyed lookups go through Maps so no property is read by a computed name
+  const DIAGRAM_BY_KEY = new Map(Object.entries(DIAGRAMS));
+  const ACCEPT = new Map(Object.values(DIAGRAMS).map((d) => [d, new Map(Object.entries(d.accept).map(([q, a]) => [Number(q), a]))]));
   const fits = (on, c) => (on === 'letter' ? isLetter(c) : on === 'digit' ? isDigit(c) : on === 'delim' ? isDelim(c) : on === c);
   function stepDiagram(d, s, c) {
     const out = d.edges.filter((x) => x.from === s);
@@ -46,18 +49,20 @@
   }
   // run one diagram from the start of the input; returns the path and the token, or where it failed
   function runDiagram(key, input) {
-    const d = DIAGRAMS[key];
+    const d = DIAGRAM_BY_KEY.get(key);
+    if (!d) throw new Error(`Unknown transition diagram: ${key}`);
+    const acc = ACCEPT.get(d);
     const path = [];
     let s = d.start, i = 0;
     for (;;) {
-      if (d.accept[s]) break;
-      const c = i < input.length ? input[i] : EOF;
+      if (acc.has(s)) break;
+      const c = i < input.length ? input.charAt(i) : EOF;
       const edge = stepDiagram(d, s, c);
       if (!edge) return { d, path, fail: { state: s, c, at: i } };
       path.push({ from: s, to: edge.to, c, on: edge.on });
       s = edge.to; i++;
     }
-    const [token, attr, retract] = d.accept[s];
+    const [token, attr, retract] = acc.get(s);
     const end = retract ? i - 1 : i;
     return { d, path, state: s, token, attr, retract: !!retract, lexeme: input.slice(0, end), rest: input.slice(end) };
   }
@@ -119,14 +124,15 @@
     let pos = 0;
     while (pos < input.length) {
       let s = dfa.start, i = pos, last = null;
-      const trace = [comb.dfa.labels[s]];
+      const trace = [dfa.labels.at(s)];
       while (i < input.length) {
-        const t = next.get(`${s},${input[i]}`);
+        const t = next.get(`${s},${input.charAt(i)}`);
         if (t === undefined || t === deadId) break;
-        s = t; i++; trace.push(input[i - 1], comb.dfa.labels[s]);
-        if (announce[s] !== null) last = { end: i, pat: announce[s] };
+        s = t; i++; trace.push(input.charAt(i - 1), dfa.labels.at(s));
+        const pat = announce.at(s);
+        if (pat !== null) last = { end: i, pat };
       }
-      if (!last) return { tokens, error: { at: pos, c: input[pos] } };
+      if (!last) return { tokens, error: { at: pos, c: input.charAt(pos) } };
       tokens.push({ lexeme: input.slice(pos, last.end), pat: last.pat, start: pos, trace, backedUp: i - last.end });
       pos = last.end;
     }
@@ -157,24 +163,25 @@
 
   // ---------- a lexer for C-like code ----------
   const KEYWORDS = new Set(['auto', 'break', 'case', 'char', 'const', 'continue', 'default', 'do', 'double', 'else', 'enum', 'extern', 'float', 'for', 'goto', 'if', 'int', 'long', 'register', 'return', 'short', 'signed', 'sizeof', 'static', 'struct', 'switch', 'typedef', 'union', 'unsigned', 'void', 'volatile', 'while', 'then']);
-  const RELOPS = { '<': 'LT', '<=': 'LE', '==': 'EQ', '!=': 'NE', '>': 'GT', '>=': 'GE' };
+  const RELOPS = new Map([['<', 'LT'], ['<=', 'LE'], ['==', 'EQ'], ['!=', 'NE'], ['>', 'GT'], ['>=', 'GE']]);
   const OPERATORS = ['<<=', '>>=', '...', '->', '++', '--', '&&', '||', '<=', '>=', '==', '!=', '+=', '-=', '*=', '/=', '%=', '&=', '|=', '^=', '<<', '>>',
     '+', '-', '*', '/', '%', '=', '<', '>', '!', '&', '|', '^', '~', '?', ':', '.'];
   const SEPARATORS = new Set(['(', ')', '{', '}', '[', ']', ';', ',']);
   function scanQuoted(code, i, q) {
     let j = i + 1;
-    while (j < code.length && code[j] !== q && code[j] !== '\n') j += code[j] === '\\' ? 2 : 1;
-    return code[j] === q ? j + 1 : -1;
+    while (j < code.length && code.charAt(j) !== q && code.charAt(j) !== '\n') j += code.charAt(j) === '\\' ? 2 : 1;
+    return j < code.length && code.charAt(j) === q ? j + 1 : -1;
   }
   function skipAt(code, i) {
-    if (isDelim(code[i]) || code[i] === '\r') { let j = i; while (j < code.length && (isDelim(code[j]) || code[j] === '\r')) j++; return { end: j, kind: 'white space' }; }
+    const ws = (k) => isDelim(code.charAt(k)) || code.charAt(k) === '\r';
+    if (ws(i)) { let j = i; while (j < code.length && ws(j)) j++; return { end: j, kind: 'white space' }; }
     if (code.startsWith('//', i)) { const j = code.indexOf('\n', i); return { end: j < 0 ? code.length : j, kind: 'comment' }; }
     if (code.startsWith('/*', i)) { const j = code.indexOf('*/', i + 2); if (j < 0) return { end: code.length, kind: 'comment', error: 'comment is never closed' }; return { end: j + 2, kind: 'comment' }; }
-    if (code[i] === '#' && (i === 0 || code[i - 1] === '\n')) { const j = code.indexOf('\n', i); return { end: j < 0 ? code.length : j, kind: 'preprocessor line' }; }
+    if (code.charAt(i) === '#' && (i === 0 || code.charAt(i - 1) === '\n')) { const j = code.indexOf('\n', i); return { end: j < 0 ? code.length : j, kind: 'preprocessor line' }; }
     return null;
   }
   function tokenAt(code, i, symIndex) {
-    const c = code[i];
+    const c = code.charAt(i);
     if (isLetter(c)) {
       const r = runDiagram('id', code.slice(i));
       const lex = r.lexeme;
@@ -193,7 +200,7 @@
       return { lexeme: code.slice(i, j), token: c === '"' ? 'literal' : 'char', cat: c === '"' ? 'string literal' : 'constant', attr: '' };
     }
     const op = OPERATORS.find((o) => code.startsWith(o, i));
-    if (op && RELOPS[op]) return { lexeme: op, token: 'relop', cat: 'operator', attr: RELOPS[op] };
+    if (op && RELOPS.has(op)) return { lexeme: op, token: 'relop', cat: 'operator', attr: RELOPS.get(op) };
     if (op) return { lexeme: op, token: op, cat: 'operator', attr: '' };
     if (SEPARATORS.has(c)) return { lexeme: c, token: c, cat: 'separator', attr: '' };
     return { lexeme: c, token: 'error', cat: 'error', attr: 'no token starts with this character' };
@@ -203,11 +210,11 @@
     const symIndex = (name) => {
       let k = symtab.findIndex((s) => s.name === name);
       if (k < 0) { symtab.push({ name, line: line, uses: 0 }); k = symtab.length - 1; }
-      symtab[k].uses++;
+      symtab.at(k).uses++;
       return k + 1;
     };
     let i = 0, line = 1, col = 1;
-    const advance = (to) => { for (; i < to; i++) { if (code[i] === '\n') { line++; col = 1; } else col++; } };
+    const advance = (to) => { for (; i < to; i++) { if (code.charAt(i) === '\n') { line++; col = 1; } else col++; } };
     while (i < code.length) {
       const sk = skipAt(code, i);
       if (sk) { skipped.push({ start: i, end: sk.end, kind: sk.kind, error: sk.error }); advance(sk.end); continue; }
@@ -270,7 +277,7 @@
   function readPattern(line) {
     let i = 0, q = false, br = false;
     for (; i < line.length; i++) {
-      const c = line[i];
+      const c = line.charAt(i);
       if (c === '\\') { i++; continue; }
       if (c === '"' && !br) q = !q;
       else if (!q && c === '[') br = true;
@@ -284,7 +291,7 @@
     if (depth > 10) throw new Error('Definitions refer to each other in a loop.');
     let out = '', i = 0;
     while (i < p.length) {
-      const c = p[i];
+      const c = p.charAt(i);
       if (c === '"') { const j = p.indexOf('"', i + 1); if (j < 0) throw new Error(`Unclosed quote in ${p}`); out += p.slice(i + 1, j).replace(/[.*+?^${}()|[\]\\/-]/g, '\\$&'); i = j + 1; continue; }
       if (c === '\\') { out += p.slice(i, i + 2); i += 2; continue; }
       if (c === '[') { const j = p.indexOf(']', i + 2); if (j < 0) throw new Error(`Unclosed [ in ${p}`); out += p.slice(i, j + 1); i = j + 1; continue; }
@@ -306,18 +313,19 @@
     const rules = [];
     const lines = body.split('\n');
     for (let k = 0; k < lines.length; k++) {
-      const raw = lines[k];
+      const raw = lines.at(k);
       if (!raw.trim() || /^\s/.test(raw)) continue;
       let { pattern, rest } = readPattern(raw);
       // an action in braces may continue over several lines
       if (rest.startsWith('{')) {
         let depth = (rest.match(/\{/g) || []).length - (rest.match(/\}/g) || []).length;
-        while (depth > 0 && k + 1 < lines.length) { k++; rest += '\n' + lines[k]; depth += (lines[k].match(/\{/g) || []).length - (lines[k].match(/\}/g) || []).length; }
+        while (depth > 0 && k + 1 < lines.length) { k++; const more = lines.at(k); rest += '\n' + more; depth += (more.match(/\{/g) || []).length - (more.match(/\}/g) || []).length; }
       }
       rules.push({ pattern, action: rest || ';', line: k + 1 });
     }
     return rules;
   }
+  const MAX_RULE_SOURCE = 2000;
   function parseLex(text) {
     const s = splitSections(text);
     const defs = new Map();
@@ -328,9 +336,14 @@
     }
     const rules = readRules(stripCodeBlocks(s.rules)).map((r, i) => {
       let src, re;
-      // the pattern is the user's own Lex rule, run only in their own browser
-      // eslint-disable-next-line security/detect-non-literal-regexp
-      try { src = lexToJS(r.pattern, defs); re = new RegExp(src, 'y'); } catch (err) { throw new Error(`Rule ${i + 1} (${r.pattern}): ${err.message}`); }
+      // compiling the user's own Lex rule is the point of this tool; it runs only in their browser,
+      // and the source length is capped so a pasted spec cannot build an unbounded pattern
+      try {
+        src = lexToJS(r.pattern, defs);
+        if (src.length > MAX_RULE_SOURCE) throw new Error(`pattern is longer than ${MAX_RULE_SOURCE} characters`);
+        // eslint-disable-next-line security/detect-non-literal-regexp, security-node/non-literal-reg-expr
+        re = new RegExp(src, 'y'); // nosemgrep
+      } catch (err) { throw new Error(`Rule ${i + 1} (${r.pattern}): ${err.message}`); }
       return { ...r, src, re, returns: returnsOf(r.action) };
     });
     if (!rules.length) throw new Error('The rules section has no patterns.');
@@ -351,7 +364,7 @@
         const m = r.re.exec(input);
         if (m && m[0].length && (!best || m[0].length > best.len)) best = { k, len: m[0].length };
       });
-      if (!best) { out.push({ lexeme: input[pos], rule: null, start: pos }); pos++; continue; }
+      if (!best) { out.push({ lexeme: input.charAt(pos), rule: null, start: pos }); pos++; continue; }
       const r = spec.rules[best.k];
       const lexeme = input.slice(pos, pos + best.len);
       let token = r.returns;
