@@ -18,13 +18,21 @@
   const TABS = ['re', 'fa', 'lang', 'rg', 'cfg', 'lex', 'parse', 'sdt', 'cg', 'pump'];
   function showTab(t, push = true) {
     if (!TABS.includes(t)) t = 're';
-    $$('.modes [data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
+    const group = $(`.subModes [data-tab="${t}"]`).dataset.group;
+    lastInGroup[group] = t;
+    $$('.modes [data-group]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.group === group)));
+    $$('.subModes [data-tab]').forEach((b) => { b.hidden = b.dataset.group !== group; b.setAttribute('aria-selected', String(b.dataset.tab === t)); });
     TABS.forEach((x) => ($('#tab-' + x).hidden = x !== t));
     if (push) { try { history.replaceState(null, '', '#' + t); } catch (e) { /* ignore */ } }
     if (t === 'fa') { editor.redraw(); if (!fittedOnce) { fittedOnce = true; editor.fit(); } }
   }
   let fittedOnce = false;
-  $$('.modes [data-tab]').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
+  const lastInGroup = {};
+  $$('.subModes [data-tab]').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
+  $$('.modes [data-group]').forEach((b) => b.addEventListener('click', () => {
+    const g = b.dataset.group;
+    showTab(lastInGroup[g] || $(`.subModes [data-group="${g}"]`).dataset.tab);
+  }));
   document.addEventListener('click', (e) => {
     const g = e.target.closest('[data-goto]');
     if (g) { e.preventDefault(); showTab(g.dataset.goto); window.scrollTo(0, 0); }

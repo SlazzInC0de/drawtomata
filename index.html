@@ -56,17 +56,11 @@
       <img src="assets/drawtomata-icon.svg" alt="" class="logoMark" width="28" height="28">
       <span class="wordmark">Draw<span>tomata</span></span><span class="vh">: automata, grammar and parsing conversions, step by step</span>
     </a></h1>
-    <nav class="modes" role="tablist" aria-label="Tools">
-      <button role="tab" data-tab="re" aria-selected="true">RE → FA</button>
-      <button role="tab" data-tab="fa" aria-selected="false">Draw FA</button>
-      <button role="tab" data-tab="lang" aria-selected="false">Language → DFA</button>
-      <button role="tab" data-tab="rg" aria-selected="false">Grammar ⇄ FA</button>
-      <button role="tab" data-tab="cfg" aria-selected="false">CFG &amp; PDA</button>
-      <button role="tab" data-tab="lex" aria-selected="false">Lexer</button>
-      <button role="tab" data-tab="parse" aria-selected="false">Parsing</button>
-      <button role="tab" data-tab="sdt" aria-selected="false">SDT</button>
-      <button role="tab" data-tab="cg" aria-selected="false">Code gen</button>
-      <button role="tab" data-tab="pump" aria-selected="false">Pumping lemma</button>
+    <nav class="modes" aria-label="Workspaces">
+      <button type="button" data-group="auto" aria-pressed="true">Automata</button>
+      <button type="button" data-group="gram" aria-pressed="false">Grammars<span class="wide"> &amp; PDA</span></button>
+      <button type="button" data-group="parse" aria-pressed="false">Parsing</button>
+      <button type="button" data-group="comp" aria-pressed="false">Compiler</button>
     </nav>
     <div class="topRight">
       <div class="epsSwitch" role="group" aria-label="Empty string symbol" title="Symbol for the empty string">
@@ -76,6 +70,18 @@
       <button type="button" class="iconBtn" id="themeBtn" title="Switch light / dark" aria-label="Switch light or dark theme"><svg class="ic"><use href="#i-moon"/></svg></button>
     </div>
   </header>
+  <nav class="subModes" role="tablist" aria-label="Tools">
+    <button role="tab" data-tab="re" data-group="auto" aria-selected="true">RE → FA</button>
+    <button role="tab" data-tab="fa" data-group="auto" aria-selected="false">Draw FA</button>
+    <button role="tab" data-tab="lang" data-group="auto" aria-selected="false">Language → DFA</button>
+    <button role="tab" data-tab="pump" data-group="auto" aria-selected="false">Pumping lemma</button>
+    <button role="tab" data-tab="rg" data-group="gram" aria-selected="false" hidden>Grammar ⇄ FA</button>
+    <button role="tab" data-tab="cfg" data-group="gram" aria-selected="false" hidden>CFG &amp; PDA</button>
+    <button role="tab" data-tab="parse" data-group="parse" aria-selected="false" hidden>Parsing</button>
+    <button role="tab" data-tab="sdt" data-group="parse" aria-selected="false" hidden>SDT</button>
+    <button role="tab" data-tab="lex" data-group="comp" aria-selected="false" hidden>Lexer</button>
+    <button role="tab" data-tab="cg" data-group="comp" aria-selected="false" hidden>Code gen</button>
+  </nav>
 
   <main class="main">
     <!-- ===================== RE → FA ===================== -->
