@@ -489,7 +489,7 @@
     function restore(json) { apply(json, false); hist = [serialize()]; hi = 0; draw(); fit(); }
 
     setTool('move');
-    return { toFA, load, clear, restore, tidy, fit, exportAs, importJSON, onChange: (f) => listeners.push(f), redraw: draw, cancel };
+    return { toFA, load, clear, restore, tidy, fit, exportAs, importJSON, onChange: (f) => listeners.push(f), redraw: draw, cancel, count: () => st.states.length };
   }
   DT.Editor = Editor;
 })(window.DT);

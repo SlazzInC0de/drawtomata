@@ -118,6 +118,9 @@ kbd { font: 500 10px var(--ui); color: var(--muted); }
   background-size: 22px 22px;
 }
 .boardInner { max-width: 1040px; margin: 0 auto; padding: 24px; padding-right: max(24px, env(safe-area-inset-right, 0px)); padding-bottom: max(40px, env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 16px; }
+.emptyState { max-width: 520px; margin: 48px auto; text-align: center; color: var(--muted); }
+.emptyState h2 { font-size: 18px; color: var(--fg); margin: 0 0 8px; }
+.emptyState p { margin: 0 0 16px; line-height: 1.6; }
 .boardInner:empty::before { content: "Results appear here."; color: var(--muted); padding: 40px 0; text-align: center; }
 
 /* ---------- form controls ---------- */

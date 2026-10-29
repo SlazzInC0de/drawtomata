@@ -24,7 +24,7 @@ const PAGES = [
 <li>A DFA state is final if its set contains at least one final state of the NFA. The empty set ∅ is the trap state.</li>
 </ol>
 <h2>Example</h2>
-<p>The NFA loaded above accepts strings over {a, b} that end in <b>ab</b>: q0 loops on a and b, q0 –a→ q1 and q1 –b→ q2, with q2 final.</p>
+<p>Pick <b>NFA: ends with ab</b> from the Examples menu above. It accepts strings over {a, b} that end in <b>ab</b>: q0 loops on a and b, q0 –a→ q1 and q1 –b→ q2, with q2 final.</p>
 <table class="ex"><thead><tr><th>DFA state</th><th>a</th><th>b</th></tr></thead><tbody>
 <tr><td>→ {q0}</td><td>{q0, q1}</td><td>{q0}</td></tr>
 <tr><td>{q0, q1}</td><td>{q0, q1}</td><td>{q0, q2}</td></tr>
@@ -79,7 +79,7 @@ const PAGES = [
 <h2>Partition method</h2>
 <p>Start with π₀ = {final states, non-final states}. Split a group whenever two of its states go to different groups on some symbol. Stop when a pass splits nothing: each group is one state of the minimal DFA.</p>
 <h2>Example</h2>
-<p>The DFA loaded above has five states, q0 to q4, over {a, b}. q0 and q2 can never be told apart, so they merge and the minimal DFA has four states. It accepts the strings that end in abb.</p>
+<p>Pick <b>DFA with equivalent states</b> from the Examples menu above. It has five states, q0 to q4, over {a, b}. q0 and q2 can never be told apart, so they merge and the minimal DFA has four states. It accepts the strings that end in abb.</p>
 <h2>Questions</h2>
 <h3>Does the DFA need to be complete?</h3>
 <p>For the textbook methods, yes. Missing moves are sent to a trap state first, and the tool shows it when it is needed.</p>
@@ -302,7 +302,7 @@ const PAGES = [
 <h2>Synthesized and inherited attributes</h2>
 <p>A <b>synthesized</b> attribute of a node is computed from its children, as in E.val = E1.val + T.val. An <b>inherited</b> attribute is computed from the parent and siblings, as in L.inh = T.type in a declaration. An SDD with only synthesized attributes is <b>S-attributed</b> and can be evaluated bottom-up during LR parsing. It is <b>L-attributed</b> when every inherited attribute of Xᵢ in A → X₁ … Xₙ uses only inherited attributes of A and attributes of X₁ … Xᵢ₋₁, so one depth-first, left-to-right pass evaluates it.</p>
 <h2>Example: 3 * 5 + 4 n</h2>
-<p>With the desk-calculator SDD loaded above, the annotated parse tree has F.val = 3 and F.val = 5 at the bottom, T.val = 15 above them, then E.val = 19 and finally L.val = 19 at the root.</p>
+<p>With the desk-calculator example (press Load the example above), the annotated parse tree has F.val = 3 and F.val = 5 at the bottom, T.val = 15 above them, then E.val = 19 and finally L.val = 19 at the root.</p>
 <table class="ex"><thead><tr><th>Production</th><th>Semantic rule</th></tr></thead><tbody>
 <tr><td>L → E n</td><td>L.val = E.val</td></tr>
 <tr><td>E → E1 + T</td><td>E.val = E1.val + T.val</td></tr>

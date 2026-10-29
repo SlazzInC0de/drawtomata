@@ -84,7 +84,7 @@
         <div class="sideHead"><h2>Regular expression to automata</h2><p>λ-NFA, NFA, DFA and the minimal DFA, with every table.</p></div>
         <form class="field" id="reForm">
           <label for="reIn" class="lbl">Regular expression</label>
-          <input id="reIn" class="mono big" autocomplete="off" spellcheck="false" value="(a+b)*abb">
+          <input id="reIn" class="mono big" autocomplete="off" spellcheck="false" placeholder="e.g. (a+b)*abb" data-example="(a+b)*abb">
           <div class="keys" data-target="reIn">
             <button type="button" data-ins="λ">λ</button><button type="button" data-ins="∅">∅</button><button type="button" data-ins="+">+</button><button type="button" data-ins="*">*</button><button type="button" data-ins="(">(</button><button type="button" data-ins=")">)</button>
           </div>
@@ -221,9 +221,7 @@
         <div class="sideHead"><h2>Regular grammar to FA</h2><p>Right-linear or left-linear. For FA → grammar, draw it in <a href="#fa" data-goto="fa">Draw FA</a>.</p></div>
         <div class="field">
           <label for="rgIn" class="lbl">Grammar</label>
-          <textarea id="rgIn" class="mono" rows="6" spellcheck="false">S -> abA
-A -> baB
-B -> aA | bb</textarea>
+          <textarea id="rgIn" class="mono" rows="6" spellcheck="false" placeholder="e.g. S -> aA | b&#10;A -> bS | a" data-example="S -> abA&#10;A -> baB&#10;B -> aA | bb"></textarea>
         </div>
         <button class="primary block" type="button" id="rgGo">Convert to FA</button>
         <div class="err" id="rgErr" hidden></div>
@@ -247,7 +245,7 @@ B -> aA | bb</textarea>
         <div class="sideHead"><h2>Context-free grammars</h2><p>Derivations, parse trees, ambiguity and CFG → NPDA.</p></div>
         <div class="field">
           <label for="cfgIn" class="lbl">Grammar</label>
-          <textarea id="cfgIn" class="mono" rows="4" spellcheck="false">E -> E+E | E*E | (E) | a</textarea>
+          <textarea id="cfgIn" class="mono" rows="4" spellcheck="false" placeholder="e.g. E -> E+E | E*E | (E) | a" data-example="E -> E+E | E*E | (E) | a"></textarea>
           <div class="examples" data-for="cfgIn">
             <button type="button" data-v="E -> E+E | E*E | (E) | a">E+E | E*E</button>
             <button type="button" data-v="S -> aSb | λ">aⁿbⁿ</button>
@@ -257,7 +255,7 @@ B -> aA | bb</textarea>
           </div>
         </div>
         <div class="fieldRow">
-          <div class="field grow"><label for="cfgW" class="lbl">String w</label><input id="cfgW" class="mono" value="a+a*a" autocomplete="off" spellcheck="false"></div>
+          <div class="field grow"><label for="cfgW" class="lbl">String w</label><input id="cfgW" class="mono" placeholder="e.g. a+a*a" data-example="a+a*a" autocomplete="off" spellcheck="false"></div>
           <div class="field"><label for="cfgLen" class="lbl">Max length</label><input id="cfgLen" class="mono tiny" type="number" min="1" max="12" value="6"></div>
         </div>
         <div class="opGrid">
@@ -271,20 +269,16 @@ B -> aA | bb</textarea>
         <div class="divider"></div>
         <div id="pdaCard" class="field">
           <span class="lbl">NPDA simulator</span>
-          <textarea id="pdaIn" class="mono" rows="6" spellcheck="false" aria-label="NPDA transitions">δ(q0, a, z) = {(q1, az)}
-δ(q1, a, a) = {(q1, aa)}
-δ(q1, b, a) = {(q2, λ)}
-δ(q2, b, a) = {(q2, λ)}
-δ(q2, λ, z) = {(qf, z)}</textarea>
+          <textarea id="pdaIn" class="mono" rows="6" spellcheck="false" aria-label="NPDA transitions" placeholder="e.g. δ(q0, a, z) = {(q0, az)}" data-example="δ(q0, a, z) = {(q1, az)}&#10;δ(q1, a, a) = {(q1, aa)}&#10;δ(q1, b, a) = {(q2, λ)}&#10;δ(q2, b, a) = {(q2, λ)}&#10;δ(q2, λ, z) = {(qf, z)}"></textarea>
           <p class="hint">Linz style, one per line: <code>δ(q0, a, z) = {(q0, az)}</code>. Stack top first.</p>
           <div class="fieldRow wrap">
             <div class="field"><label for="pdaStart" class="lbl">Start</label><input id="pdaStart" class="mono tiny" value="q0"></div>
             <div class="field"><label for="pdaZ" class="lbl">Stack</label><input id="pdaZ" class="mono tiny" value="z"></div>
-            <div class="field"><label for="pdaF" class="lbl">Final</label><input id="pdaF" class="mono tiny" value="qf"></div>
+            <div class="field"><label for="pdaF" class="lbl">Final</label><input id="pdaF" class="mono tiny" placeholder="qf" data-example="qf"></div>
             <div class="field"><label for="pdaMode" class="lbl">Accept by</label><select id="pdaMode"><option value="final">final state</option><option value="empty">empty stack</option></select></div>
           </div>
           <form class="fieldRow" id="pdaForm">
-            <div class="field grow"><label for="pdaW" class="lbl">Input</label><input id="pdaW" class="mono" value="aabb" autocomplete="off"></div>
+            <div class="field grow"><label for="pdaW" class="lbl">Input</label><input id="pdaW" class="mono" placeholder="e.g. aabb" data-example="aabb" autocomplete="off"></div>
             <button class="primary" type="submit">Run</button>
           </form>
           <button type="button" class="ghost" id="pdaToCfg">Convert this NPDA to a CFG</button>
@@ -301,13 +295,7 @@ B -> aA | bb</textarea>
         <div class="sideHead"><h2>Syntax-directed translation</h2><p>Annotated parse trees, dependency graphs and evaluation order, S- and L-attributed checks, and syntax trees built by semantic rules.</p></div>
         <div class="field">
           <label for="sdIn" class="lbl">Grammar with semantic rules</label>
-          <textarea id="sdIn" class="mono" rows="8" spellcheck="false">L -> E n        { L.val = E.val }
-E -> E1 + T     { E.val = E1.val + T.val }
-E -> T          { E.val = T.val }
-T -> T1 * F     { T.val = T1.val * F.val }
-T -> F          { T.val = F.val }
-F -> ( E )      { F.val = E.val }
-F -> digit      { F.val = digit.lexval }</textarea>
+          <textarea id="sdIn" class="mono" rows="8" spellcheck="false" placeholder="e.g. E -> E1 + T { E.val = E1.val + T.val }" data-example="L -> E n        { L.val = E.val }&#10;E -> E1 + T     { E.val = E1.val + T.val }&#10;E -> T          { E.val = T.val }&#10;T -> T1 * F     { T.val = T1.val * F.val }&#10;T -> F          { T.val = F.val }&#10;F -> ( E )      { F.val = E.val }&#10;F -> digit      { F.val = digit.lexval }"></textarea>
           <div class="examples" data-for="sdIn">
             <button type="button" data-w="3 * 5 + 4 n" data-v="L -> E n        { L.val = E.val }&#10;E -> E1 + T     { E.val = E1.val + T.val }&#10;E -> T          { E.val = T.val }&#10;T -> T1 * F     { T.val = T1.val * F.val }&#10;T -> F          { T.val = F.val }&#10;F -> ( E )      { F.val = E.val }&#10;F -> digit      { F.val = digit.lexval }">desk calculator</button>
             <button type="button" data-w="3 * 5" data-v="T -> F T'        { T'.inh = F.val ; T.val = T'.syn }&#10;T' -> * F T1'   { T1'.inh = T'.inh * F.val ; T'.syn = T1'.syn }&#10;T' -> ε          { T'.syn = T'.inh }&#10;F -> digit       { F.val = digit.lexval }">inherited (T')</button>
@@ -319,7 +307,7 @@ F -> digit      { F.val = digit.lexval }</textarea>
         </div>
         <div class="field">
           <label for="sdW" class="lbl">Input string</label>
-          <input id="sdW" class="mono" value="3 * 5 + 4 n" autocomplete="off" spellcheck="false">
+          <input id="sdW" class="mono" placeholder="e.g. 3 * 5 + 4 n" data-example="3 * 5 + 4 n" autocomplete="off" spellcheck="false">
         </div>
         <div class="field">
           <span class="lbl">Show</span>
@@ -342,7 +330,7 @@ F -> digit      { F.val = digit.lexval }</textarea>
         <div class="sideHead"><h2>Code generation</h2><p>Three-address code, DAGs, SSA, basic blocks, liveness, register allocation and peephole optimization.</p></div>
         <div class="field">
           <label for="cgIn" class="lbl">Program</label>
-          <textarea id="cgIn" class="mono" rows="7" spellcheck="false">a = b * -c + b * -c</textarea>
+          <textarea id="cgIn" class="mono" rows="7" spellcheck="false" placeholder="e.g. a = b * -c + b * -c" data-example="a = b * -c + b * -c"></textarea>
           <div class="examples" data-for="cgIn">
             <button type="button" data-v="a = b * -c + b * -c">a = b * -c + b * -c</button>
             <button type="button" data-v="x = (a + b) * (a + b) - c / (a + b)">(a + b) reused</button>
@@ -404,7 +392,7 @@ F -> digit      { F.val = digit.lexval }</textarea>
         </div>
         <div class="field" id="pmReField" hidden>
           <label for="pmRe" class="lbl">Regular expression</label>
-          <input id="pmRe" class="mono" value="(a+b)*abb" autocomplete="off" spellcheck="false">
+          <input id="pmRe" class="mono" placeholder="e.g. (a+b)*abb" data-example="(a+b)*abb" autocomplete="off" spellcheck="false">
         </div>
         <div class="fieldRow">
           <div class="field" id="pmPField"><label for="pmP" class="lbl">p</label><input id="pmP" class="mono tiny" type="number" min="1" max="10" value="4"></div>
@@ -434,7 +422,7 @@ F -> digit      { F.val = digit.lexval }</textarea>
         </div>
         <div class="field" data-show="ph">
           <label for="lxStmt" class="lbl">Statements</label>
-          <textarea id="lxStmt" class="mono" rows="4" spellcheck="false">position = initial + rate * 60</textarea>
+          <textarea id="lxStmt" class="mono" rows="4" spellcheck="false" placeholder="e.g. position = initial + rate * 60" data-example="position = initial + rate * 60"></textarea>
           <div class="examples" data-for="lxStmt">
             <button type="button" data-v="position = initial + rate * 60">position = initial + rate * 60</button>
             <button type="button" data-v="int i, n&#10;float avg, sum&#10;avg = sum / n&#10;i = i + 1">int and float</button>
@@ -444,67 +432,32 @@ F -> digit      { F.val = digit.lexval }</textarea>
         </div>
         <div class="fieldRow" data-show="td">
           <div class="field"><label for="lxDiag" class="lbl">Diagram</label><select id="lxDiag"><option value="relop">relop</option><option value="id">id</option><option value="number">number</option><option value="ws">white space</option></select></div>
-          <div class="field grow"><label for="lxLexeme" class="lbl">Input</label><input id="lxLexeme" class="mono" value="&lt;= x" autocomplete="off" spellcheck="false"></div>
+          <div class="field grow"><label for="lxLexeme" class="lbl">Input</label><input id="lxLexeme" class="mono" placeholder="e.g. &lt;= x" data-example="&lt;= x" autocomplete="off" spellcheck="false"></div>
         </div>
         <div class="field" data-show="re">
           <label for="lxPats" class="lbl">Token patterns (first listed wins a tie)</label>
-          <textarea id="lxPats" class="mono" rows="4" spellcheck="false">a     a
-abb   abb
-ab+   a*bb*</textarea>
+          <textarea id="lxPats" class="mono" rows="4" spellcheck="false" placeholder="one pattern per line, e.g.&#10;id   (a+b)(a+b)*" data-example="a     a&#10;abb   abb&#10;ab+   a*bb*"></textarea>
           <div class="examples" data-for="lxPats">
             <button type="button" data-in="aaba abb" data-v="a     a&#10;abb   abb&#10;ab+   a*bb*">a | abb | a*b+ (Aho 3.52)</button>
             <button type="button" data-in="if ifx fi" data-v="if    if&#10;id    (i+f+x)(i+f+x)*">keyword vs id</button>
             <button type="button" data-in="then the thenn" data-v="then  then&#10;the   the&#10;id    (t+h+e+n)(t+h+e+n)*">longest match vs priority</button>
           </div>
           <label for="lxPatIn" class="lbl" style="margin-top:10px">Input to scan</label>
-          <input id="lxPatIn" class="mono" value="aaba abb" autocomplete="off" spellcheck="false">
+          <input id="lxPatIn" class="mono" placeholder="e.g. abba ab" data-example="aaba abb" autocomplete="off" spellcheck="false">
           <p class="hint">Regular expressions use + for union, * for star and λ for the empty string. A space in the input is skipped between tokens.</p>
         </div>
         <div class="field" data-show="play buf">
           <label for="lxCode" class="lbl">Code</label>
-          <textarea id="lxCode" class="mono" rows="9" spellcheck="false">#include &lt;stdio.h&gt;
-int main() {
-  float rate = 3.14E+2, x1;
-  /* compute */
-  if (x1 &lt;= rate &amp;&amp; x1 != 0) x1 = x1 + 1; // bump
-  printf(&quot;sum = %d\n&quot;, x1);
-  return 0;
-}</textarea>
+          <textarea id="lxCode" class="mono" rows="9" spellcheck="false" placeholder="Paste C code here" data-example="#include &lt;stdio.h&gt;&#10;int main() {&#10;  float rate = 3.14E+2, x1;&#10;  /* compute */&#10;  if (x1 &lt;= rate &amp;&amp; x1 != 0) x1 = x1 + 1; // bump&#10;  printf(&quot;sum = %d\n&quot;, x1);&#10;  return 0;&#10;}"></textarea>
         </div>
         <div class="field" data-show="buf"><label for="lxN" class="lbl">Buffer half size N</label><input id="lxN" class="mono tiny" type="number" min="2" max="64" value="16"><p class="hint">Make N smaller than the longest lexeme (try 8) to see a lexeme lost when its half is reloaded.</p></div>
         <div class="field" data-show="ly">
           <label for="lxL" class="lbl">Lex file (.l)</label>
-          <textarea id="lxL" class="mono" rows="9" spellcheck="false">%{
-#include &quot;y.tab.h&quot;
-%}
-digit   [0-9]
-letter  [a-zA-Z]
-%%
-[ \t\n]+                     ;
-&quot;if&quot;                         { return IF; }
-{letter}({letter}|{digit})*  { yylval = install_id(); return ID; }
-{digit}+                     { yylval = atoi(yytext); return NUM; }
-&quot;+&quot;|&quot;-&quot;|&quot;*&quot;|&quot;/&quot;|&quot;(&quot;|&quot;)&quot;      { return yytext[0]; }
-.                            { printf(&quot;unexpected %s\n&quot;, yytext); }
-%%
-int yywrap(void) { return 1; }</textarea>
+          <textarea id="lxL" class="mono" rows="9" spellcheck="false" placeholder="Paste a .l file: declarations, %%, rules, %%" data-example="%{&#10;#include &quot;y.tab.h&quot;&#10;%}&#10;digit   [0-9]&#10;letter  [a-zA-Z]&#10;%%&#10;[ \t\n]+                     ;&#10;&quot;if&quot;                         { return IF; }&#10;{letter}({letter}|{digit})*  { yylval = install_id(); return ID; }&#10;{digit}+                     { yylval = atoi(yytext); return NUM; }&#10;&quot;+&quot;|&quot;-&quot;|&quot;*&quot;|&quot;/&quot;|&quot;(&quot;|&quot;)&quot;      { return yytext[0]; }&#10;.                            { printf(&quot;unexpected %s\n&quot;, yytext); }&#10;%%&#10;int yywrap(void) { return 1; }"></textarea>
           <label for="lxY" class="lbl" style="margin-top:10px">Yacc file (.y)</label>
-          <textarea id="lxY" class="mono" rows="10" spellcheck="false">%token NUM
-%left &#x27;+&#x27; &#x27;-&#x27;
-%left &#x27;*&#x27; &#x27;/&#x27;
-%right UMINUS
-%%
-expr : expr &#x27;+&#x27; expr   { $$ = $1 + $3; }
-     | expr &#x27;-&#x27; expr   { $$ = $1 - $3; }
-     | expr &#x27;*&#x27; expr   { $$ = $1 * $3; }
-     | expr &#x27;/&#x27; expr   { $$ = $1 / $3; }
-     | &#x27;(&#x27; expr &#x27;)&#x27;    { $$ = $2; }
-     | &#x27;-&#x27; expr %prec UMINUS { $$ = -$2; }
-     | NUM
-     ;
-%%</textarea>
+          <textarea id="lxY" class="mono" rows="10" spellcheck="false" placeholder="Optional: paste a .y file" data-example="%token NUM&#10;%left &#x27;+&#x27; &#x27;-&#x27;&#10;%left &#x27;*&#x27; &#x27;/&#x27;&#10;%right UMINUS&#10;%%&#10;expr : expr &#x27;+&#x27; expr   { $$ = $1 + $3; }&#10;     | expr &#x27;-&#x27; expr   { $$ = $1 - $3; }&#10;     | expr &#x27;*&#x27; expr   { $$ = $1 * $3; }&#10;     | expr &#x27;/&#x27; expr   { $$ = $1 / $3; }&#10;     | &#x27;(&#x27; expr &#x27;)&#x27;    { $$ = $2; }&#10;     | &#x27;-&#x27; expr %prec UMINUS { $$ = -$2; }&#10;     | NUM&#10;     ;&#10;%%"></textarea>
           <label for="lxLyIn" class="lbl" style="margin-top:10px">Input</label>
-          <input id="lxLyIn" class="mono" value="- 2 * 3 + ( 4 - 1 )" autocomplete="off" spellcheck="false">
+          <input id="lxLyIn" class="mono" placeholder="e.g. 2 + 3 * 4" data-example="- 2 * 3 + ( 4 - 1 )" autocomplete="off" spellcheck="false">
         </div>
         <button class="primary block" type="button" id="lxGo">Run</button>
         <div class="err" id="lxErr" hidden></div>
@@ -518,9 +471,7 @@ expr : expr &#x27;+&#x27; expr   { $$ = $1 + $3; }
         <div class="sideHead"><h2>Syntax analysis</h2><p>FIRST/FOLLOW, LL(1), recursive descent, LR(0), SLR, CLR, LALR and operator precedence, with every table and trace.</p></div>
         <div class="field">
           <label for="psIn" class="lbl">Grammar</label>
-          <textarea id="psIn" class="mono" rows="5" spellcheck="false">E -> E + T | T
-T -> T * F | F
-F -> ( E ) | id</textarea>
+          <textarea id="psIn" class="mono" rows="5" spellcheck="false" placeholder="e.g. E -> E + T | T&#10;T -> T * F | F&#10;F -> ( E ) | id" data-example="E -> E + T | T&#10;T -> T * F | F&#10;F -> ( E ) | id"></textarea>
           <div class="examples" data-for="psIn">
             <button type="button" data-v="E -> E + T | T&#10;T -> T * F | F&#10;F -> ( E ) | id">expression</button>
             <button type="button" data-v="E -> T E'&#10;E' -> + T E' | ε&#10;T -> F T'&#10;T' -> * F T' | ε&#10;F -> ( E ) | id">expression (LL)</button>
@@ -534,7 +485,7 @@ F -> ( E ) | id</textarea>
         </div>
         <div class="field">
           <label for="psW" class="lbl">Input string</label>
-          <input id="psW" class="mono" value="id + id * id" autocomplete="off" spellcheck="false">
+          <input id="psW" class="mono" placeholder="e.g. id + id * id" data-example="id + id * id" autocomplete="off" spellcheck="false">
         </div>
         <div class="field">
           <span class="lbl">Transform</span>
@@ -586,7 +537,7 @@ F -> ( E ) | id</textarea>
 <h2>Synthesized and inherited attributes</h2>
 <p>A <b>synthesized</b> attribute of a node is computed from its children, as in E.val = E1.val + T.val. An <b>inherited</b> attribute is computed from the parent and siblings, as in L.inh = T.type in a declaration. An SDD with only synthesized attributes is <b>S-attributed</b> and can be evaluated bottom-up during LR parsing. It is <b>L-attributed</b> when every inherited attribute of Xᵢ in A → X₁ … Xₙ uses only inherited attributes of A and attributes of X₁ … Xᵢ₋₁, so one depth-first, left-to-right pass evaluates it.</p>
 <h2>Example: 3 * 5 + 4 n</h2>
-<p>With the desk-calculator SDD loaded above, the annotated parse tree has F.val = 3 and F.val = 5 at the bottom, T.val = 15 above them, then E.val = 19 and finally L.val = 19 at the root.</p>
+<p>With the desk-calculator example (press Load the example above), the annotated parse tree has F.val = 3 and F.val = 5 at the bottom, T.val = 15 above them, then E.val = 19 and finally L.val = 19 at the root.</p>
 <table class="ex"><thead><tr><th>Production</th><th>Semantic rule</th></tr></thead><tbody>
 <tr><td>L → E n</td><td>L.val = E.val</td></tr>
 <tr><td>E → E1 + T</td><td>E.val = E1.val + T.val</td></tr>

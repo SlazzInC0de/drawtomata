@@ -88,6 +88,16 @@
   const stage = (id, num, title, meta, body) =>
     `<section class="stage" id="${id}"><div class="stage-h">${num ? `<span class="num">${num}</span>` : ''}<h2>${title}</h2><div class="meta">${meta || ''}</div></div>${body}</section>`;
   const chip = (k, v) => `<span class="chip">${k} <b>${v}</b></span>`;
+  // every tab starts empty; "Load the example" fills the tab's fields from their data-example
+  const blank = (sel) => !$(sel).value.trim();
+  const emptyState = (el, title, hint, tab) => ui.put(el, `<div class="emptyState"><h2>${title}</h2><p>${hint}</p>${tab ? `<button type="button" class="ghost" data-fill="${tab}">Load the example</button>` : ''}</div>`);
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-fill]');
+    if (!b) return;
+    $$(`#tab-${b.dataset.fill} [data-example]`).forEach((el) => { if (!el.value.trim()) el.value = ui.D(el.dataset.example); });
+    if (b.dataset.fill === 'pump' && !$('#pmLang').value) $('#pmLang').value = 'anbn';
+    (FILL_RUN[b.dataset.fill] || (() => {}))();
+  });
   const verifyChip = (r, what = 'same language as input') =>
     r.eq ? `<span class="chip ok" title="Checked by comparing the two automata state by state">✓ ${what}</span>` : `<span class="chip bad">✗ differs on "${esc(r.witness || EPS)}"</span>`;
   const deadToggle = () => `<label class="chk small"><input type="checkbox" class="deadToggle" ${ui.showDead ? 'checked' : ''}> show trap state</label>`;
@@ -261,6 +271,7 @@
   function runRE() {
     const src = $('#reIn').value;
     showErr($('#reErr'), '');
+    if (blank('#reIn')) { reState = null; store.set('re', ''); emptyState($('#reOut'), 'Type a regular expression', 'Use + for union, * for star and λ for the empty string. It is converted to a λ-NFA, an NFA, a DFA and the minimal DFA, step by step.', 're'); return; }
     let ast;
     try { ast = RX.parse(src); } catch (e) { showErr($('#reErr'), e.message); return; }
     store.set('re', src);
@@ -342,12 +353,18 @@
   });
   // a converter page (e.g. /nfa-to-dfa/) names its tab, operation and example on <body>
   const PAGE = document.body.dataset;
-  const startEx = EX[PAGE.example] || EX.minme;
-  try { const saved = store.get('editor'); if (saved && (JSON.parse(saved).states || JSON.parse(saved).s || []).length) editor.restore(saved); else editor.load(exFA(startEx), { rename: false }); }
+  try {
+    const saved = store.get('editor');
+    if (saved && (JSON.parse(saved).states || JSON.parse(saved).s || []).length) {
+      editor.restore(saved);
+      const f = editor.toFA(), ex = exFA(EX.minme);
+      if (f.n === ex.n && f.trans.length === ex.trans.length && FA.equivalent(f, ex).eq) editor.clear();
+    }
+  }
   catch (e) {
-    // Keep the unreadable autosave so the example below does not silently overwrite the user's work.
+    // Keep the unreadable autosave so starting with an empty canvas does not silently lose the user's work.
     try { const saved = store.get('editor'); if (saved) store.set('editor-backup', saved); } catch (e2) { /* ignore */ }
-    editor.load(exFA(startEx), { rename: false });
+    editor.clear();
     toast('Your saved automaton could not be opened. A copy was kept in browser storage as dt-editor-backup.');
   }
 
@@ -504,6 +521,7 @@
   let rgState = null;
   function runRG() {
     showErr($('#rgErr'), '');
+    if (blank('#rgIn')) { rgState = null; store.set('rg', ''); emptyState($('#rgOut'), 'Type a regular grammar', 'One production per line, right-linear (S -> aA) or left-linear (S -> Aa). It is turned into an NFA.', 'rg'); return; }
     try {
       const G = GR.parse($('#rgIn').value);
       if (G.undefinedVars.length) throw new Error(`Variable(s) ${G.undefinedVars.join(', ')} have no productions.`);
@@ -545,6 +563,7 @@
     lastCfgOp = op;
     $$('[data-cfg]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.cfg === op)));
     showErr($('#cfgErr'), '');
+    if (blank('#cfgIn')) { store.set('cfg', ''); emptyState($('#cfgOut'), 'Type a context-free grammar', 'One production per line, such as E -> E+E | E*E | (E) | a. Then get derivations, parse trees, an ambiguity check or an NPDA.', 'cfg'); return; }
     try {
       const G = GR.parse($('#cfgIn').value);
       if (G.undefinedVars.length) throw new Error(`Variable(s) ${G.undefinedVars.join(', ')} have no productions.`);
@@ -616,6 +635,7 @@
   let pdaFromCfg = null;
   function runPDA() {
     showErr($('#pdaErr'), '');
+    if (blank('#pdaIn')) { $('#pdaOut').innerHTML = ''; return; }
     try {
       const trans = pdaFromCfg && pdaFromCfg.text === $('#pdaIn').value ? pdaFromCfg.trans : GR.parsePDA($('#pdaIn').value);
       if (!trans.length) throw new Error('Write at least one transition.');
@@ -864,6 +884,7 @@
     lastPsOp = op || lastPsOp;
     $$('[data-ps]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ps === lastPsOp)));
     showErr($('#psErr'), '');
+    if (blank('#psIn')) { store.set('ps', ''); emptyState($('#psOut'), 'Type a grammar', 'One production per line, such as E -> E + T | T. Then build FIRST and FOLLOW, LL(1), SLR, CLR or LALR tables and parse a string.', 'parse'); return; }
     let G, prec;
     try { G = PS.parseGrammar($('#psIn').value); } catch (e) { showErr($('#psErr'), e.message); return; }
     try { prec = PS.parsePrecedence($('#psPrec').value); } catch (e) { showErr($('#psErr'), e.message); return; }
@@ -972,7 +993,7 @@
 
   // PUMPING LEMMA
   const pmLang = $('#pmLang');
-  pmLang.innerHTML = Object.entries(TH.LANGUAGES).map(([k, L]) => `<option value="${k}">${esc(L.name)}</option>`).join('');
+  pmLang.innerHTML = '<option value="">Choose a language</option>' + Object.entries(TH.LANGUAGES).map(([k, L]) => `<option value="${k}">${esc(L.name)}</option>`).join('');
   const pmMode = () => ($$('input[name="pmMode"]').find((x) => x.checked) || {}).value || 'non';
   function syncPm() {
     const reg = pmMode() === 'reg';
@@ -994,6 +1015,7 @@
   function runPump() {
     showErr($('#pmErr'), '');
     syncPm();
+    if (pmMode() === 'reg' ? blank('#pmRe') : !pmLang.value) { emptyState($('#pmOut'), pmMode() === 'reg' ? 'Type a regular expression' : 'Choose a language', pmMode() === 'reg' ? 'The minimal DFA gives p, and the pigeonhole principle gives a split that always pumps.' : 'Pick a non-regular language such as aⁿbⁿ to play the pumping-lemma game against every split xyz.', 'pump'); return; }
     const wRaw = $('#pmW').value.trim();
     const w = DT.isEps(wRaw) ? '' : wRaw.replace(/\s+/g, '');
     let html = '';
@@ -1272,6 +1294,7 @@
     lastCgOp = op || lastCgOp;
     $$('[data-cg]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.cg === lastCgOp)));
     showErr($('#cgErr'), '');
+    if (blank('#cgIn')) { store.set('cg', ''); emptyState($('#cgOut'), 'Type an expression or a short program', 'Assignments such as a = b * -c + b * -c, or three-address code with labels and gotos.', 'cg'); return; }
     let prog;
     try {
       prog = CG.parseProgram($('#cgIn').value);
@@ -1423,6 +1446,7 @@
     lastSdOp = op || lastSdOp;
     $$('[data-sd]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sd === lastSdOp)));
     showErr($('#sdErr'), '');
+    if (blank('#sdIn')) { store.set('sd', ''); emptyState($('#sdOut'), 'Type a grammar with semantic rules', 'Rules go in braces after each production, such as E -> E1 + T { E.val = E1.val + T.val }. Then give an input string.', 'sdt'); return; }
     let r;
     try { r = SD.run($('#sdIn').value, $('#sdW').value); } catch (e) {
       showErr($('#sdErr'), e.message);
@@ -1639,6 +1663,12 @@
     lastLx = op || lastLx;
     syncLx();
     showErr($('#lxErr'), '');
+    const need = { ph: '#lxStmt', td: '#lxLexeme', re: '#lxPats', play: '#lxCode', buf: '#lxCode', ly: '#lxL' }[lastLx];
+    if (need && blank(need)) {
+      const what = { ph: ['Type a statement', 'An assignment such as position = initial + rate * 60 goes through all six phases of a compiler.'], td: ['Type some input', 'The chosen transition diagram reads it character by character, as a lexer would.'], re: ['Write token patterns', 'One per line: a token name, then its regular expression. They are combined into one NFA and DFA.'], play: ['Paste some code', 'C-like code is split into tokens with their attributes, and the symbol table is built.'], buf: ['Paste some code', 'Watch lexemeBegin and forward move through the two buffer halves.'], ly: ['Paste a Lex file', 'Add a Yacc file too to build its LALR(1) table and parse the tokens.'] }[lastLx];
+      emptyState($('#lxOut'), what[0], what[1], 'lex');
+      return;
+    }
     let html;
     try {
       html = lastLx === 'ph' ? lxPhases() : lastLx === 're' ? lxPatterns() : lastLx === 'play' ? lxPlay() : lastLx === 'buf' ? lxBuffer() : lastLx === 'ly' ? lxLexYacc() : lxDiagrams();
@@ -1656,29 +1686,31 @@
   });
   ['#lxLexeme', '#lxPatIn', '#lxLyIn', '#lxN'].forEach((s) => $(s).addEventListener('keydown', (e) => { if (e.key === 'Enter') runLx(); }));
 
+  const FILL_RUN = { re: runRE, rg: runRG, cfg: () => { runCFG(lastCfgOp || 'derive'); runPDA(); }, parse: () => runPS(), sdt: () => runSD(), cg: () => runCG(), lex: () => runLx(), pump: () => runPump() };
+
   // boot
-  const savedRE = store.get('re'); if (savedRE) $('#reIn').value = savedRE;
-  const savedRG = store.get('rg'); if (savedRG) $('#rgIn').value = savedRG;
-  const savedCFG = store.get('cfg'); if (savedCFG) $('#cfgIn').value = savedCFG;
+  // restore what the visitor typed last time, but not one of the old built-in examples
+  const restore = (key, id) => { const v = store.get(key); if (v && v !== ui.D($('#' + id).dataset.example || '')) $('#' + id).value = v; };
+  restore('re', 'reIn'); restore('rg', 'rgIn'); restore('cfg', 'cfgIn');
   setEps(ui.eps);
-  const savedPS = store.get('ps'); if (savedPS) $('#psIn').value = savedPS;
-  const savedPW = store.get('psw'); if (savedPW) $('#psW').value = savedPW;
+  restore('ps', 'psIn'); restore('psw', 'psW');
   const savedPP = store.get('psprec'); if (savedPP !== null) $('#psPrec').value = savedPP;
-  runRE(); runRG(); runCFG('derive'); runPDA(); runLang(); runPS('ff');
-  const savedPL = store.get('pmlang'); if (savedPL && DT.theory.LANGUAGES[savedPL]) $('#pmLang').value = savedPL;
-  const savedPR = store.get('pmre'); if (savedPR) $('#pmRe').value = savedPR;
+  runRE(); runRG(); runCFG('derive'); runPDA(); runPS('ff');
+  emptyState($('#langOut'), 'Describe a language', 'Choose Σ and one or two conditions above, then press Build DFA.');
+  const savedPL = store.get('pmlang'); if (savedPL && savedPL !== 'anbn' && DT.theory.LANGUAGES[savedPL]) $('#pmLang').value = savedPL;
+  restore('pmre', 'pmRe');
   runPump();
-  const savedCG = store.get('cg'); if (savedCG) $('#cgIn').value = savedCG;
+  restore('cg', 'cgIn');
   const savedCL = store.get('cglive'); if (savedCL) $('#cgLive').value = savedCL;
   runCG('tac');
-  const savedSD = store.get('sd'); if (savedSD) $('#sdIn').value = savedSD;
-  const savedSW = store.get('sdw'); if (savedSW) $('#sdW').value = savedSW;
+  restore('sd', 'sdIn'); restore('sdw', 'sdW');
   runSD('tree');
-  ['lxLexeme', 'lxPats', 'lxPatIn', 'lxCode', 'lxN', 'lxL', 'lxY', 'lxLyIn', 'lxStmt'].forEach((k) => { const v = store.get(k); if (v !== null) $('#' + k).value = v; });
-  runLx(store.get('lxop') || 'td');
+  ['lxLexeme', 'lxPats', 'lxPatIn', 'lxCode', 'lxL', 'lxY', 'lxLyIn', 'lxStmt'].forEach((k) => restore(k, k));
+  { const n = store.get('lxN'); if (n) $('#lxN').value = n; }
+  runLx(store.get('lxop') || 'ph');
   showTab((location.hash || '#' + (PAGE.tab || 're')).slice(1), false);
   if (!location.hash && PAGE.op) {
-    if (PAGE.tab === 'fa') runOp(PAGE.op);
+    if (PAGE.tab === 'fa') { if (editor.count && editor.count()) runOp(PAGE.op); }
     else if (PAGE.tab === 'parse') runPS(PAGE.op);
     else if (PAGE.tab === 'cg') runCG(PAGE.op);
     else if (PAGE.tab === 'sdt') runSD(PAGE.op);
