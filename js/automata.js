@@ -374,7 +374,9 @@
     const tr = trimUnreachable(fa).fa;
     const rv = reverse(tr);
     const rl = toRightLinear(rv.fa);
-    const revStr = (s) => (s === EPS ? EPS : DT.grammar.tokenize(s).reverse().join(''));
+    // B followed by the terminal 1 must stay apart: "B1" would read as the variable B1
+    const join = (toks) => toks.reduce((out, t, i) => out + (i && /^[A-Z]/.test(toks[i - 1]) && /^[0-9'_]/.test(t) ? ' ' : '') + t, '');
+    const revStr = (s) => (s === EPS ? EPS : join(DT.grammar.tokenize(s).reverse()));
     const prods = rl.prods.map((p) => ({ lhs: p.lhs, rhs: p.rhs.map(revStr) }));
     return { reversed: rv, right: rl, prods };
   }

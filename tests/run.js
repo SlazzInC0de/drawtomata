@@ -247,6 +247,14 @@ test('NPDA → CFG generates exactly what the NPDA accepts', () => {
   check(grammar.cfgToPDA(grammar.parse('S -> aSa | bSb | c')), 'final');
 });
 
+test('left-linear grammar keeps a variable apart from a digit that follows it', () => {
+  // contains 01 over {0, 1}: S -> B1 must not be read as the variable B1
+  const f = { n: 3, start: 0, finals: new Set([2]), labels: ['q0', 'q1', 'q2'], trans: [[0, '1', 0], [0, '0', 1], [1, '0', 1], [1, '1', 2], [2, '0', 2], [2, '1', 2]].map(([a, s, b]) => ({ from: a, sym: s, to: b })) };
+  const r = fa.toLeftLinear(f);
+  const text = r.prods.map((p) => `${p.lhs} -> ${p.rhs.join(' | ')}`).join('\n');
+  assert.ok(fa.equivalent(f, grammar.regularToNFA(grammar.parse(text)).fa).eq, text);
+});
+
 // ---------- code generation ----------
 const CG = ctx.DT.codegen;
 const plain = (x) => JSON.parse(JSON.stringify(x));
