@@ -19,6 +19,10 @@ Drawtomata converts between regular expressions, finite automata and grammars, a
 
 ## Features
 
+The tools sit in four workspaces: **Automata**, **Grammars & PDA**, **Parsing** and **Compiler**. Every input starts blank; each tool has a "Load the example" button.
+
+**Learning mode.** Subset construction, the minimization mark table, the LL(1) predictive parse and the LR parse can be played one step at a time. Each step highlights the cells it fills and states the rule that fills them.
+
 **RE → FA.** Thompson construction to a λ-NFA, λ-closure method to an NFA, subset construction to a DFA, then minimization with both the mark (table-filling) procedure and the π-partition method.
 
 **Draw FA.** Draw any DFA, NFA or λ-NFA on a canvas and run:
@@ -111,6 +115,7 @@ js/sdt.js        semantic rules, annotated parse trees, dependency graphs, S/L-a
 js/codegen.js    three-address code, DAGs, SSA, blocks, liveness, code generator, peephole
 scripts/build-pages.js  one page per converter (/nfa-to-dfa/, /ll1-parser/, …) and the sitemap, built from index.html
 js/render.js     diagrams and tables
+js/learn.js      learning mode: step builders and the step player
 js/editor.js     the drawing canvas
 js/app.js        page wiring
 tests/run.js     conversion tests
@@ -125,6 +130,7 @@ tests/run.js     conversion tests
 | 25 Oct 2026 | Code generation: three-address code, quadruples and triples, DAGs, SSA, basic blocks and flow graphs, liveness, code generator, peephole |
 | 27 Oct 2026 | Syntax-directed translation: annotated parse trees, dependency graphs and evaluation order, S/L-attributed checks, syntax trees |
 | 29 Oct 2026 | Lexical analysis: transition diagrams, patterns to one DFA, lexer and symbol table, input buffering, Lex/Yacc files |
+| 30 Oct 2026 | Workspaces, first-visit examples, learning mode, limits for very large inputs |
 
 ## Security and privacy
 

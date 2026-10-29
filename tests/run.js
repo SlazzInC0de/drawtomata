@@ -6,7 +6,7 @@ const vm = require('vm');
 const assert = require('assert/strict');
 
 const ctx = vm.createContext({ console });
-for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js', 'lex.js', 'phases.js']) {
+for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js', 'lex.js', 'phases.js', 'learn.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'), ctx, { filename: f });
 }
 const { regex, fa, grammar, parsing: P, theory: TH } = ctx.DT;
@@ -531,6 +531,41 @@ test('bad input gives a clear message, not NaN or a broken character', () => {
   assert.throws(() => SDT.run('X -> a { X.v = 1 / 0 }', 'a'), /Division by zero/);
   assert.throws(() => regex.parse('a🙂'), /"🙂" is not allowed \(position 2\)/);
   assert.throws(() => TH.pumpingRegular('∅', 'a'), /holds vacuously/);
+});
+
+test('learning mode steps reveal the whole table and quote the real table entries', () => {
+  const LR = ctx.DT.learn;
+  const reveal = (sp) => { const s = new Set(sp.always.map(([r, c]) => r + ',' + c)); sp.steps.forEach((x) => x.cells.forEach(([r, c]) => s.add(r + ',' + c))); return s; };
+  // subset: Aho Fig 3.34 NFA for (a|b)*abb
+  const t = fa.thompson(regex.parse('(a+b)*abb')).fa, sb = fa.subset(t);
+  const ss = LR.subsetSteps(t, sb);
+  assert.equal(ss.steps.length, 2 + sb.fa.n * sb.alphabet.length);
+  assert.equal(reveal(ss).size, ss.rows.length * ss.head.length, 'every subset cell is revealed');
+  assert.match(ss.steps[0].text, /λ-closure\(\{q0\}\)/);
+  // minimization: every cell of the lower triangle is revealed once the steps end
+  const m = fa.minimize(sb.fa);
+  const ms = LR.minimizeSteps(m);
+  assert.equal(reveal(ms).size, ms.rows.length * ms.head.length, 'every mark-table cell is revealed');
+  assert.match(ms.steps[ms.steps.length - 1].text, /Merge \{/);
+  // LL(1): Aho Fig 4.21 on id + id * id
+  const G = P.parseGrammar("E -> T E'\nE' -> + T E' | ε\nT -> F T'\nT' -> * F T' | ε\nF -> ( E ) | id");
+  const r = P.predictiveParse(G, P.ll1(G), ['id', '+', 'id', '*', 'id']);
+  const ls = LR.llSteps(G, r);
+  assert.equal(ls.steps.length, r.rows.length);
+  assert.match(ls.steps[0].text, /M\[E, id\] = E → T E'/);
+  assert.match(ls.steps[ls.steps.length - 1].text, /accepted/);
+  // LR: every GOTO quoted in a reduce step matches the SLR table
+  const e = lrAll('E -> E + T | T\nT -> T * F | F\nF -> ( E ) | id');
+  const pr = P.lrParse(e.GA, e.slr, ['id', '*', 'id', '+', 'id']);
+  const rs = LR.lrSteps(e.GA, pr);
+  let gotos = 0;
+  for (const st of rs.steps) {
+    const g = st.text.match(/GOTO\[(\d+), (\S+)\] = (\d+)/);
+    if (!g) continue;
+    gotos++;
+    assert.equal(e.slr.go[+g[1]].get(g[2]), +g[3], st.text);
+  }
+  assert.ok(gotos >= 5);
 });
 
 const root = path.join(__dirname, '..');

@@ -437,3 +437,14 @@ article.seo + footer.seo { margin-top: 24px; }
 @media (max-width: 420px) {
   .modes .wide { display: none; }
 }
+
+/* learning mode */
+.learn { margin: 4px 0 12px; }
+.learn.open { border: 1px solid var(--line); border-radius: var(--r-lg); padding: 10px 12px; background: var(--canvas); }
+.learnBar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.learnBar .iconBtn { border: 1px solid var(--line); background: var(--canvas); font-size: 12px; }
+.learnPos { font-size: 13px; color: var(--muted); min-width: 92px; text-align: center; font-variant-numeric: tabular-nums; }
+.learnText { margin: 10px 0; padding: 8px 10px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 var(--r-sm) var(--r-sm) 0; font-size: 14px; line-height: 1.5; }
+.learnTable td.hl { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.learnTable td.wait { background: var(--bg); }
+.learnTable tr.cur td { background: var(--accent-soft); }

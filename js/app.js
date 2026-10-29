@@ -139,6 +139,7 @@
     return stage(id, num, 'λ-NFA → NFA without λ-moves', chip('states', r.fa.n) + verifyChip(eq), body);
   }
 
+  const LEARN_MAX = 300;
   function subsetHTML(src, sb, id = 'st-dfa', num = '3') {
     const L = src.labels, dfa = sb.fa;
     const T = new Map(dfa.trans.map((t) => [t.from + '|' + t.sym, t.to]));
@@ -147,6 +148,7 @@
     const hasDead = dfa.labels.includes('∅');
     const first = sb.sets[0];
     const body = `<div class="formula">Start: A = λ-closure(${esc(L[src.start])}) = ${setOf(L, first).replace(/<[^>]+>/g, '')}  ·  Next: λ-closure( move(S, a) )  ·  final if S contains a final state</div>
+      ${dfa.n * sb.alphabet.length <= LEARN_MAX ? DT.learn.button(DT.learn.subsetSteps(src, sb)) : ''}
       ${ui.table(['DFA state', 'set of NFA states', ...sb.alphabet.map(esc)], rows, 'mono')}
       ${hasDead ? '<p class="small muted">∅ is the trap (dead) state: once there, the string can never be accepted.</p>' : ''}
       ${ui.slot(ui.faGraph(dfa, { hide: hideFor(dfa) }))}${ui.legend}`;
@@ -185,7 +187,7 @@
     const body = `${m.notes.length ? `<ul class="steps">${m.notes.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
       <p>${merged.length ? `Merged: ${merged.map((g) => `<b class="mono">{${g.map((q) => esc(L[q])).join(',')}}</b>`).join(', ')}.` : 'No two states are equivalent, so the DFA is already minimal.'}</p>
       <div class="cols">
-        <div><div class="sub">Mark procedure (table filling)</div>${mark || '<p class="small muted">Only one state.</p>'}<ol class="steps" start="0">${passList}</ol></div>
+        <div><div class="sub">Mark procedure (table filling)</div>${n > 1 && n <= MARK_MAX ? DT.learn.button(DT.learn.minimizeSteps(m)) : ''}${mark || '<p class="small muted">Only one state.</p>'}<ol class="steps" start="0">${passList}</ol></div>
         <div><div class="sub">Equivalence (π) method</div><div class="part">${partList}</div></div>
       </div>
       <div class="cols">
@@ -793,6 +795,7 @@
     const rows = r.rows.map((x) => [esc(x.matched), esc(x.stack.join(' ')), inputCell(x.input), esc(x.action)]);
     return stage('ps-pp', '', `Non-recursive predictive parse of “${esc(tk.toks.join(' ') || EPS)}”`, (r.accepted ? okChip('accepted') : badChip('rejected')) + (t.isLL1 ? '' : badChip('table has conflicts')),
       `<p class="small muted">Stack top is on the right. Start with $${esc(G.start)} and w$; expand the top nonterminal using M[top, lookahead], match terminals.</p>
+       ${r.rows.length <= LEARN_MAX ? DT.learn.button(DT.learn.llSteps(G, r)) : ''}
        ${traceTable(['Matched', 'Stack', 'Input', 'Action'], rows, r.accepted)}`);
   }
 
@@ -859,7 +862,7 @@
     if (!tk.err && kind !== 'lr0') {
       const r = PS.lrParse(GA, table, tk.toks);
       accepted = r.accepted;
-      traceHTML = traceTable(['Stack', 'Input', 'Action', 'Handle'], r.rows.map((x) => [esc(x.stack), inputCell(x.input), esc(x.action), esc(x.handle || '')]), r.accepted);
+      traceHTML = (r.rows.length <= LEARN_MAX ? DT.learn.button(DT.learn.lrSteps(GA, r)) : '') + traceTable(['Stack', 'Input', 'Action', 'Handle'], r.rows.map((x) => [esc(x.stack), inputCell(x.input), esc(x.action), esc(x.handle || '')]), r.accepted);
     }
     const conflictFree = table.conflicts.length === 0;
     let meta = chip('states', coll.states.length) + (raw.conflicts.length ? badChip(`${raw.conflicts.length} conflict${raw.conflicts.length > 1 ? 's' : ''}`) : okChip(`no conflicts, the grammar is ${names[kind]}`));
