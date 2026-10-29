@@ -211,8 +211,18 @@
   // deferred diagram slots inside HTML strings
   const queue = [];
   let gid = 0;
-  ui.slot = (g, cls = '') => { const id = 'gv' + ++gid; queue.push([id, 'g', g]); return `<div class="gv ${cls}" id="${id}"><div class="gv-wait">drawing…</div></div>`; };
-  ui.treeSlot = (root) => { const id = 'gv' + ++gid; queue.push([id, 't', root]); return `<div class="gv tree" id="${id}"><div class="gv-wait">drawing…</div></div>`; };
+  const MAX_DRAW = 200, MAX_ROWS = 400;
+  const tooBig = (what, n) => `<p class="small muted tooBig">${what} has ${n} nodes, too many to draw clearly (limit ${MAX_DRAW}).</p>`;
+  const treeSize = (n) => 1 + (n.kids || []).reduce((s, k) => s + treeSize(k), 0);
+  ui.slot = (g, cls = '') => {
+    if (g.nodes && g.nodes.length > MAX_DRAW) return tooBig('This diagram', g.nodes.length);
+    const id = 'gv' + ++gid; queue.push([id, 'g', g]); return `<div class="gv ${cls}" id="${id}"><div class="gv-wait">drawing…</div></div>`;
+  };
+  ui.treeSlot = (root) => {
+    const size = treeSize(root);
+    if (size > MAX_DRAW * 3) return tooBig('This tree', size);
+    const id = 'gv' + ++gid; queue.push([id, 't', root]); return `<div class="gv tree" id="${id}"><div class="gv-wait">drawing…</div></div>`;
+  };
   ui.flush = () => {
     for (const [id, kind, g] of queue.splice(0)) {
       const el = document.getElementById(id);
@@ -223,8 +233,11 @@
   ui.put = (el, html) => { el.innerHTML = DOMPurify.sanitize(D(html)); ui.flush(); };
 
   // tables
-  ui.table = (head, rows, cls = '') =>
-    `<div class="tbl"><table class="${cls}"><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr${r.cls ? ` class="${r.cls}"` : ''}>${(r.cells || r).map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  ui.table = (head, allRows, cls = '') => {
+    const rows = allRows.length > MAX_ROWS ? allRows.slice(0, MAX_ROWS) : allRows;
+    const more = allRows.length > MAX_ROWS ? `<p class="small muted tooBig">Showing the first ${MAX_ROWS} of ${allRows.length} rows.</p>` : '';
+    return `<div class="tbl"><table class="${cls}"><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr${r.cls ? ` class="${r.cls}"` : ''}>${(r.cells || r).map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${more}`;
+  };
   ui.stateCell = (fa, i) => `${i === fa.start ? '<span class="mk-start" title="start">→</span>' : ''}${fa.finals.has(i) ? '<span class="mk-final" title="final">*</span>' : ''}${esc(fa.labels[i])}`;
   ui.faTable = (fa, opts = {}) => {
     const A = DT.fa.alphabetOf(fa);

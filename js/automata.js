@@ -441,7 +441,7 @@
   }
   function buildCondition(c, A) {
     const w = c.w || '';
-    if ((c.type === 'starts' || c.type === 'ends' || c.type === 'contains') && [...w].some((ch) => !A.includes(ch))) throw new Error(`"${w}" uses a symbol that is not in Σ.`);
+    if ((c.type === 'starts' || c.type === 'ends' || c.type === 'contains') && [...w].some((ch) => !A.includes(ch))) throw new Error(`"${w}" uses "${[...w].find((ch) => !A.includes(ch))}", which is not in Σ = {${A.join(', ')}}.`);
     if (c.type === 'starts') {
       const m = w.length, trans = [];
       for (let k = 0; k < m; k++) for (const s of A) trans.push({ from: k, sym: s, to: s === w[k] ? k + 1 : m + 1 });

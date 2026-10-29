@@ -9,7 +9,7 @@
   const baseOf = (s) => { const m = s.match(/^([A-Za-z][A-Za-z_]*?)(\d+)('*)$/); return m ? m[1] + m[3] : s; };
   // position 0 is the head of a production, 1..n its body symbols
   const occAt = (node, pos) => (pos === 0 ? node : node.kids[pos - 1]);
-  const ARITH = { '+': (a, b) => a + b, '-': (a, b) => a - b, '*': (a, b) => a * b, '/': (a, b) => (b === 0 ? NaN : a / b) };
+  const ARITH = { '+': (a, b) => a + b, '-': (a, b) => a - b, '*': (a, b) => a * b, '/': (a, b) => a / b };
 
   // ---------- expressions inside { … } ----------
   function lexExpr(s) {
@@ -362,6 +362,7 @@
       const a = ev(e.l, look), b = ev(e.r, look);
       if (e.op === '||') return show(a) + show(b);
       if (typeof a !== 'number' || typeof b !== 'number') throw new Error(`Cannot compute ${show(a)} ${e.op} ${show(b)}: both sides must be numbers.`);
+      if (e.op === '/' && b === 0) throw new Error(`Division by zero: ${show(a)} / 0.`);
       return ARITH[e.op](a, b);
     }
     function ev(e, look) {

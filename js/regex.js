@@ -17,7 +17,7 @@
       else if (EPS_CHARS.includes(c)) out.push({ k: 'eps', i });
       else if (c === '∅' || c === 'Ø' || c === 'φ' || c === 'ϕ') out.push({ k: 'empty', i });
       else if (/[a-zA-Z0-9]/.test(c)) out.push({ k: 'sym', v: c, i });
-      else throw new Error(`"${c}" is not allowed (position ${i + 1}). Use letters/digits, + * ( ) and λ.`);
+      else throw new Error(`"${String.fromCodePoint(src.codePointAt(i))}" is not allowed (position ${[...src.slice(0, i)].length + 1}). Use letters/digits, + * ( ) and λ.`);
     }
     return out;
   }

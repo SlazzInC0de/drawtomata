@@ -145,10 +145,13 @@
     return stage(id, num, 'NFA → DFA (subset construction)', chip('states', dfa.n) + verifyChip(eq) + deadToggle(), body);
   }
 
+  const MARK_MAX = 40, LIST_MAX = 80, STEP_MAX = 512;
+  const stepLimit = (n, what) => `${what} has ${n} states. That is too large to show step by step (limit ${STEP_MAX}). Try a smaller input.`;
   function minimizeHTML(src, m, id = 'st-min', num = '4') {
     const L = m.labels, n = m.dfa.n, A = m.alphabet;
     let mark = '';
-    if (n > 1) {
+    if (n > MARK_MAX) mark = `<p class="small muted">The table would have ${n * (n - 1) / 2} cells, so it is skipped for ${n} states (limit ${MARK_MAX}). The passes below still list what was marked.</p>`;
+    else if (n > 1) {
       const head = ['', ...L.slice(0, n - 1).map(esc)];
       const rows = [];
       for (let i = 1; i < n; i++) {
@@ -162,11 +165,12 @@
       mark = ui.table(head, rows, 'mark mono').replace(/<td>×/g, '<td class="x">×').replace(/<td>=<\/td>/g, '<td class="eq">=</td>').replace(/<td><\/td>/g, '<td class="blank"></td>');
     }
     const pair = (i, j) => `(${esc(L[i])},${esc(L[j])})`;
+    const few = (arr, f, sep) => arr.slice(0, LIST_MAX).map(f).join(sep) + (arr.length > LIST_MAX ? `${sep}<span class="muted">… and ${arr.length - LIST_MAX} more</span>` : '');
     const passList = m.passes.map((p, k) => k === 0
-      ? `<li><b>Pass 0</b>: mark every (final, non-final) pair: ${p.length ? p.map((x) => pair(x.i, x.j)).join(' ') : 'none'}</li>`
-      : `<li><b>Pass ${k}</b>: ${p.map((x) => `${pair(x.i, x.j)} on ${esc(x.a)} → ${pair(x.to[0], x.to[1])}`).join(', ')}</li>`).join('') +
+      ? `<li><b>Pass 0</b>: mark every (final, non-final) pair: ${p.length ? few(p, (x) => pair(x.i, x.j), ' ') : 'none'}</li>`
+      : `<li><b>Pass ${k}</b>: ${few(p, (x) => `${pair(x.i, x.j)} on ${esc(x.a)} → ${pair(x.to[0], x.to[1])}`, ', ')}</li>`).join('') +
       `<li><b>Pass ${m.passes.length}</b>: nothing new is marked, stop. Unmarked pairs (=) are indistinguishable.</li>`;
-    const partList = m.partitions.map((p, k) => `<div>π<sub>${k}</sub> = ${p.map((g) => `<span class="grp">{${g.map((q) => esc(L[q])).join(',')}}</span>`).join('')}</div>`).join('') +
+    const partList = m.partitions.map((p, k) => `<div>π<sub>${k}</sub> = ${few(p, (g) => `<span class="grp">{${g.map((q) => esc(L[q])).join(',')}}</span>`, '')}</div>`).join('') +
       `<div class="muted">π<sub>${m.partitions.length}</sub> = π<sub>${m.partitions.length - 1}</sub>, so stop.</div>`;
     const merged = m.groups.filter((g) => g.length > 1);
     const eq = FA.equivalent(src, m.min);
@@ -279,6 +283,7 @@
       const t = FA.thompson(ast);
       const ef = FA.removeEps(t.fa);
       const sb = FA.subset(t.fa);
+      if (sb.fa.n > STEP_MAX) throw new Error(stepLimit(sb.fa.n, 'The DFA for this expression'));
       const mn = FA.minimize(sb.fa);
       reState = { src, ast, t, ef, sb, mn };
     } catch (e) { showErr($('#reErr'), e.message); return; }
@@ -296,7 +301,7 @@
     html += subsetHTML(t.fa, sb);
     html += minimizeHTML(t.fa, mn);
     html += stage('st-test', '', 'Test strings on the minimal DFA', '',
-      `<form class="row wrapRow" id="reTestForm"><label class="sr" for="reTest">Strings</label><input id="reTest" class="mono" value="${esc(store.get('retest') || 'abb, aabb, ab, ' + ui.eps)}"><button class="ghost" type="submit">Run</button></form><div id="reTestOut"></div>
+      `<form class="row wrapRow" id="reTestForm"><label class="sr" for="reTest">Strings</label><input id="reTest" class="mono" placeholder="e.g. abb, aabb, ${ui.eps}" value="${esc(store.get('retest') || '')}"><button class="ghost" type="submit">Run</button></form><div id="reTestOut"></div>
        <div class="btnRow">${loadBtn(mn.min, 'Open minimal DFA in Draw FA')}${loadBtn(t.fa, 'Open λ-NFA in Draw FA')}${loadBtn(sb.fa, 'Open DFA in Draw FA')}</div>`);
     ui.put($('#reOut'), html);
     $('#reTestForm').addEventListener('submit', (e) => { e.preventDefault(); runReTest(); });
@@ -304,6 +309,7 @@
   }
   function runReTest() {
     const v = $('#reTest').value; store.set('retest', v);
+    if (!v.trim()) { ui.put($('#reTestOut'), `<p class="small muted">Type strings separated by commas and press Run. Use ${ui.eps} for the empty string.</p>`); return; }
     ui.put($('#reTestOut'), ui.table(['string', 'result', 'run'], testRows(reState.mn.min, splitList(v)), 'mono'));
   }
   rerenders.re = renderRE;
@@ -370,7 +376,7 @@
 
   let lastOp = null;
   const elimOrder = () => store.get('elim') || '';
-  const testList = () => store.get('fatest') || 'ab, aab, ba, λ';
+  const testList = () => store.get('fatest') || '';
   function runOp(op) {
     lastOp = op;
     $$('.op[data-op]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.op === op)));
@@ -383,8 +389,11 @@
         else { const r = FA.removeEps(src); html = removeEpsHTML(src, r, 'st-nfa', '') + `<div class="btnRow">${loadBtn(r.fa, 'Load into canvas')}</div>`; }
       } else if (op === 'dfa') {
         const sb = FA.subset(src);
+        if (sb.fa.n > STEP_MAX) throw new Error(stepLimit(sb.fa.n, 'The DFA'));
         html = (FA.isDFA(src) ? '<p class="small muted">Already deterministic. The table still shows the subset view; missing moves go to ∅.</p>' : '') + subsetHTML(src, sb, 'st-dfa', '') + `<div class="btnRow">${loadBtn(sb.fa, 'Load DFA into canvas')}</div>`;
       } else if (op === 'min') {
+        const big = FA.isDFA(src) ? src.n : FA.subset(src).fa.n;
+        if (big > STEP_MAX) throw new Error(stepLimit(big, 'The DFA to minimize'));
         const m = FA.minimize(src);
         html = minimizeHTML(src, m, 'st-min', '') + `<div class="btnRow">${loadBtn(m.min, 'Load minimal DFA into canvas')}</div>`;
       } else if (op === 're') {
@@ -394,8 +403,8 @@
       } else if (op === 'rlg') html = rlgHTML(src);
       else if (op === 'llg') html = llgHTML(src);
       else if (op === 'test') {
-        html = `<form class="drawerForm" id="faTestForm"><div class="field"><label class="lbl" for="faTest">Strings, comma separated</label><input id="faTest" class="mono" value="${esc(ui.D(testList()))}" autocomplete="off"></div><button class="primary" type="submit">Run</button></form>` +
-          ui.table(['string', 'result', FA.isDFA(src) ? 'run' : 'states after each symbol'], testRows(src, splitList(testList())), 'mono');
+        html = `<form class="drawerForm" id="faTestForm"><div class="field"><label class="lbl" for="faTest">Strings, comma separated</label><input id="faTest" class="mono" placeholder="e.g. ab, aab, ${ui.eps}" value="${esc(ui.D(testList()))}" autocomplete="off"></div><button class="primary" type="submit">Run</button></form>` +
+          (testList().trim() ? ui.table(['string', 'result', FA.isDFA(src) ? 'run' : 'states after each symbol'], testRows(src, splitList(testList())), 'mono') : `<p class="small muted">Type strings separated by commas and press Run. Use ${ui.eps} for the empty string.</p>`);
       }
     } catch (e) { toast(e.message); return; }
     openDrawer(OP_TITLES[op]);
@@ -1701,6 +1710,7 @@
   // (clearing here also undoes the browser's own form restore on reload)
   $$('[data-example], #cgLive').forEach((el) => { el.value = ''; });
   $('#pmLang').value = '';
+  store.set('retest', ''); store.set('fatest', '');
   setEps(ui.eps);
   runRE(); runRG(); runCFG('derive'); runPDA(); runPS('ff');
   emptyState($('#langOut'), 'Describe a language', 'Choose Σ and one or two conditions above, then press Build DFA.');

@@ -59,6 +59,7 @@
     const p = dfa.n;
     const test = (s) => DT.fa.accepts(dfa, s).ok;
     const A = DT.fa.alphabetOf(dfa);
+    if (!A.length) throw new Error(`L(${reText}) has no symbols, so it has no string long enough to pump. The lemma holds vacuously.`);
     if ([...w].some((c) => !A.includes(c))) throw new Error(`"${w}" uses a symbol outside Σ = {${A.join(', ')}}.`);
     const problems = [];
     if (!test(w)) problems.push(`"${w}" is not in L(${reText}).`);

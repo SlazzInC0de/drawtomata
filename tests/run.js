@@ -527,6 +527,12 @@ test('converter pages and sitemap are up to date (run node scripts/build-pages.j
 // Security headers: every inline <script> must be allowed by a hash inside script-src,
 // and every external script must carry an SRI digest that matches the file it loads.
 const crypto = require('crypto');
+test('bad input gives a clear message, not NaN or a broken character', () => {
+  assert.throws(() => SDT.run('X -> a { X.v = 1 / 0 }', 'a'), /Division by zero/);
+  assert.throws(() => regex.parse('a🙂'), /"🙂" is not allowed \(position 2\)/);
+  assert.throws(() => TH.pumpingRegular('∅', 'a'), /holds vacuously/);
+});
+
 const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const csp = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'))
