@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Verified Against the Textbook | Drawtomata</title>
+<meta name="description" content="Worked examples from Aho, Lam, Sethi and Ullman and from Linz, with the textbook answer next to what Drawtomata computes. Every check runs again in your browser.">
+<meta name="google-site-verification" content="lD49FQi-laK4Ykwxqgnlgu-ZVwIR7JKvXZEgora-BPs">
+<link rel="canonical" href="https://drawtomata.vercel.app/verified/"><!-- nosemgrep: missing-integrity (a canonical URL is not fetched, so it has no integrity hash) -->
+<meta name="theme-color" content="#2563EB">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Verified against the textbook | Drawtomata">
+<meta property="og:description" content="Type a regular expression or draw an automaton and get every conversion step, from λ-NFA to minimal DFA, FA to RE, grammars and NPDA.">
+<meta property="og:url" content="https://drawtomata.vercel.app/verified/">
+<meta property="og:image" content="https://drawtomata.vercel.app/docs/screenshot.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="../assets/drawtomata-icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/drawtomata-icon-32.png">
+<link rel="apple-touch-icon" href="../assets/drawtomata-icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+<script>try{var t=localStorage.getItem('dt-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+</head>
+<body class="docPage">
+<header class="topbar"><div class="brandH"><a class="brand" href="../" aria-label="Drawtomata home">
+      <img src="../assets/drawtomata-icon.svg" alt="" class="logoMark" width="28" height="28">
+      <span class="wordmark">Draw<span>tomata</span></span>
+    </a></div><a class="ghost vOpen" href="../">Open the tool</a></header>
+<article class="seo verified" id="how">
+<p class="seoCrumb"><a href="../">Drawtomata</a> / Verified against the textbook</p>
+<h1>Verified against the textbook</h1>
+<p class="seoLead">Each example below is a worked example from the course books. The textbook answer sits next to what Drawtomata computes with the same code the tool uses. The same checks run in the test suite on every change, and again in your browser when this page opens.</p>
+<p class="vSummary" id="vSummary"><span class="chip ok">15 of 15 match</span> <span class="small muted" id="vWhen">when the site was built</span></p>
+<h2>Automata</h2>
+<section class="vCase" data-case="subset">
+<div class="vHead"><h3>Subset construction on the NFA for (a|b)*abb</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Aho, Lam, Sethi, Ullman, Compilers (2nd ed.), Example 3.21, Fig. 3.35</p>
+<pre class="vIn">(a+b)*abb</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">5 DFA states (A to E), final state E</dd><dt>Drawtomata</dt><dd class="vAct">5 DFA states (A to E), final state E</dd></dl>
+</section>
+<section class="vCase" data-case="minimize">
+<div class="vHead"><h3>Minimizing the DFA of Fig. 3.36</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Aho, Lam, Sethi, Ullman, Compilers (2nd ed.), Example 3.40</p>
+<pre class="vIn">the 5-state DFA above</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">4 states: A and C are merged</dd><dt>Drawtomata</dt><dd class="vAct">4 states: A and C are merged</dd></dl>
+</section>
+<section class="vCase" data-case="anbn">
+<div class="vHead"><h3>aⁿbⁿ is not regular: w = aᵖbᵖ defeats every split</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Linz, An Introduction to Formal Languages and Automata, Ch. 4 (pumping lemma)</p>
+<pre class="vIn">p = 1 to 6</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">no split survives for any p</dd><dt>Drawtomata</dt><dd class="vAct">no split survives for any p</dd></dl>
+</section>
+<h2>Parsing</h2>
+<section class="vCase" data-case="firstfollow">
+<div class="vHead"><h3>FIRST and FOLLOW of the expression grammar</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Aho, Lam, Sethi, Ullman, Compilers (2nd ed.), Example 4.30</p>
+<pre class="vIn">E -> T E'
+E' -> + T E' | ε
+T -> F T'
+T' -> * F T' | ε
+F -> ( E ) | id</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">FIRST(E) = {(, id}; FOLLOW(E) = {$, )}; FOLLOW(T) = {$, ), +}; FOLLOW(F) = {$, ), *, +}</dd><dt>Drawtomata</dt><dd class="vAct">FIRST(E) = {(, id}; FOLLOW(E) = {$, )}; FOLLOW(T) = {$, ), +}; FOLLOW(F) = {$, ), *, +}</dd></dl>
+</section>
+<section class="vCase" data-case="ll1">
+<div class="vHead"><h3>LL(1) parsing table of the expression grammar</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Aho, Lam, Sethi, Ullman, Compilers (2nd ed.), Example 4.32, Fig. 4.17</p>
+<pre class="vIn">E -> T E'
+E' -> + T E' | ε
+T -> F T'
+T' -> * F T' | ε
+F -> ( E ) | id</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">LL(1), 13 entries, M[E', )] = E' → λ</dd><dt>Drawtomata</dt><dd class="vAct">LL(1), 13 entries, M[E', )] = E' → λ</dd></dl>
+</section>
+<section class="vCase" data-case="predictive">
+<div class="vHead"><h3>Predictive parser output on id + id * id</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Aho, Lam, Sethi, Ullman, Compilers (2nd ed.), Fig. 4.21</p>
+<pre class="vIn">id + id * id</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">E → T E'; T → F T'; F → id; T' → λ; E' → + T E'; T → F T'; F → id; T' → * F T'; F → id; T' → λ; E' → λ; accept</dd><dt>Drawtomata</dt><dd class="vAct">E → T E'; T → F T'; F → id; T' → λ; E' → + T E'; T → F T'; F → id; T' → * F T'; F → id; T' → λ; E' → λ; accept</dd></dl>
+</section>
+<section class="vCase" data-case="lr0">
+<div class="vHead"><h3>LR(0) items and SLR table of the expression grammar</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Aho, Lam, Sethi, Ullman, Compilers (2nd ed.), Fig. 4.31 and Fig. 4.37</p>
+<pre class="vIn">E -> E + T | T
+T -> T * F | F
+F -> ( E ) | id</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">12 item sets (I0 to I11), SLR table has no conflicts</dd><dt>Drawtomata</dt><dd class="vAct">12 item sets (I0 to I11), SLR table has no conflicts</dd></dl>
+</section>
+<section class="vCase" data-case="slrparse">
+<div class="vHead"><h3>Moves of the SLR parser on id * id + id</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Aho, Lam, Sethi, Ullman, Compilers (2nd ed.), Fig. 4.38</p>
+<pre class="vIn">id * id + id</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">s5, r F → id, r T → F, s7, s5, r F → id, r T → T * F, r E → T, s6, s5, r F → id, r T → F, r E → E + T, accept</dd><dt>Drawtomata</dt><dd class="vAct">s5, r F → id, r T → F, s7, s5, r F → id, r T → T * F, r E → T, s6, s5, r F → id, r T → F, r E → E + T, accept</dd></dl>
+</section>
+<section class="vCase" data-case="slrconflict">
+<div class="vHead"><h3>S → L = R | R is not SLR, but it is LALR</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Aho, Lam, Sethi, Ullman, Compilers (2nd ed.), Example 4.48</p>
+<pre class="vIn">S -> L = R | R
+L -> * R | id
+R -> L</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">SLR: 1 conflict, on =; LALR: no conflicts</dd><dt>Drawtomata</dt><dd class="vAct">SLR: 1 conflict, on =; LALR: no conflicts</dd></dl>
+</section>
+<section class="vCase" data-case="lalr">
+<div class="vHead"><h3>LR(1) and LALR states of S → C C, C → c C | d</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Aho, Lam, Sethi, Ullman, Compilers (2nd ed.), Examples 4.54 and 4.58</p>
+<pre class="vIn">S -> C C
+C -> c C | d</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">10 LR(1) states, 7 LALR states</dd><dt>Drawtomata</dt><dd class="vAct">10 LR(1) states, 7 LALR states</dd></dl>
+</section>
+<h2>Compiler</h2>
+<section class="vCase" data-case="annotated">
+<div class="vHead"><h3>Annotated parse tree for 3 * 5 + 4 n</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Aho, Lam, Sethi, Ullman, Compilers (2nd ed.), Example 5.2, Fig. 5.3</p>
+<pre class="vIn">3 * 5 + 4 n</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">L.val = 19</dd><dt>Drawtomata</dt><dd class="vAct">L.val = 19</dd></dl>
+</section>
+<section class="vCase" data-case="syntaxtree">
+<div class="vHead"><h3>Syntax tree for a - 4 + c built by semantic rules</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Aho, Lam, Sethi, Ullman, Compilers (2nd ed.), Example 5.11, Fig. 5.11</p>
+<pre class="vIn">a - 4 + c</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">p1 = Leaf(id, a); p2 = Leaf(num, 4); p3 = Node(-, p1, p2); p4 = Leaf(id, c); p5 = Node(+, p3, p4)</dd><dt>Drawtomata</dt><dd class="vAct">p1 = Leaf(id, a); p2 = Leaf(num, 4); p3 = Node(-, p1, p2); p4 = Leaf(id, c); p5 = Node(+, p3, p4)</dd></dl>
+</section>
+<section class="vCase" data-case="phases">
+<div class="vHead"><h3>Phases of a compiler on position = initial + rate * 60</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Aho, Lam, Sethi, Ullman, Compilers (2nd ed.), Fig. 1.7</p>
+<pre class="vIn">position = initial + rate * 60</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">tokens &lt;id,1> &lt;=> &lt;id,2> &lt;+> &lt;id,3> &lt;*> &lt;60>; optimized: t1 = id3 * 60.0 ; id1 = id2 + t1</dd><dt>Drawtomata</dt><dd class="vAct">tokens &lt;id,1> &lt;=> &lt;id,2> &lt;+> &lt;id,3> &lt;*> &lt;60>; optimized: t1 = id3 * 60.0 ; id1 = id2 + t1</dd></dl>
+</section>
+<section class="vCase" data-case="tac">
+<div class="vHead"><h3>Three-address code for a = b * - c + b * - c</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Aho, Lam, Sethi, Ullman, Compilers (2nd ed.), Section 6.2, Fig. 6.10</p>
+<pre class="vIn">a = b * -c + b * -c</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">t1 = minus c ; t2 = b * t1 ; t3 = minus c ; t4 = b * t3 ; t5 = t2 + t4 ; a = t5</dd><dt>Drawtomata</dt><dd class="vAct">t1 = minus c ; t2 = b * t1 ; t3 = minus c ; t4 = b * t3 ; t5 = t2 + t4 ; a = t5</dd></dl>
+</section>
+<section class="vCase" data-case="leaders">
+<div class="vHead"><h3>Leaders of the code that sets a 10×10 matrix to the identity</h3><span class="chip ok vStatus">✓ matches</span></div>
+<p class="vSrc">Aho, Lam, Sethi, Ullman, Compilers (2nd ed.), Example 8.5</p>
+<pre class="vIn">17 three-address instructions</pre>
+<dl class="vCmp"><dt>Textbook</dt><dd class="vExp">leaders 1, 2, 3, 10, 12, 13 (6 basic blocks)</dd><dt>Drawtomata</dt><dd class="vAct">leaders 1, 2, 3, 10, 12, 13 (6 basic blocks)</dd></dl>
+</section>
+<h2>Books</h2>
+<ul><li>A. V. Aho, M. S. Lam, R. Sethi, J. D. Ullman, <em>Compilers: Principles, Techniques, and Tools</em>, 2nd edition.</li><li>P. Linz, <em>An Introduction to Formal Languages and Automata</em>.</li></ul>
+</article>
+<footer class="seo"><nav class="seoNav" aria-label="All converters"><h2>All converters</h2><ul><li><a href="../nfa-to-dfa/">NFA to DFA</a></li><li><a href="../regex-to-dfa/">Regex to DFA</a></li><li><a href="../dfa-minimization/">DFA minimization</a></li><li><a href="../epsilon-nfa-to-nfa/">ε-NFA to NFA</a></li><li><a href="../fa-to-regex/">FA to regex</a></li><li><a href="../first-and-follow/">FIRST and FOLLOW</a></li><li><a href="../phases-of-compiler/">Compiler phases</a></li><li><a href="../lexical-analysis/">Lexical analyzer</a></li><li><a href="../ll1-parser/">LL(1) table</a></li><li><a href="../lr-parsing-table/">SLR, CLR, LALR</a></li><li><a href="../cfg-to-pda/">CFG to PDA</a></li><li><a href="../pumping-lemma/">Pumping lemma</a></li><li><a href="../syntax-directed-translation/">Annotated parse tree</a></li><li><a href="../three-address-code/">Three-address code</a></li><li><span aria-current="page">Verified against the textbook</span></li></ul></nav><p class="seoMeta">Drawtomata is free and runs in your browser. <a href="https://github.com/SlazzInC0de/drawtomata">Source on GitHub</a>.</p></footer>
+<script src="../js/regex.js"></script>
+<script src="../js/automata.js"></script>
+<script src="../js/grammar.js"></script>
+<script src="../js/parsing.js"></script>
+<script src="../js/theory.js"></script>
+<script src="../js/codegen.js"></script>
+<script src="../js/sdt.js"></script>
+<script src="../js/lex.js"></script>
+<script src="../js/phases.js"></script>
+<script src="../js/textbook.js"></script>
+<script src="../js/verified.js"></script>
+</body>
+</html>

@@ -6,7 +6,7 @@ const vm = require('vm');
 const assert = require('assert/strict');
 
 const ctx = vm.createContext({ console });
-for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js', 'lex.js', 'phases.js', 'learn.js']) {
+for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js', 'lex.js', 'phases.js', 'learn.js', 'textbook.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'), ctx, { filename: f });
 }
 const { regex, fa, grammar, parsing: P, theory: TH } = ctx.DT;
@@ -566,6 +566,12 @@ test('learning mode steps reveal the whole table and quote the real table entrie
     assert.equal(e.slr.go[+g[1]].get(g[2]), +g[3], st.text);
   }
   assert.ok(gotos >= 5);
+});
+
+test('every textbook example on /verified/ matches', () => {
+  const res = ctx.DT.textbook.runAll();
+  assert.ok(res.length >= 15);
+  for (const r of res) assert.equal(r.actual, r.expected, `${r.id} (${r.source})`);
 });
 
 const root = path.join(__dirname, '..');

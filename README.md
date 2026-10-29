@@ -21,6 +21,8 @@ Drawtomata converts between regular expressions, finite automata and grammars, a
 
 The tools sit in four workspaces: **Automata**, **Grammars & PDA**, **Parsing** and **Compiler**. Every input starts blank; each tool has a "Load the example" button.
 
+**Verified against the textbook.** [/verified/](https://drawtomata.vercel.app/verified/) lists worked examples from Aho, Lam, Sethi and Ullman and from Linz, with the book's answer next to what the engines produce. The same cases run in `tests/run.js` and again in the visitor's browser.
+
 **Learning mode.** Subset construction, the minimization mark table, the LL(1) predictive parse and the LR parse can be played one step at a time. Each step highlights the cells it fills and states the rule that fills them.
 
 **RE → FA.** Thompson construction to a λ-NFA, λ-closure method to an NFA, subset construction to a DFA, then minimization with both the mark (table-filling) procedure and the π-partition method.
@@ -116,6 +118,7 @@ js/codegen.js    three-address code, DAGs, SSA, blocks, liveness, code generator
 scripts/build-pages.js  one page per converter (/nfa-to-dfa/, /ll1-parser/, …) and the sitemap, built from index.html
 js/render.js     diagrams and tables
 js/learn.js      learning mode: step builders and the step player
+js/textbook.js   textbook examples shown on /verified/ and checked by the tests
 js/editor.js     the drawing canvas
 js/app.js        page wiring
 tests/run.js     conversion tests
