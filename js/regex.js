@@ -1,8 +1,7 @@
 /* Regular expression parsing, printing and simplifying algebra */
 (function (DT) {
   'use strict';
-  const EPS = 'λ';
-  const EPS_CHARS = 'λεΛ∈@';
+  const { EPS, EPS_CHARS } = DT.core;
 
   function tokenize(src) {
     const out = [];
@@ -166,7 +165,5 @@
     }
   };
 
-  DT.EPS = EPS;
-  DT.isEps = (s) => s === '' || EPS_CHARS.includes(s) || s === 'eps' || s === 'lambda';
   DT.regex = { tokenize, parse, astStr, R };
-})(typeof window !== 'undefined' ? (window.DT = window.DT || {}) : (globalThis.DT = globalThis.DT || {}));
+})(typeof window !== 'undefined' ? window.DT : globalThis.DT);

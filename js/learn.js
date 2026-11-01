@@ -2,7 +2,7 @@
    The step builders are pure (tested in Node); the player below only runs in the browser. */
 (function (DT) {
   'use strict';
-  const EPS = 'λ';
+  const EPS = DT.EPS;
   const setStr = (L, S) => (S.length ? '{' + S.map((q) => L[q]).join(', ') + '}' : '∅');
   const sorted = (s) => [...s].sort((a, b) => a - b);
   const allCols = (r, w) => Array.from({ length: w }, (_, c) => [r, c]);

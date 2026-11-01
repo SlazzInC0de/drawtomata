@@ -93,11 +93,7 @@
   const isN = (G, s) => G.ntSet.has(s);
   const dedupe = (prods) => { const seen = new Set(); return prods.filter((p) => { const k = p.lhs + '→' + p.rhs.join(' '); if (seen.has(k)) return false; seen.add(k); return true; }); };
 
-  function nullableSet(G) {
-    const N = new Set();
-    for (let ch = true; ch;) { ch = false; for (const p of G.prods) if (!N.has(p.lhs) && p.rhs.every((s) => N.has(s))) { N.add(p.lhs); ch = true; } }
-    return N;
-  }
+  const nullableSet = DT.core.nullableSet;
   function generatingSet(G) {
     const Gn = new Set();
     for (let ch = true; ch;) { ch = false; for (const p of G.prods) if (!Gn.has(p.lhs) && p.rhs.every((s) => !isN(G, s) || Gn.has(s))) { Gn.add(p.lhs); ch = true; } }

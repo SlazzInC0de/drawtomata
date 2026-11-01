@@ -6,7 +6,7 @@ const vm = require('vm');
 const assert = require('assert/strict');
 
 const ctx = vm.createContext({ console });
-for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js', 'lex.js', 'phases.js', 'learn.js', 'textbook.js']) {
+for (const f of ['core.js', 'regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js', 'lex.js', 'phases.js', 'learn.js', 'textbook.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'), ctx, { filename: f });
 }
 const { regex, fa, grammar, parsing: P, theory: TH } = ctx.DT;
@@ -592,6 +592,19 @@ test('golden snapshots: every engine output is unchanged (node tests/golden.js -
       return `${p}: expected ${JSON.stringify(a).slice(0, 120)}, got ${JSON.stringify(b).slice(0, 120)}`;
     };
     assert.fail(`${k} changed at ${where(want, have, k)}`);
+  }
+});
+
+test('every converter accepts the same spellings of the empty string', () => {
+  for (const e of ['λ', 'ε', 'eps', 'epsilon', 'lambda']) {
+    assert.equal(P.parseGrammar(`A -> a A | ${e}`).prods[1].rhs.length, 0, `parsing: ${e}`);
+    const sd = SDT.parseSDD(`A -> a A1 { A.n = A1.n + 1 }\nA -> ${e} { A.n = 0 }`);
+    assert.equal(sd.prods[1].rhs.length, 0, `sdt: ${e}`);
+    assert.ok(ctx.DT.isEps(e), `isEps: ${e}`);
+  }
+  for (const e of ['λ', 'ε', '@']) {
+    assert.equal(grammar.parse(`S -> aS | ${e}`).prods[1].rhs.length, 0, `cfg: ${e}`);
+    assert.equal(regex.astStr(regex.parse(`a+${e}`)), regex.astStr(regex.parse('a+λ')), `regex: ${e}`);
   }
 });
 

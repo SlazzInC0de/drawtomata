@@ -371,13 +371,13 @@ ${siteFooter('', null)}
 function engines() {
   const vm = require('vm');
   const ctx = vm.createContext({ console });
-  for (const f of ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js', 'lex.js', 'phases.js', 'textbook.js']) {
+  for (const f of ['core.js', 'regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js', 'lex.js', 'phases.js', 'textbook.js']) {
     // eslint-disable-next-line security/detect-non-literal-fs-filename
     vm.runInContext(fs.readFileSync(path.join(root, 'js', f), 'utf8'), ctx, { filename: f });
   }
   return ctx.DT;
 }
-const VERIFIED_SCRIPTS = ['regex', 'automata', 'grammar', 'parsing', 'theory', 'codegen', 'sdt', 'lex', 'phases', 'textbook', 'verified'];
+const VERIFIED_SCRIPTS = ['core', 'regex', 'automata', 'grammar', 'parsing', 'theory', 'codegen', 'sdt', 'lex', 'phases', 'textbook', 'verified'];
 function verifiedPage(indexHtml) {
   const results = engines().textbook.runAll();
   const ok = results.filter((r) => r.ok).length;

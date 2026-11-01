@@ -24,17 +24,14 @@
   function parse(text) {
     const prods = [], order = [];
     let last = null;
-    const lines = text.split(/\n|;/).map((l) => l.trim()).filter((l) => l && !l.startsWith('//') && !l.startsWith('#'));
-    if (!lines.length) throw new Error('Grammar is empty. Write productions like  S -> aSb | λ');
-    for (const line of lines) {
-      let lhs, rhsText;
-      const m = line.match(/^(.*?)(->|→|=>|::=|⟶|—>|-->)(.*)$/);
-      if (m) {
-        const lt = tokenize(m[1]);
-        if (lt.length !== 1 || !isVar(lt[0])) throw new Error(`Left side "${m[1].trim()}" must be one variable (capital letter, like S or A1).`);
-        lhs = lt[0]; rhsText = m[3];
-      } else if (line.startsWith('|') && last) { lhs = last; rhsText = line.slice(1); }
-      else throw new Error(`Cannot read "${line}". Use the form  A -> aB | b`);
+    for (const r of DT.core.readProductions(text, { example: 'S -> aSb | λ', form: 'A -> aB | b' })) {
+      let lhs;
+      const rhsText = r.rhs;
+      if (r.lhs !== null) {
+        const lt = tokenize(r.lhs);
+        if (lt.length !== 1 || !isVar(lt[0])) throw new Error(`Left side "${r.lhs}" must be one variable (capital letter, like S or A1).`);
+        lhs = lt[0];
+      } else lhs = last;
       last = lhs;
       if (!order.includes(lhs)) order.push(lhs);
       for (const alt of rhsText.split('|')) {

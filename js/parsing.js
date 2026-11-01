@@ -11,7 +11,7 @@
   // ---------- reading grammars ----------
   const KEYWORDS = new Set(['id', 'num', 'if', 'then', 'else', 'while', 'do', 'for', 'int', 'float', 'real', 'char', 'bool',
     'true', 'false', 'not', 'and', 'or', 'begin', 'end', 'print', 'return', 'digit', 'letter', 'var', 'const', 'void', 'main', 'call', 'num1', 'id1', 'id2', 'str']);
-  const EPS_WORDS = new Set(['ε', 'λ', 'Λ', '∈', '@', 'eps', 'epsilon', 'lambda']);
+  const { EPS_WORDS } = DT.core;
 
   // Splits one alternative into symbols. With spaces, each spaced word stays whole when it is
   // a word or a run of punctuation (so "id", ":=" and "==" survive); without spaces, uppercase
@@ -65,17 +65,13 @@
   function parseGrammar(text) {
     const prods = [], order = [];
     let last = null;
-    const lines = text.split(/\n|;/).map((l) => l.trim()).filter((l) => l && !l.startsWith('//') && !l.startsWith('#'));
-    if (!lines.length) throw new Error('Grammar is empty. Write productions like  E -> E + T | T');
-    for (const line of lines) {
-      let lhs, rhsText;
-      const m = line.match(/^(.*?)(->|→|::=|=>|⟶|-->)(.*)$/);
-      if (m) {
-        lhs = m[1].trim().replace(/[’′]/g, "'");
-        if (!/^[A-Z][A-Za-z0-9_']*$/.test(lhs)) throw new Error(`Left side "${m[1].trim()}" must be one nonterminal starting with a capital letter, like E or E'.`);
-        rhsText = m[3];
-      } else if (line.startsWith('|') && last) { lhs = last; rhsText = line.slice(1); }
-      else throw new Error(`Cannot read "${line}". Use the form  A -> α | β`);
+    for (const r of DT.core.readProductions(text, { example: 'E -> E + T | T', form: 'A -> α | β' })) {
+      let lhs;
+      const rhsText = r.rhs;
+      if (r.lhs !== null) {
+        lhs = r.lhs.replace(/[’′]/g, "'");
+        if (!/^[A-Z][A-Za-z0-9_']*$/.test(lhs)) throw new Error(`Left side "${r.lhs}" must be one nonterminal starting with a capital letter, like E or E'.`);
+      } else lhs = last;
       last = lhs;
       if (!order.includes(lhs)) order.push(lhs);
       for (const alt of rhsText.split('|')) {
@@ -168,11 +164,7 @@
   // ---------- left recursion ----------
   // Left-corner reachability, treating nullable prefixes as transparent.
   function leftCorners(G) {
-    const nullable = new Set();
-    for (let ch = true; ch;) {
-      ch = false;
-      for (const p of G.prods) if (!nullable.has(p.lhs) && p.rhs.every((s) => nullable.has(s))) { nullable.add(p.lhs); ch = true; }
-    }
+    const nullable = DT.core.nullableSet(G);
     const edge = new Map(G.nts.map((A) => [A, new Set()]));
     for (const p of G.prods) for (const s of p.rhs) { if (!isNT(G, s)) break; edge.get(p.lhs).add(s); if (!nullable.has(s)) break; }
     const reach = new Map();

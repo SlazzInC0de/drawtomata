@@ -7,7 +7,7 @@ const vm = require('vm');
 
 const ROOT = path.join(__dirname, '..');
 const DIR = path.join(__dirname, 'golden');
-const FILES = ['regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js', 'lex.js', 'phases.js', 'learn.js'];
+const FILES = ['core.js', 'regex.js', 'automata.js', 'grammar.js', 'parsing.js', 'theory.js', 'codegen.js', 'sdt.js', 'lex.js', 'phases.js', 'learn.js'];
 
 // a fresh context with a seeded Math.random, so the random checks are repeatable
 function engines() {

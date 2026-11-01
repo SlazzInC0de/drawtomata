@@ -3,7 +3,7 @@
    checks, and syntax-tree construction with Node / Leaf. */
 (function (DT) {
   'use strict';
-  const EPSW = new Set(['ε', 'λ', 'eps', 'epsilon', '@']);
+  const EPSW = DT.core.EPS_WORDS;
   const isNTName = (s) => /^[A-Z]/.test(s);
   // E1 and T1' stand for occurrences of E and T'
   const baseOf = (s) => { const m = s.match(/^([A-Za-z][A-Za-z_]*?)(\d+)('*)$/); return m ? m[1] + m[3] : s; };
