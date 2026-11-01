@@ -118,6 +118,7 @@ js/codegen.js    three-address code, DAGs, SSA, blocks, liveness, code generator
 scripts/build-pages.js  one page per converter (/nfa-to-dfa/, /ll1-parser/, …) and the sitemap, built from index.html
 js/render.js     diagrams and tables
 js/learn.js      learning mode: step builders and the step player
+js/sound.js      soft key-click sounds (Web Audio, no files), toggled in the top bar
 js/textbook.js   textbook examples shown on /verified/ and checked by the tests
 js/editor.js     the drawing canvas
 js/app.js        page wiring

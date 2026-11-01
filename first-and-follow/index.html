@@ -40,6 +40,8 @@
     <symbol id="i-fit" viewBox="0 0 24 24"><path d="M3.5 8.5v-5h5M15.5 3.5h5v5M20.5 15.5v5h-5M8.5 20.5h-5v-5"/><path d="M9.5 9.5h5v5h-5z"/></symbol>
     <symbol id="i-download" viewBox="0 0 24 24"><path d="M3.5 15v5.5h17V15M12 3v8"/><path d="M12 16.5 7 11h10z" fill="currentColor" stroke="none"/></symbol>
     <symbol id="i-moon" viewBox="0 0 24 24"><path d="M14 3.2a9 9 0 1 0 6.8 12.6A7.2 7.2 0 0 1 14 3.2z"/></symbol>
+    <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></symbol>
     <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><path d="m5.5 5.5 13 13M18.5 5.5l-13 13"/></symbol>
     <symbol id="i-flag" viewBox="0 0 24 24"><path d="M1.5 12H7"/><path d="M11 12 6.5 8v8z" fill="currentColor" stroke="none"/><circle cx="17" cy="12" r="5"/></symbol>
@@ -67,6 +69,7 @@
         <button type="button" data-eps="λ" aria-pressed="true">λ</button>
         <button type="button" data-eps="ε" aria-pressed="false">ε</button>
       </div>
+      <button type="button" class="iconBtn" id="soundBtn" title="Click sounds on / off" aria-label="Turn click sounds off" aria-pressed="true"><svg class="ic"><use href="#i-sound"/></svg></button>
       <button type="button" class="iconBtn" id="themeBtn" title="Switch light / dark" aria-label="Switch light or dark theme"><svg class="ic"><use href="#i-moon"/></svg></button>
     </div>
   </header>
@@ -591,6 +594,7 @@
 <script src="../js/vendor/purify.min.js"></script>
 <script src="../js/render.js"></script>
 <script src="../js/learn.js"></script>
+<script src="../js/sound.js"></script>
 <script src="../js/editor.js"></script>
 <script src="../js/app.js"></script>
 </body>
