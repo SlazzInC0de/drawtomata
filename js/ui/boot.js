@@ -34,7 +34,9 @@
   App.runCG('tac');
   App.runSD('tree');
   App.runLx(store.get('lxop') || 'ph');
-  showTab((location.hash || '#' + (App.PAGE.tab || 're')).slice(1), false);
+  const startHash = location.hash.slice(1);
+  // a hash that is not a tool (such as #main from the skip link) keeps the page's own tool
+  showTab(TABS.includes(startHash) ? startHash : (App.PAGE.tab || 're'), false);
   if (!location.hash && App.PAGE.op) {
     if (App.PAGE.tab === 'fa') { if (App.editor.count && App.editor.count()) App.runOp(App.PAGE.op); }
     else if (App.PAGE.tab === 'parse') App.runPS(App.PAGE.op);

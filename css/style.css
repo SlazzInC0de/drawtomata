@@ -538,3 +538,8 @@ article.seo + .siteFoot { margin-top: 40px; }
 @media (prefers-reduced-motion: reduce) {
   .primary, .modes button, .learnBar .iconBtn, .learnBar .ghost { transition: none; }
 }
+
+/* keyboard users can jump past the header */
+.skipLink { position: absolute; left: 12px; top: -48px; z-index: 50; padding: 8px 14px; border-radius: var(--r); background: var(--accent); color: var(--on-accent); font-weight: 600; text-decoration: none; transition: top 0.15s; }
+.skipLink:focus { top: 12px; }
+.main:focus { outline: none; }
