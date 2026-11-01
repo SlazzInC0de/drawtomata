@@ -121,8 +121,12 @@ js/learn.js      learning mode: step builders and the step player
 js/sound.js      soft key-click sounds (Web Audio, no files), toggled in the top bar
 js/textbook.js   textbook examples shown on /verified/ and checked by the tests
 js/editor.js     the drawing canvas
-js/app.js        page wiring
+js/ui/common.js  shared page helpers (tabs, theme, result stages, automaton views)
+js/ui/<tool>.js  one file per tool: re, fa, lang, rg, cfg, parse, pump, cg, sdt, lex
+js/ui/boot.js    first-visit banner, blank inputs, first tab
+js/core.js       shared empty-string spellings, grammar line reader, nullable set
 tests/run.js     conversion tests
+tests/golden.js  golden snapshots of every engine (tests/golden/*.json)
 ```
 
 ## Roadmap
