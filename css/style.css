@@ -499,25 +499,18 @@ article.seo + .siteFoot { margin-top: 40px; }
 .fIcon:hover { border-color: var(--accent); color: var(--accent) !important; }
 .fBottom a:link, .fBottom a:visited { color: var(--muted); }
 
-/* volumetric controls: raised keys that sink when pressed */
+/* tactile controls: a top highlight and a thin base that compresses when pressed */
 .primary {
-  --depth: 5px;
-  border-radius: 999px; padding: 10px 22px; font-weight: 600; margin-top: var(--depth);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, #fff) 0%, var(--accent) 55%, color-mix(in srgb, var(--accent) 85%, #000) 100%);
-  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.55), inset 0 -2px 4px rgba(0, 0, 0, 0.18),
-    0 var(--depth) 0 color-mix(in srgb, var(--accent-hover) 70%, #000),
-    0 calc(var(--depth) + 8px) 18px -6px color-mix(in srgb, var(--accent) 55%, transparent);
+  --depth: 2px;
+  margin-top: var(--depth);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 88%, #fff), var(--accent));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 var(--depth) 0 var(--accent-hover), 0 4px 10px -3px color-mix(in srgb, var(--accent) 60%, transparent);
   transform: translateY(calc(var(--depth) * -1));
-  transition: transform 0.12s cubic-bezier(0.3, 0.7, 0.4, 1), box-shadow 0.12s, filter 0.12s;
+  transition: transform 0.1s, box-shadow 0.1s, filter 0.1s;
 }
-.primary:hover { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, #fff) 0%, var(--accent) 55%, color-mix(in srgb, var(--accent) 85%, #000) 100%); filter: brightness(1.06); }
-.primary:active {
-  transform: translateY(-1px);
-  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 2px rgba(0, 0, 0, 0.2),
-    0 1px 0 color-mix(in srgb, var(--accent-hover) 70%, #000), 0 3px 6px -2px var(--drop);
-}
+.primary:hover { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 88%, #fff), var(--accent)); filter: brightness(1.06); }
+.primary:active { transform: translateY(0); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 var(--accent-hover), 0 1px 3px -1px var(--drop); }
 .primary:disabled { filter: grayscale(0.6) opacity(0.6); transform: none; box-shadow: none; cursor: default; }
-.primary.sm { --depth: 3px; padding: 6px 14px; }
 .modes { padding: 5px; background: linear-gradient(160deg, var(--plate-1), var(--plate-2)); border-color: transparent; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12), inset 0 -1px 0 var(--rim); }
 .modes button { border-radius: var(--r); transition: color 0.12s, transform 0.12s, box-shadow 0.12s; }
 .modes button[aria-pressed="true"] {
@@ -527,7 +520,7 @@ article.seo + .siteFoot { margin-top: 40px; }
 }
 .modes button:active { transform: translateY(1px); }
 .learnBar .iconBtn, .learnBar .ghost {
-  --depth: 4px; border: 0; margin-top: var(--depth);
+  --depth: 2px; border: 0; margin-top: var(--depth);
   background: linear-gradient(180deg, var(--key-1), var(--key-2)); color: var(--fg);
   box-shadow: inset 0 1.5px 0 var(--rim), 0 var(--depth) 0 var(--key-side), 0 calc(var(--depth) + 4px) 8px -3px var(--drop);
   transform: translateY(calc(var(--depth) * -1)); transition: transform 0.1s, box-shadow 0.1s;
@@ -539,7 +532,7 @@ article.seo + .siteFoot { margin-top: 40px; }
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, #fff), var(--accent));
   box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.5), 0 var(--depth) 0 color-mix(in srgb, var(--accent-hover) 70%, #000), 0 calc(var(--depth) + 4px) 10px -3px color-mix(in srgb, var(--accent) 55%, transparent);
 }
-.learnBar .iconBtn:active, .learnBar .ghost:active { transform: translateY(-1px); box-shadow: inset 0 1.5px 0 var(--rim), 0 1px 0 var(--key-side), 0 2px 3px -1px var(--drop); }
+.learnBar .iconBtn:active, .learnBar .ghost:active { transform: translateY(0); box-shadow: inset 0 1.5px 0 var(--rim), 0 1px 0 var(--key-side), 0 2px 3px -1px var(--drop); }
 .learnBar .iconBtn:disabled { opacity: 0.45; transform: none; box-shadow: inset 0 1px 0 var(--rim); background: var(--bg); }
 .learnBar .iconBtn:disabled:active { transform: none; }
 @media (prefers-reduced-motion: reduce) {
