@@ -493,3 +493,7 @@ article.seo + .siteFoot { margin-top: 40px; }
 @media (max-width: 420px) {
   .fInner { grid-template-columns: minmax(0, 1fr); gap: 24px; }
 }
+.fSocial { display: flex; gap: 8px; }
+.fIcon { width: 36px; height: 36px; display: inline-grid; place-items: center; border: 1px solid var(--line); border-radius: var(--r); color: var(--fg) !important; }
+.fIcon:hover { border-color: var(--accent); color: var(--accent) !important; }
+.fBottom a:link, .fBottom a:visited { color: var(--muted); }
