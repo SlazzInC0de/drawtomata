@@ -31,6 +31,7 @@
   --r: 8px;
   --r-lg: 10px;
   --top: 56px;
+  --plate-1: #EEF2F7; --plate-2: #E2E8F0; --key-1: #FFFFFF; --key-2: #EEF2F7; --key-side: #C9D3E0; --rim: rgba(255, 255, 255, 0.95); --drop: rgba(15, 23, 42, 0.18);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -38,7 +39,7 @@
     --accent: #3B82F6; --accent-hover: #60A5FA; --accent-soft: #172554; --on-accent: #FFFFFF;
     --blue: #172554; --green: #052E16; --amber: #3A2A07; --rose: #4C0519; --violet: #2E1065;
     --green-ink: #4ADE80; --amber-ink: #FBBF24; --rose-ink: #FB7185; --violet-ink: #A78BFA;
-    --node: #111A2E; --node-stroke: #94A3B8; --edge: #94A3B8; --dot: #1C2638;
+    --node: #111A2E; --node-stroke: #94A3B8; --edge: #94A3B8; --dot: #1C2638; --plate-1: #131C2E; --plate-2: #0B1220; --key-1: #26324A; --key-2: #1A2438; --key-side: #070B14; --rim: rgba(255, 255, 255, 0.22); --drop: rgba(0, 0, 0, 0.55);
     --float-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.25);
     color-scheme: dark;
   }
@@ -48,7 +49,7 @@
   --accent: #3B82F6; --accent-hover: #60A5FA; --accent-soft: #172554; --on-accent: #FFFFFF;
   --blue: #172554; --green: #052E16; --amber: #3A2A07; --rose: #4C0519; --violet: #2E1065;
   --green-ink: #4ADE80; --amber-ink: #FBBF24; --rose-ink: #FB7185; --violet-ink: #A78BFA;
-  --node: #111A2E; --node-stroke: #94A3B8; --edge: #94A3B8; --dot: #1C2638;
+  --node: #111A2E; --node-stroke: #94A3B8; --edge: #94A3B8; --dot: #1C2638; --plate-1: #131C2E; --plate-2: #0B1220; --key-1: #26324A; --key-2: #1A2438; --key-side: #070B14; --rim: rgba(255, 255, 255, 0.22); --drop: rgba(0, 0, 0, 0.55);
   --float-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.25);
   color-scheme: dark;
 }
@@ -497,3 +498,50 @@ article.seo + .siteFoot { margin-top: 40px; }
 .fIcon { width: 36px; height: 36px; display: inline-grid; place-items: center; border: 1px solid var(--line); border-radius: var(--r); color: var(--fg) !important; }
 .fIcon:hover { border-color: var(--accent); color: var(--accent) !important; }
 .fBottom a:link, .fBottom a:visited { color: var(--muted); }
+
+/* volumetric controls: raised keys that sink when pressed */
+.primary {
+  --depth: 5px;
+  border-radius: 999px; padding: 10px 22px; font-weight: 600; margin-top: var(--depth);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, #fff) 0%, var(--accent) 55%, color-mix(in srgb, var(--accent) 85%, #000) 100%);
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.55), inset 0 -2px 4px rgba(0, 0, 0, 0.18),
+    0 var(--depth) 0 color-mix(in srgb, var(--accent-hover) 70%, #000),
+    0 calc(var(--depth) + 8px) 18px -6px color-mix(in srgb, var(--accent) 55%, transparent);
+  transform: translateY(calc(var(--depth) * -1));
+  transition: transform 0.12s cubic-bezier(0.3, 0.7, 0.4, 1), box-shadow 0.12s, filter 0.12s;
+}
+.primary:hover { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, #fff) 0%, var(--accent) 55%, color-mix(in srgb, var(--accent) 85%, #000) 100%); filter: brightness(1.06); }
+.primary:active {
+  transform: translateY(-1px);
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 2px rgba(0, 0, 0, 0.2),
+    0 1px 0 color-mix(in srgb, var(--accent-hover) 70%, #000), 0 3px 6px -2px var(--drop);
+}
+.primary:disabled { filter: grayscale(0.6) opacity(0.6); transform: none; box-shadow: none; cursor: default; }
+.primary.sm { --depth: 3px; padding: 6px 14px; }
+.modes { padding: 5px; background: linear-gradient(160deg, var(--plate-1), var(--plate-2)); border-color: transparent; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12), inset 0 -1px 0 var(--rim); }
+.modes button { border-radius: var(--r); transition: color 0.12s, transform 0.12s, box-shadow 0.12s; }
+.modes button[aria-pressed="true"] {
+  background: linear-gradient(180deg, var(--key-1), var(--key-2));
+  box-shadow: inset 0 1px 0 var(--rim), 0 2px 0 var(--key-side), 0 4px 8px -3px var(--drop);
+  transform: translateY(-1px);
+}
+.modes button:active { transform: translateY(1px); }
+.learnBar .iconBtn, .learnBar .ghost {
+  --depth: 4px; border: 0; margin-top: var(--depth);
+  background: linear-gradient(180deg, var(--key-1), var(--key-2)); color: var(--fg);
+  box-shadow: inset 0 1.5px 0 var(--rim), 0 var(--depth) 0 var(--key-side), 0 calc(var(--depth) + 4px) 8px -3px var(--drop);
+  transform: translateY(calc(var(--depth) * -1)); transition: transform 0.1s, box-shadow 0.1s;
+}
+.learnBar .iconBtn { width: 38px; height: 36px; border-radius: 10px; }
+.learnBar .ghost { border-radius: 10px; padding: 8px 14px; font-weight: 600; }
+.learnBar [data-lstep="play"] {
+  color: var(--on-accent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, #fff), var(--accent));
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.5), 0 var(--depth) 0 color-mix(in srgb, var(--accent-hover) 70%, #000), 0 calc(var(--depth) + 4px) 10px -3px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.learnBar .iconBtn:active, .learnBar .ghost:active { transform: translateY(-1px); box-shadow: inset 0 1.5px 0 var(--rim), 0 1px 0 var(--key-side), 0 2px 3px -1px var(--drop); }
+.learnBar .iconBtn:disabled { opacity: 0.45; transform: none; box-shadow: inset 0 1px 0 var(--rim); background: var(--bg); }
+.learnBar .iconBtn:disabled:active { transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .primary, .modes button, .learnBar .iconBtn, .learnBar .ghost { transition: none; }
+}
