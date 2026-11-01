@@ -1755,5 +1755,5 @@
     else if (PAGE.tab === 'lex') runLx(PAGE.op);
     else if (PAGE.tab === 'cfg') runCFG(PAGE.op);
   }
-  window.addEventListener('hashchange', () => { const t = location.hash.slice(1); if (TABS.includes(t)) showTab(t, false); });
+  window.addEventListener('hashchange', () => { const t = location.hash.slice(1); if (TABS.includes(t)) { showTab(t, false); window.scrollTo(0, 0); } });
 })(window.DT);
