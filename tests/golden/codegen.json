@@ -14878,5 +14878,3344 @@
    "costBefore": 45,
    "costAfter": 20
   }
+ },
+ {
+  "src": "a = minus b + not c\nd = -(-5) % 3\ne = x[i + 1] - -y\nif not (a <= b) goto L\nL: f = MINUS a",
+  "prog": {
+   "ins": [
+    {
+     "k": "un",
+     "dst": "t1",
+     "op": "minus",
+     "a": "b",
+     "src": 1
+    },
+    {
+     "k": "un",
+     "dst": "t2",
+     "op": "not",
+     "a": "c",
+     "src": 1
+    },
+    {
+     "k": "bin",
+     "dst": "t3",
+     "op": "+",
+     "a": "t1",
+     "b": "t2",
+     "src": 1
+    },
+    {
+     "k": "copy",
+     "dst": "a",
+     "a": "t3",
+     "src": 1
+    },
+    {
+     "k": "bin",
+     "dst": "d",
+     "op": "%",
+     "a": "5",
+     "b": "3",
+     "src": 2
+    },
+    {
+     "k": "bin",
+     "dst": "t4",
+     "op": "+",
+     "a": "i",
+     "b": "1",
+     "src": 3
+    },
+    {
+     "k": "load",
+     "dst": "t5",
+     "arr": "x",
+     "idx": "t4",
+     "src": 3
+    },
+    {
+     "k": "un",
+     "dst": "t6",
+     "op": "minus",
+     "a": "y",
+     "src": 3
+    },
+    {
+     "k": "bin",
+     "dst": "t7",
+     "op": "-",
+     "a": "t5",
+     "b": "t6",
+     "src": 3
+    },
+    {
+     "k": "copy",
+     "dst": "e",
+     "a": "t7",
+     "src": 3
+    },
+    {
+     "k": "bin",
+     "dst": "t8",
+     "op": "<=",
+     "a": "a",
+     "b": "b",
+     "src": 4
+    },
+    {
+     "k": "un",
+     "dst": "t9",
+     "op": "not",
+     "a": "t8",
+     "src": 4
+    },
+    {
+     "k": "if",
+     "a": "t9",
+     "rel": "!=",
+     "b": "0",
+     "src": 4,
+     "ti": 13,
+     "label": "L"
+    },
+    {
+     "k": "un",
+     "dst": "f",
+     "op": "minus",
+     "a": "a",
+     "src": 5
+    }
+   ],
+   "gen": {},
+   "lowered": true,
+   "names": {}
+  },
+  "reps": {
+   "quads": [
+    [
+     "minus",
+     "b",
+     "",
+     "t1"
+    ],
+    [
+     "not",
+     "c",
+     "",
+     "t2"
+    ],
+    [
+     "+",
+     "t1",
+     "t2",
+     "t3"
+    ],
+    [
+     "=",
+     "t3",
+     "",
+     "a"
+    ],
+    [
+     "%",
+     "5",
+     "3",
+     "d"
+    ],
+    [
+     "+",
+     "i",
+     "1",
+     "t4"
+    ],
+    [
+     "=[]",
+     "x",
+     "t4",
+     "t5"
+    ],
+    [
+     "minus",
+     "y",
+     "",
+     "t6"
+    ],
+    [
+     "-",
+     "t5",
+     "t6",
+     "t7"
+    ],
+    [
+     "=",
+     "t7",
+     "",
+     "e"
+    ],
+    [
+     "<=",
+     "a",
+     "b",
+     "t8"
+    ],
+    [
+     "not",
+     "t8",
+     "",
+     "t9"
+    ],
+    [
+     "if",
+     "t9",
+     "",
+     "(14)"
+    ],
+    [
+     "minus",
+     "a",
+     "",
+     "f"
+    ]
+   ],
+   "triples": [
+    [
+     "minus",
+     "b",
+     "",
+     ""
+    ],
+    [
+     "not",
+     "c",
+     "",
+     ""
+    ],
+    [
+     "+",
+     "(0)",
+     "(1)",
+     ""
+    ],
+    [
+     "=",
+     "a",
+     "(2)",
+     ""
+    ],
+    [
+     "%",
+     "5",
+     "3",
+     ""
+    ],
+    [
+     "=",
+     "d",
+     "(4)",
+     ""
+    ],
+    [
+     "+",
+     "i",
+     "1",
+     ""
+    ],
+    [
+     "=[]",
+     "x",
+     "(6)",
+     ""
+    ],
+    [
+     "minus",
+     "y",
+     "",
+     ""
+    ],
+    [
+     "-",
+     "(7)",
+     "(8)",
+     ""
+    ],
+    [
+     "=",
+     "e",
+     "(9)",
+     ""
+    ],
+    [
+     "<=",
+     "a",
+     "b",
+     ""
+    ],
+    [
+     "not",
+     "(11)",
+     "",
+     ""
+    ],
+    [
+     "if",
+     "(12)",
+     "",
+     "(14)"
+    ],
+    [
+     "minus",
+     "a",
+     "",
+     ""
+    ],
+    [
+     "=",
+     "f",
+     "(14)",
+     ""
+    ]
+   ],
+   "indirect": [
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50
+   ]
+  },
+  "bb": {
+   "blocks": [
+    {
+     "id": 0,
+     "start": 0,
+     "end": 13,
+     "succ": [
+      1
+     ],
+     "pred": [],
+     "ins": [
+      {
+       "k": "un",
+       "dst": "t1",
+       "op": "minus",
+       "a": "b",
+       "src": 1
+      },
+      {
+       "k": "un",
+       "dst": "t2",
+       "op": "not",
+       "a": "c",
+       "src": 1
+      },
+      {
+       "k": "bin",
+       "dst": "t3",
+       "op": "+",
+       "a": "t1",
+       "b": "t2",
+       "src": 1
+      },
+      {
+       "k": "copy",
+       "dst": "a",
+       "a": "t3",
+       "src": 1
+      },
+      {
+       "k": "bin",
+       "dst": "d",
+       "op": "%",
+       "a": "5",
+       "b": "3",
+       "src": 2
+      },
+      {
+       "k": "bin",
+       "dst": "t4",
+       "op": "+",
+       "a": "i",
+       "b": "1",
+       "src": 3
+      },
+      {
+       "k": "load",
+       "dst": "t5",
+       "arr": "x",
+       "idx": "t4",
+       "src": 3
+      },
+      {
+       "k": "un",
+       "dst": "t6",
+       "op": "minus",
+       "a": "y",
+       "src": 3
+      },
+      {
+       "k": "bin",
+       "dst": "t7",
+       "op": "-",
+       "a": "t5",
+       "b": "t6",
+       "src": 3
+      },
+      {
+       "k": "copy",
+       "dst": "e",
+       "a": "t7",
+       "src": 3
+      },
+      {
+       "k": "bin",
+       "dst": "t8",
+       "op": "<=",
+       "a": "a",
+       "b": "b",
+       "src": 4
+      },
+      {
+       "k": "un",
+       "dst": "t9",
+       "op": "not",
+       "a": "t8",
+       "src": 4
+      },
+      {
+       "k": "if",
+       "a": "t9",
+       "rel": "!=",
+       "b": "0",
+       "src": 4,
+       "ti": 13,
+       "label": "L"
+      }
+     ]
+    },
+    {
+     "id": 1,
+     "start": 13,
+     "end": 14,
+     "succ": [
+      2
+     ],
+     "pred": [
+      0
+     ],
+     "ins": [
+      {
+       "k": "un",
+       "dst": "f",
+       "op": "minus",
+       "a": "a",
+       "src": 5
+      }
+     ]
+    }
+   ],
+   "leaders": [
+    0,
+    13
+   ],
+   "why": {},
+   "blockOf": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1
+   ],
+   "EXIT": 2
+  },
+  "dom": {
+   "dom": [
+    {},
+    {}
+   ],
+   "idom": [
+    3,
+    0
+   ],
+   "ENTRY": 3,
+   "reach": {},
+   "loops": []
+  },
+  "live": {
+   "use": [
+    {},
+    {}
+   ],
+   "def": [
+    {},
+    {}
+   ],
+   "IN": [
+    {},
+    {}
+   ],
+   "OUT": [
+    {},
+    {}
+   ],
+   "passes": [
+    {
+     "IN": [
+      {},
+      {}
+     ],
+     "OUT": [
+      {},
+      {}
+     ]
+    },
+    {
+     "IN": [
+      {},
+      {}
+     ],
+     "OUT": [
+      {},
+      {}
+     ]
+    }
+   ]
+  },
+  "opt": {
+   "bb": {
+    "blocks": [
+     {
+      "id": 0,
+      "start": 0,
+      "end": 13,
+      "succ": [
+       1
+      ],
+      "pred": [],
+      "ins": [
+       {
+        "k": "un",
+        "dst": "t1",
+        "op": "minus",
+        "a": "b",
+        "src": 1
+       },
+       {
+        "k": "un",
+        "dst": "t2",
+        "op": "not",
+        "a": "c",
+        "src": 1
+       },
+       {
+        "k": "bin",
+        "dst": "t3",
+        "op": "+",
+        "a": "t1",
+        "b": "t2",
+        "src": 1
+       },
+       {
+        "k": "copy",
+        "dst": "a",
+        "a": "t3",
+        "src": 1
+       },
+       {
+        "k": "bin",
+        "dst": "d",
+        "op": "%",
+        "a": "5",
+        "b": "3",
+        "src": 2
+       },
+       {
+        "k": "bin",
+        "dst": "t4",
+        "op": "+",
+        "a": "i",
+        "b": "1",
+        "src": 3
+       },
+       {
+        "k": "load",
+        "dst": "t5",
+        "arr": "x",
+        "idx": "t4",
+        "src": 3
+       },
+       {
+        "k": "un",
+        "dst": "t6",
+        "op": "minus",
+        "a": "y",
+        "src": 3
+       },
+       {
+        "k": "bin",
+        "dst": "t7",
+        "op": "-",
+        "a": "t5",
+        "b": "t6",
+        "src": 3
+       },
+       {
+        "k": "copy",
+        "dst": "e",
+        "a": "t7",
+        "src": 3
+       },
+       {
+        "k": "bin",
+        "dst": "t8",
+        "op": "<=",
+        "a": "a",
+        "b": "b",
+        "src": 4
+       },
+       {
+        "k": "un",
+        "dst": "t9",
+        "op": "not",
+        "a": "t8",
+        "src": 4
+       },
+       {
+        "k": "if",
+        "a": "t9",
+        "rel": "!=",
+        "b": "0",
+        "src": 4,
+        "ti": 13,
+        "label": "L"
+       }
+      ]
+     },
+     {
+      "id": 1,
+      "start": 13,
+      "end": 14,
+      "succ": [
+       2
+      ],
+      "pred": [
+       0
+      ],
+      "ins": [
+       {
+        "k": "un",
+        "dst": "f",
+        "op": "minus",
+        "a": "a",
+        "src": 5
+       }
+      ]
+     }
+    ],
+    "leaders": [
+     0,
+     13
+    ],
+    "why": {},
+    "blockOf": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ],
+    "EXIT": 2
+   },
+   "lv": {
+    "use": [
+     {},
+     {}
+    ],
+    "def": [
+     {},
+     {}
+    ],
+    "IN": [
+     {},
+     {}
+    ],
+    "OUT": [
+     {},
+     {}
+    ],
+    "passes": [
+     {
+      "IN": [
+       {},
+       {}
+      ],
+      "OUT": [
+       {},
+       {}
+      ]
+     },
+     {
+      "IN": [
+       {},
+       {}
+      ],
+      "OUT": [
+       {},
+       {}
+      ]
+     }
+    ]
+   },
+   "per": [
+    {
+     "dag": {
+      "nodes": [
+       {
+        "kind": "leaf",
+        "label": "b",
+        "id": 0,
+        "ids": []
+       },
+       {
+        "kind": "op",
+        "op": "minus",
+        "kids": [
+         0
+        ],
+        "id": 1,
+        "ids": [
+         "t1"
+        ]
+       },
+       {
+        "kind": "leaf",
+        "label": "c",
+        "id": 2,
+        "ids": []
+       },
+       {
+        "kind": "op",
+        "op": "not",
+        "kids": [
+         2
+        ],
+        "id": 3,
+        "ids": [
+         "t2"
+        ]
+       },
+       {
+        "kind": "op",
+        "op": "+",
+        "kids": [
+         1,
+         3
+        ],
+        "id": 4,
+        "ids": [
+         "t3",
+         "a"
+        ]
+       },
+       {
+        "kind": "const",
+        "label": "5",
+        "id": 5,
+        "ids": []
+       },
+       {
+        "kind": "const",
+        "label": "3",
+        "id": 6,
+        "ids": []
+       },
+       {
+        "kind": "const",
+        "label": "2",
+        "id": 7,
+        "ids": [
+         "d"
+        ]
+       },
+       {
+        "kind": "leaf",
+        "label": "i",
+        "id": 8,
+        "ids": []
+       },
+       {
+        "kind": "const",
+        "label": "1",
+        "id": 9,
+        "ids": []
+       },
+       {
+        "kind": "op",
+        "op": "+",
+        "kids": [
+         8,
+         9
+        ],
+        "id": 10,
+        "ids": [
+         "t4"
+        ]
+       },
+       {
+        "kind": "leaf",
+        "label": "x",
+        "id": 11,
+        "ids": []
+       },
+       {
+        "kind": "op",
+        "op": "=[]",
+        "kids": [
+         11,
+         10
+        ],
+        "arr": "x",
+        "id": 12,
+        "ids": [
+         "t5"
+        ]
+       },
+       {
+        "kind": "leaf",
+        "label": "y",
+        "id": 13,
+        "ids": []
+       },
+       {
+        "kind": "op",
+        "op": "minus",
+        "kids": [
+         13
+        ],
+        "id": 14,
+        "ids": [
+         "t6"
+        ]
+       },
+       {
+        "kind": "op",
+        "op": "-",
+        "kids": [
+         12,
+         14
+        ],
+        "id": 15,
+        "ids": [
+         "t7",
+         "e"
+        ]
+       },
+       {
+        "kind": "op",
+        "op": "<=",
+        "kids": [
+         4,
+         0
+        ],
+        "id": 16,
+        "ids": [
+         "t8"
+        ]
+       },
+       {
+        "kind": "op",
+        "op": "not",
+        "kids": [
+         16
+        ],
+        "id": 17,
+        "ids": [
+         "t9"
+        ]
+       },
+       {
+        "kind": "const",
+        "label": "0",
+        "id": 18,
+        "ids": []
+       }
+      ],
+      "cur": {},
+      "leafOf": {},
+      "steps": [
+       {
+        "n": 1,
+        "text": "t1 = minus b",
+        "note": "new node 1: minus(0)",
+        "kind": "new",
+        "node": 1
+       },
+       {
+        "n": 2,
+        "text": "t2 = not c",
+        "note": "new node 3: not(2)",
+        "kind": "new",
+        "node": 3
+       },
+       {
+        "n": 3,
+        "text": "t3 = t1 + t2",
+        "note": "new node 4: +(1, 3)",
+        "kind": "new",
+        "node": 4
+       },
+       {
+        "n": 4,
+        "text": "a = t3",
+        "note": "copy: a is attached to node 4, no new node",
+        "node": 4,
+        "kind": "copy"
+       },
+       {
+        "n": 5,
+        "text": "d = 5 % 3",
+        "note": "constant folding: 5 % 3 = 2",
+        "kind": "fold",
+        "node": 7
+       },
+       {
+        "n": 6,
+        "text": "t4 = i + 1",
+        "note": "new node 10: +(8, 9)",
+        "kind": "new",
+        "node": 10
+       },
+       {
+        "n": 7,
+        "text": "t5 = x[t4]",
+        "note": "new node 12: =[](11, 10)",
+        "node": 12,
+        "kind": "new"
+       },
+       {
+        "n": 8,
+        "text": "t6 = minus y",
+        "note": "new node 14: minus(13)",
+        "kind": "new",
+        "node": 14
+       },
+       {
+        "n": 9,
+        "text": "t7 = t5 - t6",
+        "note": "new node 15: -(12, 14)",
+        "kind": "new",
+        "node": 15
+       },
+       {
+        "n": 10,
+        "text": "e = t7",
+        "note": "copy: e is attached to node 15, no new node",
+        "node": 15,
+        "kind": "copy"
+       },
+       {
+        "n": 11,
+        "text": "t8 = a <= b",
+        "note": "new node 16: <=(4, 0)",
+        "kind": "new",
+        "node": 16
+       },
+       {
+        "n": 12,
+        "text": "t9 = not t8",
+        "note": "new node 17: not(16)",
+        "kind": "new",
+        "node": 17
+       },
+       {
+        "n": 13,
+        "text": "if t9 goto B2",
+        "note": "the jump stays at the end of the block",
+        "kind": "jump"
+       }
+      ],
+      "jump": {
+       "x": {
+        "k": "if",
+        "a": "t9",
+        "rel": "!=",
+        "b": "0",
+        "src": 4,
+        "ti": 13,
+        "label": "L"
+       },
+       "a": 17,
+       "b": 18
+      },
+      "gen": {}
+     },
+     "code": [
+      {
+       "k": "un",
+       "dst": "t1",
+       "op": "minus",
+       "a": "b"
+      },
+      {
+       "k": "un",
+       "dst": "t2",
+       "op": "not",
+       "a": "c"
+      },
+      {
+       "k": "bin",
+       "dst": "a",
+       "op": "+",
+       "a": "t1",
+       "b": "t2"
+      },
+      {
+       "k": "bin",
+       "dst": "t4",
+       "op": "+",
+       "a": "i",
+       "b": "1"
+      },
+      {
+       "k": "load",
+       "dst": "t5",
+       "arr": "x",
+       "idx": "t4"
+      },
+      {
+       "k": "un",
+       "dst": "t6",
+       "op": "minus",
+       "a": "y"
+      },
+      {
+       "k": "bin",
+       "dst": "e",
+       "op": "-",
+       "a": "t5",
+       "b": "t6"
+      },
+      {
+       "k": "bin",
+       "dst": "t8",
+       "op": "<=",
+       "a": "a",
+       "b": "b"
+      },
+      {
+       "k": "un",
+       "dst": "t9",
+       "op": "not",
+       "a": "t8"
+      },
+      {
+       "k": "copy",
+       "dst": "d",
+       "a": "2"
+      },
+      {
+       "k": "if",
+       "a": "t9",
+       "rel": "!=",
+       "b": "0",
+       "src": 4,
+       "ti": 13,
+       "label": "L"
+      }
+     ],
+     "dropped": [
+      "t3",
+      "t7"
+     ],
+     "before": [
+      {
+       "k": "un",
+       "dst": "t1",
+       "op": "minus",
+       "a": "b",
+       "src": 1
+      },
+      {
+       "k": "un",
+       "dst": "t2",
+       "op": "not",
+       "a": "c",
+       "src": 1
+      },
+      {
+       "k": "bin",
+       "dst": "t3",
+       "op": "+",
+       "a": "t1",
+       "b": "t2",
+       "src": 1
+      },
+      {
+       "k": "copy",
+       "dst": "a",
+       "a": "t3",
+       "src": 1
+      },
+      {
+       "k": "bin",
+       "dst": "d",
+       "op": "%",
+       "a": "5",
+       "b": "3",
+       "src": 2
+      },
+      {
+       "k": "bin",
+       "dst": "t4",
+       "op": "+",
+       "a": "i",
+       "b": "1",
+       "src": 3
+      },
+      {
+       "k": "load",
+       "dst": "t5",
+       "arr": "x",
+       "idx": "t4",
+       "src": 3
+      },
+      {
+       "k": "un",
+       "dst": "t6",
+       "op": "minus",
+       "a": "y",
+       "src": 3
+      },
+      {
+       "k": "bin",
+       "dst": "t7",
+       "op": "-",
+       "a": "t5",
+       "b": "t6",
+       "src": 3
+      },
+      {
+       "k": "copy",
+       "dst": "e",
+       "a": "t7",
+       "src": 3
+      },
+      {
+       "k": "bin",
+       "dst": "t8",
+       "op": "<=",
+       "a": "a",
+       "b": "b",
+       "src": 4
+      },
+      {
+       "k": "un",
+       "dst": "t9",
+       "op": "not",
+       "a": "t8",
+       "src": 4
+      },
+      {
+       "k": "if",
+       "a": "t9",
+       "rel": "!=",
+       "b": "0",
+       "src": 4,
+       "ti": 13,
+       "label": "L"
+      }
+     ],
+     "liveOut": {}
+    },
+    {
+     "dag": {
+      "nodes": [
+       {
+        "kind": "leaf",
+        "label": "a",
+        "id": 0,
+        "ids": []
+       },
+       {
+        "kind": "op",
+        "op": "minus",
+        "kids": [
+         0
+        ],
+        "id": 1,
+        "ids": [
+         "f"
+        ]
+       }
+      ],
+      "cur": {},
+      "leafOf": {},
+      "steps": [
+       {
+        "n": 14,
+        "text": "f = minus a",
+        "note": "new node 1: minus(0)",
+        "kind": "new",
+        "node": 1
+       }
+      ],
+      "jump": null,
+      "gen": {}
+     },
+     "code": [
+      {
+       "k": "un",
+       "dst": "f",
+       "op": "minus",
+       "a": "a"
+      }
+     ],
+     "dropped": [],
+     "before": [
+      {
+       "k": "un",
+       "dst": "f",
+       "op": "minus",
+       "a": "a",
+       "src": 5
+      }
+     ],
+     "liveOut": {}
+    }
+   ],
+   "ins": [
+    {
+     "k": "un",
+     "dst": "t1",
+     "op": "minus",
+     "a": "b"
+    },
+    {
+     "k": "un",
+     "dst": "t2",
+     "op": "not",
+     "a": "c"
+    },
+    {
+     "k": "bin",
+     "dst": "a",
+     "op": "+",
+     "a": "t1",
+     "b": "t2"
+    },
+    {
+     "k": "bin",
+     "dst": "t4",
+     "op": "+",
+     "a": "i",
+     "b": "1"
+    },
+    {
+     "k": "load",
+     "dst": "t5",
+     "arr": "x",
+     "idx": "t4"
+    },
+    {
+     "k": "un",
+     "dst": "t6",
+     "op": "minus",
+     "a": "y"
+    },
+    {
+     "k": "bin",
+     "dst": "e",
+     "op": "-",
+     "a": "t5",
+     "b": "t6"
+    },
+    {
+     "k": "bin",
+     "dst": "t8",
+     "op": "<=",
+     "a": "a",
+     "b": "b"
+    },
+    {
+     "k": "un",
+     "dst": "t9",
+     "op": "not",
+     "a": "t8"
+    },
+    {
+     "k": "copy",
+     "dst": "d",
+     "a": "2"
+    },
+    {
+     "k": "if",
+     "a": "t9",
+     "rel": "!=",
+     "b": "0",
+     "src": 4,
+     "ti": 11,
+     "label": "L"
+    },
+    {
+     "k": "un",
+     "dst": "f",
+     "op": "minus",
+     "a": "a"
+    }
+   ],
+   "starts": [
+    0,
+    11
+   ],
+   "exitLive": {}
+  },
+  "ssa": {
+   "bb": {
+    "blocks": [
+     {
+      "id": 0,
+      "start": 0,
+      "end": 13,
+      "succ": [
+       1
+      ],
+      "pred": [],
+      "ins": [
+       {
+        "k": "un",
+        "dst": "t1",
+        "op": "minus",
+        "a": "b",
+        "src": 1
+       },
+       {
+        "k": "un",
+        "dst": "t2",
+        "op": "not",
+        "a": "c",
+        "src": 1
+       },
+       {
+        "k": "bin",
+        "dst": "t3",
+        "op": "+",
+        "a": "t1",
+        "b": "t2",
+        "src": 1
+       },
+       {
+        "k": "copy",
+        "dst": "a",
+        "a": "t3",
+        "src": 1
+       },
+       {
+        "k": "bin",
+        "dst": "d",
+        "op": "%",
+        "a": "5",
+        "b": "3",
+        "src": 2
+       },
+       {
+        "k": "bin",
+        "dst": "t4",
+        "op": "+",
+        "a": "i",
+        "b": "1",
+        "src": 3
+       },
+       {
+        "k": "load",
+        "dst": "t5",
+        "arr": "x",
+        "idx": "t4",
+        "src": 3
+       },
+       {
+        "k": "un",
+        "dst": "t6",
+        "op": "minus",
+        "a": "y",
+        "src": 3
+       },
+       {
+        "k": "bin",
+        "dst": "t7",
+        "op": "-",
+        "a": "t5",
+        "b": "t6",
+        "src": 3
+       },
+       {
+        "k": "copy",
+        "dst": "e",
+        "a": "t7",
+        "src": 3
+       },
+       {
+        "k": "bin",
+        "dst": "t8",
+        "op": "<=",
+        "a": "a",
+        "b": "b",
+        "src": 4
+       },
+       {
+        "k": "un",
+        "dst": "t9",
+        "op": "not",
+        "a": "t8",
+        "src": 4
+       },
+       {
+        "k": "if",
+        "a": "t9",
+        "rel": "!=",
+        "b": "0",
+        "src": 4,
+        "ti": 13,
+        "label": "L"
+       }
+      ]
+     },
+     {
+      "id": 1,
+      "start": 13,
+      "end": 14,
+      "succ": [
+       2
+      ],
+      "pred": [
+       0
+      ],
+      "ins": [
+       {
+        "k": "un",
+        "dst": "f",
+        "op": "minus",
+        "a": "a",
+        "src": 5
+       }
+      ]
+     }
+    ],
+    "leaders": [
+     0,
+     13
+    ],
+    "why": {},
+    "blockOf": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ],
+    "EXIT": 2
+   },
+   "D": {
+    "dom": [
+     {},
+     {}
+    ],
+    "idom": [
+     3,
+     0
+    ],
+    "ENTRY": 3,
+    "reach": {},
+    "loops": []
+   },
+   "DF": [
+    {},
+    {}
+   ],
+   "blocks": [
+    {
+     "phis": [],
+     "ins": [
+      {
+       "k": "un",
+       "dst": "t1",
+       "op": "minus",
+       "a": "b",
+       "src": 1
+      },
+      {
+       "k": "un",
+       "dst": "t2",
+       "op": "not",
+       "a": "c",
+       "src": 1
+      },
+      {
+       "k": "bin",
+       "dst": "t3",
+       "op": "+",
+       "a": "t1",
+       "b": "t2",
+       "src": 1
+      },
+      {
+       "k": "copy",
+       "dst": "a",
+       "a": "t3",
+       "src": 1
+      },
+      {
+       "k": "bin",
+       "dst": "d",
+       "op": "%",
+       "a": "5",
+       "b": "3",
+       "src": 2
+      },
+      {
+       "k": "bin",
+       "dst": "t4",
+       "op": "+",
+       "a": "i",
+       "b": "1",
+       "src": 3
+      },
+      {
+       "k": "load",
+       "dst": "t5",
+       "arr": "x",
+       "idx": "t4",
+       "src": 3
+      },
+      {
+       "k": "un",
+       "dst": "t6",
+       "op": "minus",
+       "a": "y",
+       "src": 3
+      },
+      {
+       "k": "bin",
+       "dst": "t7",
+       "op": "-",
+       "a": "t5",
+       "b": "t6",
+       "src": 3
+      },
+      {
+       "k": "copy",
+       "dst": "e",
+       "a": "t7",
+       "src": 3
+      },
+      {
+       "k": "bin",
+       "dst": "t8",
+       "op": "<=",
+       "a": "a",
+       "b": "b",
+       "src": 4
+      },
+      {
+       "k": "un",
+       "dst": "t9",
+       "op": "not",
+       "a": "t8",
+       "src": 4
+      },
+      {
+       "k": "if",
+       "a": "t9",
+       "rel": "!=",
+       "b": "0",
+       "src": 4,
+       "ti": 13,
+       "label": "L"
+      }
+     ]
+    },
+    {
+     "phis": [],
+     "ins": [
+      {
+       "k": "un",
+       "dst": "f",
+       "op": "minus",
+       "a": "a",
+       "src": 5
+      }
+     ]
+    }
+   ],
+   "rename": {},
+   "origin": {},
+   "single": true,
+   "phiCount": 0,
+   "ENTRY": 3
+  },
+  "gen": {
+   "code": [
+    {
+     "op": "LABEL",
+     "L": "B1"
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "b"
+     }
+    },
+    {
+     "op": "NEG",
+     "d": 1,
+     "s": 0
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "c"
+     }
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "t1"
+     },
+     "s": 1,
+     "why": "spill t1"
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "imm",
+      "v": "0"
+     }
+    },
+    {
+     "op": "EQ",
+     "d": 0,
+     "s": 0,
+     "t": 1
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "mem",
+      "name": "t1"
+     }
+    },
+    {
+     "op": "ADD",
+     "d": 1,
+     "s": 1,
+     "t": 0
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "imm",
+      "v": "5"
+     }
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "a"
+     },
+     "s": 1,
+     "why": "spill a"
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "imm",
+      "v": "3"
+     }
+    },
+    {
+     "op": "MOD",
+     "d": 0,
+     "s": 0,
+     "t": 1
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "mem",
+      "name": "i"
+     }
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "d"
+     },
+     "s": 0,
+     "why": "spill d"
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "imm",
+      "v": "1"
+     }
+    },
+    {
+     "op": "ADD",
+     "d": 0,
+     "s": 1,
+     "t": 0
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "idx",
+      "arr": "x",
+      "r": 0
+     }
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "mem",
+      "name": "y"
+     }
+    },
+    {
+     "op": "NEG",
+     "d": 1,
+     "s": 1
+    },
+    {
+     "op": "SUB",
+     "d": 0,
+     "s": 0,
+     "t": 1
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "mem",
+      "name": "a"
+     }
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "e"
+     },
+     "s": 0,
+     "why": "spill e"
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "b"
+     }
+    },
+    {
+     "op": "LE",
+     "d": 0,
+     "s": 1,
+     "t": 0
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "imm",
+      "v": "0"
+     }
+    },
+    {
+     "op": "EQ",
+     "d": 0,
+     "s": 0,
+     "t": 1
+    },
+    {
+     "op": "BNEZ",
+     "s": 0,
+     "L": "B2"
+    },
+    {
+     "op": "LABEL",
+     "L": "B2"
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "a"
+     }
+    },
+    {
+     "op": "NEG",
+     "d": 1,
+     "s": 0
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "f"
+     },
+     "s": 1,
+     "why": "f is live on exit"
+    }
+   ],
+   "rows": [
+    {
+     "i": 0,
+     "block": 0,
+     "x": {
+      "k": "un",
+      "dst": "t1",
+      "op": "minus",
+      "a": "b",
+      "src": 1
+     },
+     "code": [
+      {
+       "op": "LD",
+       "d": 0,
+       "src": {
+        "kind": "mem",
+        "name": "b"
+       }
+      },
+      {
+       "op": "NEG",
+       "d": 1,
+       "s": 0
+      }
+     ],
+     "cost": 3,
+     "regs": [
+      "R0: b",
+      "R1: t1"
+     ],
+     "addr": [
+      "b: R0, mem",
+      "t1: R1"
+     ]
+    },
+    {
+     "i": 1,
+     "block": 0,
+     "x": {
+      "k": "un",
+      "dst": "t2",
+      "op": "not",
+      "a": "c",
+      "src": 1
+     },
+     "code": [
+      {
+       "op": "LD",
+       "d": 0,
+       "src": {
+        "kind": "mem",
+        "name": "c"
+       }
+      },
+      {
+       "op": "ST",
+       "dst": {
+        "kind": "mem",
+        "name": "t1"
+       },
+       "s": 1,
+       "why": "spill t1"
+      },
+      {
+       "op": "LD",
+       "d": 1,
+       "src": {
+        "kind": "imm",
+        "v": "0"
+       }
+      },
+      {
+       "op": "EQ",
+       "d": 0,
+       "s": 0,
+       "t": 1
+      }
+     ],
+     "cost": 7,
+     "regs": [
+      "R0: t2",
+      "R1: #0"
+     ],
+     "addr": [
+      "t2: R0"
+     ]
+    },
+    {
+     "i": 2,
+     "block": 0,
+     "x": {
+      "k": "bin",
+      "dst": "t3",
+      "op": "+",
+      "a": "t1",
+      "b": "t2",
+      "src": 1
+     },
+     "code": [
+      {
+       "op": "LD",
+       "d": 1,
+       "src": {
+        "kind": "mem",
+        "name": "t1"
+       }
+      },
+      {
+       "op": "ADD",
+       "d": 1,
+       "s": 1,
+       "t": 0
+      }
+     ],
+     "cost": 3,
+     "regs": [
+      "R0: t2",
+      "R1: t3"
+     ],
+     "addr": [
+      "t2: R0",
+      "t3: R1"
+     ]
+    },
+    {
+     "i": 3,
+     "block": 0,
+     "x": {
+      "k": "copy",
+      "dst": "a",
+      "a": "t3",
+      "src": 1
+     },
+     "code": [],
+     "cost": 0,
+     "regs": [
+      "R0: t2",
+      "R1: t3, a"
+     ],
+     "addr": [
+      "t2: R0",
+      "t3: R1",
+      "a: R1"
+     ]
+    },
+    {
+     "i": 4,
+     "block": 0,
+     "x": {
+      "k": "bin",
+      "dst": "d",
+      "op": "%",
+      "a": "5",
+      "b": "3",
+      "src": 2
+     },
+     "code": [
+      {
+       "op": "LD",
+       "d": 0,
+       "src": {
+        "kind": "imm",
+        "v": "5"
+       }
+      },
+      {
+       "op": "ST",
+       "dst": {
+        "kind": "mem",
+        "name": "a"
+       },
+       "s": 1,
+       "why": "spill a"
+      },
+      {
+       "op": "LD",
+       "d": 1,
+       "src": {
+        "kind": "imm",
+        "v": "3"
+       }
+      },
+      {
+       "op": "MOD",
+       "d": 0,
+       "s": 0,
+       "t": 1
+      }
+     ],
+     "cost": 7,
+     "regs": [
+      "R0: d",
+      "R1: #3"
+     ],
+     "addr": [
+      "d: R0"
+     ]
+    },
+    {
+     "i": 5,
+     "block": 0,
+     "x": {
+      "k": "bin",
+      "dst": "t4",
+      "op": "+",
+      "a": "i",
+      "b": "1",
+      "src": 3
+     },
+     "code": [
+      {
+       "op": "LD",
+       "d": 1,
+       "src": {
+        "kind": "mem",
+        "name": "i"
+       }
+      },
+      {
+       "op": "ST",
+       "dst": {
+        "kind": "mem",
+        "name": "d"
+       },
+       "s": 0,
+       "why": "spill d"
+      },
+      {
+       "op": "LD",
+       "d": 0,
+       "src": {
+        "kind": "imm",
+        "v": "1"
+       }
+      },
+      {
+       "op": "ADD",
+       "d": 0,
+       "s": 1,
+       "t": 0
+      }
+     ],
+     "cost": 7,
+     "regs": [
+      "R0: t4",
+      "R1: i"
+     ],
+     "addr": [
+      "i: R1, mem",
+      "t4: R0"
+     ]
+    },
+    {
+     "i": 6,
+     "block": 0,
+     "x": {
+      "k": "load",
+      "dst": "t5",
+      "arr": "x",
+      "idx": "t4",
+      "src": 3
+     },
+     "code": [
+      {
+       "op": "LD",
+       "d": 0,
+       "src": {
+        "kind": "idx",
+        "arr": "x",
+        "r": 0
+       }
+      }
+     ],
+     "cost": 2,
+     "regs": [
+      "R0: t5",
+      "R1: i"
+     ],
+     "addr": [
+      "i: R1, mem",
+      "t5: R0"
+     ]
+    },
+    {
+     "i": 7,
+     "block": 0,
+     "x": {
+      "k": "un",
+      "dst": "t6",
+      "op": "minus",
+      "a": "y",
+      "src": 3
+     },
+     "code": [
+      {
+       "op": "LD",
+       "d": 1,
+       "src": {
+        "kind": "mem",
+        "name": "y"
+       }
+      },
+      {
+       "op": "NEG",
+       "d": 1,
+       "s": 1
+      }
+     ],
+     "cost": 3,
+     "regs": [
+      "R0: t5",
+      "R1: t6"
+     ],
+     "addr": [
+      "t5: R0",
+      "t6: R1"
+     ]
+    },
+    {
+     "i": 8,
+     "block": 0,
+     "x": {
+      "k": "bin",
+      "dst": "t7",
+      "op": "-",
+      "a": "t5",
+      "b": "t6",
+      "src": 3
+     },
+     "code": [
+      {
+       "op": "SUB",
+       "d": 0,
+       "s": 0,
+       "t": 1
+      }
+     ],
+     "cost": 1,
+     "regs": [
+      "R0: t7",
+      "R1: t6"
+     ],
+     "addr": [
+      "t6: R1",
+      "t7: R0"
+     ]
+    },
+    {
+     "i": 9,
+     "block": 0,
+     "x": {
+      "k": "copy",
+      "dst": "e",
+      "a": "t7",
+      "src": 3
+     },
+     "code": [],
+     "cost": 0,
+     "regs": [
+      "R0: t7, e",
+      "R1: t6"
+     ],
+     "addr": [
+      "t6: R1",
+      "t7: R0",
+      "e: R0"
+     ]
+    },
+    {
+     "i": 10,
+     "block": 0,
+     "x": {
+      "k": "bin",
+      "dst": "t8",
+      "op": "<=",
+      "a": "a",
+      "b": "b",
+      "src": 4
+     },
+     "code": [
+      {
+       "op": "LD",
+       "d": 1,
+       "src": {
+        "kind": "mem",
+        "name": "a"
+       }
+      },
+      {
+       "op": "ST",
+       "dst": {
+        "kind": "mem",
+        "name": "e"
+       },
+       "s": 0,
+       "why": "spill e"
+      },
+      {
+       "op": "LD",
+       "d": 0,
+       "src": {
+        "kind": "mem",
+        "name": "b"
+       }
+      },
+      {
+       "op": "LE",
+       "d": 0,
+       "s": 1,
+       "t": 0
+      }
+     ],
+     "cost": 7,
+     "regs": [
+      "R0: t8",
+      "R1: a"
+     ],
+     "addr": [
+      "a: R1, mem",
+      "t8: R0"
+     ]
+    },
+    {
+     "i": 11,
+     "block": 0,
+     "x": {
+      "k": "un",
+      "dst": "t9",
+      "op": "not",
+      "a": "t8",
+      "src": 4
+     },
+     "code": [
+      {
+       "op": "LD",
+       "d": 1,
+       "src": {
+        "kind": "imm",
+        "v": "0"
+       }
+      },
+      {
+       "op": "EQ",
+       "d": 0,
+       "s": 0,
+       "t": 1
+      }
+     ],
+     "cost": 3,
+     "regs": [
+      "R0: t9",
+      "R1: #0"
+     ],
+     "addr": [
+      "t9: R0"
+     ]
+    },
+    {
+     "i": 12,
+     "block": 0,
+     "x": {
+      "k": "if",
+      "a": "t9",
+      "rel": "!=",
+      "b": "0",
+      "src": 4,
+      "ti": 13,
+      "label": "L"
+     },
+     "code": [
+      {
+       "op": "BNEZ",
+       "s": 0,
+       "L": "B2"
+      }
+     ],
+     "cost": 2,
+     "regs": [
+      "R0: t9",
+      "R1: #0"
+     ],
+     "addr": [
+      "t9: R0"
+     ]
+    },
+    {
+     "i": 13,
+     "block": 1,
+     "x": {
+      "k": "un",
+      "dst": "f",
+      "op": "minus",
+      "a": "a",
+      "src": 5
+     },
+     "code": [
+      {
+       "op": "LD",
+       "d": 0,
+       "src": {
+        "kind": "mem",
+        "name": "a"
+       }
+      },
+      {
+       "op": "NEG",
+       "d": 1,
+       "s": 0
+      },
+      {
+       "op": "ST",
+       "dst": {
+        "kind": "mem",
+        "name": "f"
+       },
+       "s": 1,
+       "why": "f is live on exit"
+      }
+     ],
+     "cost": 5,
+     "regs": [
+      "R0: a",
+      "R1: f"
+     ],
+     "addr": [
+      "a: R0, mem",
+      "f: R1, mem"
+     ]
+    }
+   ],
+   "total": 50,
+   "bb": {
+    "blocks": [
+     {
+      "id": 0,
+      "start": 0,
+      "end": 13,
+      "succ": [
+       1
+      ],
+      "pred": [],
+      "ins": [
+       {
+        "k": "un",
+        "dst": "t1",
+        "op": "minus",
+        "a": "b",
+        "src": 1
+       },
+       {
+        "k": "un",
+        "dst": "t2",
+        "op": "not",
+        "a": "c",
+        "src": 1
+       },
+       {
+        "k": "bin",
+        "dst": "t3",
+        "op": "+",
+        "a": "t1",
+        "b": "t2",
+        "src": 1
+       },
+       {
+        "k": "copy",
+        "dst": "a",
+        "a": "t3",
+        "src": 1
+       },
+       {
+        "k": "bin",
+        "dst": "d",
+        "op": "%",
+        "a": "5",
+        "b": "3",
+        "src": 2
+       },
+       {
+        "k": "bin",
+        "dst": "t4",
+        "op": "+",
+        "a": "i",
+        "b": "1",
+        "src": 3
+       },
+       {
+        "k": "load",
+        "dst": "t5",
+        "arr": "x",
+        "idx": "t4",
+        "src": 3
+       },
+       {
+        "k": "un",
+        "dst": "t6",
+        "op": "minus",
+        "a": "y",
+        "src": 3
+       },
+       {
+        "k": "bin",
+        "dst": "t7",
+        "op": "-",
+        "a": "t5",
+        "b": "t6",
+        "src": 3
+       },
+       {
+        "k": "copy",
+        "dst": "e",
+        "a": "t7",
+        "src": 3
+       },
+       {
+        "k": "bin",
+        "dst": "t8",
+        "op": "<=",
+        "a": "a",
+        "b": "b",
+        "src": 4
+       },
+       {
+        "k": "un",
+        "dst": "t9",
+        "op": "not",
+        "a": "t8",
+        "src": 4
+       },
+       {
+        "k": "if",
+        "a": "t9",
+        "rel": "!=",
+        "b": "0",
+        "src": 4,
+        "ti": 13,
+        "label": "L"
+       }
+      ]
+     },
+     {
+      "id": 1,
+      "start": 13,
+      "end": 14,
+      "succ": [
+       2
+      ],
+      "pred": [
+       0
+      ],
+      "ins": [
+       {
+        "k": "un",
+        "dst": "f",
+        "op": "minus",
+        "a": "a",
+        "src": 5
+       }
+      ]
+     }
+    ],
+    "leaders": [
+     0,
+     13
+    ],
+    "why": {},
+    "blockOf": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ],
+    "EXIT": 2
+   },
+   "lv": {
+    "use": [
+     {},
+     {}
+    ],
+    "def": [
+     {},
+     {}
+    ],
+    "IN": [
+     {},
+     {}
+    ],
+    "OUT": [
+     {},
+     {}
+    ],
+    "passes": [
+     {
+      "IN": [
+       {},
+       {}
+      ],
+      "OUT": [
+       {},
+       {}
+      ]
+     },
+     {
+      "IN": [
+       {},
+       {}
+      ],
+      "OUT": [
+       {},
+       {}
+      ]
+     }
+    ]
+   },
+   "nRegs": 2
+  },
+  "peep": {
+   "tac": {
+    "ins": [
+     {
+      "k": "un",
+      "dst": "t1",
+      "op": "minus",
+      "a": "b",
+      "src": 1
+     },
+     {
+      "k": "un",
+      "dst": "t2",
+      "op": "not",
+      "a": "c",
+      "src": 1
+     },
+     {
+      "k": "bin",
+      "dst": "t3",
+      "op": "+",
+      "a": "t1",
+      "b": "t2",
+      "src": 1
+     },
+     {
+      "k": "copy",
+      "dst": "a",
+      "a": "t3",
+      "src": 1
+     },
+     {
+      "k": "copy",
+      "dst": "d",
+      "a": "2",
+      "src": 2
+     },
+     {
+      "k": "bin",
+      "dst": "t4",
+      "op": "+",
+      "a": "i",
+      "b": "1",
+      "src": 3
+     },
+     {
+      "k": "load",
+      "dst": "t5",
+      "arr": "x",
+      "idx": "t4",
+      "src": 3
+     },
+     {
+      "k": "un",
+      "dst": "t6",
+      "op": "minus",
+      "a": "y",
+      "src": 3
+     },
+     {
+      "k": "bin",
+      "dst": "t7",
+      "op": "-",
+      "a": "t5",
+      "b": "t6",
+      "src": 3
+     },
+     {
+      "k": "copy",
+      "dst": "e",
+      "a": "t7",
+      "src": 3
+     },
+     {
+      "k": "bin",
+      "dst": "t8",
+      "op": "<=",
+      "a": "a",
+      "b": "b",
+      "src": 4
+     },
+     {
+      "k": "un",
+      "dst": "t9",
+      "op": "not",
+      "a": "t8",
+      "src": 4
+     },
+     {
+      "k": "un",
+      "dst": "f",
+      "op": "minus",
+      "a": "a",
+      "src": 5
+     }
+    ],
+    "log": [
+     {
+      "rule": "Constant folding",
+      "text": "(5) d = 5 % 3 → d = 2"
+     },
+     {
+      "rule": "Jump to the next instruction",
+      "text": "(13) if t9 goto (14) is deleted, control falls through to it anyway"
+     }
+    ]
+   },
+   "before": [
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "b"
+     }
+    },
+    {
+     "op": "NEG",
+     "d": 0,
+     "s": 0
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "t1"
+     },
+     "s": 0
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "c"
+     }
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "imm",
+      "v": "0"
+     }
+    },
+    {
+     "op": "EQ",
+     "d": 0,
+     "s": 0,
+     "t": 1
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "t2"
+     },
+     "s": 0
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "t1"
+     }
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "mem",
+      "name": "t2"
+     }
+    },
+    {
+     "op": "ADD",
+     "d": 0,
+     "s": 0,
+     "t": 1
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "t3"
+     },
+     "s": 0
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "t3"
+     }
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "a"
+     },
+     "s": 0
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "imm",
+      "v": "5"
+     }
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "imm",
+      "v": "3"
+     }
+    },
+    {
+     "op": "MOD",
+     "d": 0,
+     "s": 0,
+     "t": 1
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "d"
+     },
+     "s": 0
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "i"
+     }
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "imm",
+      "v": "1"
+     }
+    },
+    {
+     "op": "ADD",
+     "d": 0,
+     "s": 0,
+     "t": 1
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "t4"
+     },
+     "s": 0
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "mem",
+      "name": "t4"
+     }
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "idx",
+      "arr": "x",
+      "r": 1
+     }
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "t5"
+     },
+     "s": 0
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "y"
+     }
+    },
+    {
+     "op": "NEG",
+     "d": 0,
+     "s": 0
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "t6"
+     },
+     "s": 0
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "t5"
+     }
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "mem",
+      "name": "t6"
+     }
+    },
+    {
+     "op": "SUB",
+     "d": 0,
+     "s": 0,
+     "t": 1
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "t7"
+     },
+     "s": 0
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "t7"
+     }
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "e"
+     },
+     "s": 0
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "a"
+     }
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "mem",
+      "name": "b"
+     }
+    },
+    {
+     "op": "LE",
+     "d": 0,
+     "s": 0,
+     "t": 1
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "t8"
+     },
+     "s": 0
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "t8"
+     }
+    },
+    {
+     "op": "LD",
+     "d": 1,
+     "src": {
+      "kind": "imm",
+      "v": "0"
+     }
+    },
+    {
+     "op": "EQ",
+     "d": 0,
+     "s": 0,
+     "t": 1
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "t9"
+     },
+     "s": 0
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "t9"
+     }
+    },
+    {
+     "op": "BNEZ",
+     "s": 0,
+     "L": "L1"
+    },
+    {
+     "op": "LABEL",
+     "L": "L1"
+    },
+    {
+     "op": "LD",
+     "d": 0,
+     "src": {
+      "kind": "mem",
+      "name": "a"
+     }
+    },
+    {
+     "op": "NEG",
+     "d": 0,
+     "s": 0
+    },
+    {
+     "op": "ST",
+     "dst": {
+      "kind": "mem",
+      "name": "f"
+     },
+     "s": 0
+    }
+   ],
+   "after": {
+    "code": [
+     {
+      "op": "LD",
+      "d": 0,
+      "src": {
+       "kind": "mem",
+       "name": "b"
+      }
+     },
+     {
+      "op": "NEG",
+      "d": 0,
+      "s": 0
+     },
+     {
+      "op": "ST",
+      "dst": {
+       "kind": "mem",
+       "name": "t1"
+      },
+      "s": 0
+     },
+     {
+      "op": "LD",
+      "d": 0,
+      "src": {
+       "kind": "mem",
+       "name": "c"
+      }
+     },
+     {
+      "op": "LD",
+      "d": 1,
+      "src": {
+       "kind": "imm",
+       "v": "0"
+      }
+     },
+     {
+      "op": "EQ",
+      "d": 0,
+      "s": 0,
+      "t": 1
+     },
+     {
+      "op": "ST",
+      "dst": {
+       "kind": "mem",
+       "name": "t2"
+      },
+      "s": 0
+     },
+     {
+      "op": "LD",
+      "d": 0,
+      "src": {
+       "kind": "mem",
+       "name": "t1"
+      }
+     },
+     {
+      "op": "LD",
+      "d": 1,
+      "src": {
+       "kind": "mem",
+       "name": "t2"
+      }
+     },
+     {
+      "op": "ADD",
+      "d": 0,
+      "s": 0,
+      "t": 1
+     },
+     {
+      "op": "ST",
+      "dst": {
+       "kind": "mem",
+       "name": "t3"
+      },
+      "s": 0
+     },
+     {
+      "op": "ST",
+      "dst": {
+       "kind": "mem",
+       "name": "a"
+      },
+      "s": 0
+     },
+     {
+      "op": "LD",
+      "d": 0,
+      "src": {
+       "kind": "imm",
+       "v": "2"
+      }
+     },
+     {
+      "op": "ST",
+      "dst": {
+       "kind": "mem",
+       "name": "d"
+      },
+      "s": 0
+     },
+     {
+      "op": "LD",
+      "d": 0,
+      "src": {
+       "kind": "mem",
+       "name": "i"
+      }
+     },
+     {
+      "op": "LD",
+      "d": 1,
+      "src": {
+       "kind": "imm",
+       "v": "1"
+      }
+     },
+     {
+      "op": "ADD",
+      "d": 0,
+      "s": 0,
+      "t": 1
+     },
+     {
+      "op": "ST",
+      "dst": {
+       "kind": "mem",
+       "name": "t4"
+      },
+      "s": 0
+     },
+     {
+      "op": "LD",
+      "d": 1,
+      "src": {
+       "kind": "mem",
+       "name": "t4"
+      }
+     },
+     {
+      "op": "LD",
+      "d": 0,
+      "src": {
+       "kind": "idx",
+       "arr": "x",
+       "r": 1
+      }
+     },
+     {
+      "op": "ST",
+      "dst": {
+       "kind": "mem",
+       "name": "t5"
+      },
+      "s": 0
+     },
+     {
+      "op": "LD",
+      "d": 0,
+      "src": {
+       "kind": "mem",
+       "name": "y"
+      }
+     },
+     {
+      "op": "NEG",
+      "d": 0,
+      "s": 0
+     },
+     {
+      "op": "ST",
+      "dst": {
+       "kind": "mem",
+       "name": "t6"
+      },
+      "s": 0
+     },
+     {
+      "op": "LD",
+      "d": 0,
+      "src": {
+       "kind": "mem",
+       "name": "t5"
+      }
+     },
+     {
+      "op": "LD",
+      "d": 1,
+      "src": {
+       "kind": "mem",
+       "name": "t6"
+      }
+     },
+     {
+      "op": "SUB",
+      "d": 0,
+      "s": 0,
+      "t": 1
+     },
+     {
+      "op": "ST",
+      "dst": {
+       "kind": "mem",
+       "name": "t7"
+      },
+      "s": 0
+     },
+     {
+      "op": "ST",
+      "dst": {
+       "kind": "mem",
+       "name": "e"
+      },
+      "s": 0
+     },
+     {
+      "op": "LD",
+      "d": 0,
+      "src": {
+       "kind": "mem",
+       "name": "a"
+      }
+     },
+     {
+      "op": "LD",
+      "d": 1,
+      "src": {
+       "kind": "mem",
+       "name": "b"
+      }
+     },
+     {
+      "op": "LE",
+      "d": 0,
+      "s": 0,
+      "t": 1
+     },
+     {
+      "op": "ST",
+      "dst": {
+       "kind": "mem",
+       "name": "t8"
+      },
+      "s": 0
+     },
+     {
+      "op": "LD",
+      "d": 1,
+      "src": {
+       "kind": "imm",
+       "v": "0"
+      }
+     },
+     {
+      "op": "EQ",
+      "d": 0,
+      "s": 0,
+      "t": 1
+     },
+     {
+      "op": "ST",
+      "dst": {
+       "kind": "mem",
+       "name": "t9"
+      },
+      "s": 0
+     },
+     {
+      "op": "LD",
+      "d": 0,
+      "src": {
+       "kind": "mem",
+       "name": "a"
+      }
+     },
+     {
+      "op": "NEG",
+      "d": 0,
+      "s": 0
+     },
+     {
+      "op": "ST",
+      "dst": {
+       "kind": "mem",
+       "name": "f"
+      },
+      "s": 0
+     }
+    ],
+    "log": [
+     {
+      "rule": "Redundant load",
+      "text": "LD R0, t3: R0 already holds t3"
+     },
+     {
+      "rule": "Redundant load",
+      "text": "LD R0, t7: R0 already holds t7"
+     },
+     {
+      "rule": "Redundant load",
+      "text": "LD R0, t8: R0 already holds t8"
+     }
+    ]
+   },
+   "costBefore": 82,
+   "costAfter": 69
+  }
  }
 ]

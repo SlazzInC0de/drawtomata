@@ -123,7 +123,7 @@ js/editor.js     the drawing canvas
 js/ui/common.js  shared page helpers (tabs, theme, result stages, automaton views)
 js/ui/<tool>.js  one file per tool: re, fa, lang, rg, cfg, parse, pump, cg, sdt, lex
 js/ui/boot.js    first-visit banner, blank inputs, first tab
-js/core.js       shared empty-string spellings, grammar line reader, nullable set
+js/core.js       shared empty-string spellings, grammar line reader, nullable set, expression parser
 tests/run.js     conversion tests
 tests/golden.js  golden snapshots of every engine (tests/golden/*.json)
 ```

@@ -9,6 +9,7 @@ Drawtomata's value is that its answers are right. These rules keep it that way, 
 | Empty-string spellings (λ, ε, eps, …) | `DT.core.EPS_WORDS`, `DT.core.EPS_CHARS`, `DT.isEps` in `js/core.js` | define another list |
 | Reading grammar text (`A -> α \| β`, continuation lines, comments) | `DT.core.readProductions` | write another line splitter |
 | Nullable nonterminals | `DT.core.nullableSet` | recompute it inline |
+| Arithmetic expressions (`a + b * -c`, `x[i]`, relops) | `DT.core.parseExpr` with your own `node` and `error` hooks | write another precedence parser |
 | Automata (Thompson, subset, minimize, equivalence, products) | `DT.fa` in `js/automata.js` | copy an algorithm into a tool file |
 | FIRST/FOLLOW, LL(1), LR tables, LR driver | `DT.parsing` in `js/parsing.js` | build a second table or driver |
 | UI for one tool | that tool's file in `js/ui/` | edit another tool's file for a fix that is not about it |

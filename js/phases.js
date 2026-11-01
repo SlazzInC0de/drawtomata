@@ -22,22 +22,29 @@
   }
 
   // ---------- syntax analysis: assignment → id = expr ----------
+  // the expression grammar is the shared one in core.js (no relational operators, arrays or %)
+  const failAt = (t, what) => { throw new Error(t ? `Syntax error at "${t.lexeme}": expected ${what}.` : `Syntax error: the statement ends where ${what} was expected.`); };
+  const EXPR = {
+    text: (t) => t.lexeme,
+    kind: (t) => (t.token === 'id' ? 'id' : t.token === 'number' ? 'num' : 'op'),
+    node: {
+      num: (t) => ({ k: 'num', text: t.lexeme, float: isFloatLit(t.lexeme) }),
+      id: (t) => ({ k: 'id', name: t.lexeme, entry: t.attr }),
+      neg: (a) => ({ k: 'neg', a }),
+      bin: (op, l, r) => ({ k: 'bin', op, l, r })
+    },
+    error: {
+      end: () => failAt(null, 'an operand'),
+      unexpected: (t) => failAt(t, 'an operand'),
+      expect: (c, t) => failAt(t, `"${c}"`)
+    }
+  };
   function parseTokens(toks) {
     let p = 0;
     const peek = () => toks[p];
     const is = (lex) => peek() && peek().lexeme === lex;
-    const fail = (what) => { throw new Error(peek() ? `Syntax error at "${peek().lexeme}": expected ${what}.` : `Syntax error: the statement ends where ${what} was expected.`); };
-    function factor() {
-      const t = peek();
-      if (!t) fail('an operand');
-      if (t.lexeme === '(') { p++; const e = expr(); if (!is(')')) fail('")"'); p++; return e; }
-      if (t.lexeme === '-') { p++; return { k: 'neg', a: factor() }; }
-      if (t.token === 'id') { p++; return { k: 'id', name: t.lexeme, entry: t.attr }; }
-      if (t.token === 'number') { p++; return { k: 'num', text: t.lexeme, float: isFloatLit(t.lexeme) }; }
-      return fail('an operand');
-    }
-    function term() { let l = factor(); while (is('*') || is('/')) { const op = toks[p++].lexeme; l = { k: 'bin', op, l, r: factor() }; } return l; }
-    function expr() { let l = term(); while (is('+') || is('-')) { const op = toks[p++].lexeme; l = { k: 'bin', op, l, r: term() }; } return l; }
+    const fail = (what) => failAt(peek(), what);
+    const expr = () => { const r = DT.core.parseExpr(toks, EXPR, p); p = r.pos; return r.e; };
     if (!peek() || peek().token !== 'id') fail('the name being assigned');
     const target = { k: 'id', name: peek().lexeme, entry: peek().attr };
     p++;

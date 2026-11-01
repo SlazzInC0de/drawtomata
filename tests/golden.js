@@ -57,8 +57,12 @@ const CG_PROGRAMS = [
   'a = b + c\nb = a - d\nc = b + c\nd = a - d',
   'x = a[i] + a[j]\nif x > 0 goto L1\ny = 0 - x\ngoto L2\nL1: y = x\nL2: z = y * 2',
   '1) i = 1\n2) j = 1\n3) t1 = 10 * i\n4) t2 = t1 + j\n5) t3 = 8 * t2\n6) t4 = t3 - 88\n7) a[t4] = 0\n8) j = j + 1\n9) if j <= 10 goto (3)\n10) i = i + 1\n11) if i <= 10 goto (2)\n12) i = 1\n13) t5 = i - 1\n14) t6 = 88 * t5\n15) a[t6] = 1\n16) i = i + 1\n17) if i <= 10 goto (13)',
-  'if debug == 1 goto L1\ngoto L2\nL1: x = x * 1\ny = y * 2\nL2: i = i + 1\ngoto L3\nk = 0\nL3: goto L4\nL4: n = 4 * 2'
+  'if debug == 1 goto L1\ngoto L2\nL1: x = x * 1\ny = y * 2\nL2: i = i + 1\ngoto L3\nk = 0\nL3: goto L4\nL4: n = 4 * 2',
+  'a = minus b + not c\nd = -(-5) % 3\ne = x[i + 1] - -y\nif not (a <= b) goto L\nL: f = MINUS a'
 ];
+// inputs that must fail, with the exact message
+const CG_ERRORS = ['x =', 'x = (a + b', 'x = a[1', 'x = a + goto', 'x = * 3', 'a[ ] = 1', 'x = a b'];
+const PH_ERRORS = ['x = ', 'x = y = z', '= 1', 'x = 1 +', 'x = (1', 'x = (1 + 2', '1 = x', 'x = -(-(-a))', 'x = a * (b - -3)'];
 const SDDs = [
   ['L -> E n { L.val = E.val }\nE -> E1 + T { E.val = E1.val + T.val }\nE -> T { E.val = T.val }\nT -> T1 * F { T.val = T1.val * F.val }\nT -> F { T.val = F.val }\nF -> ( E ) { F.val = E.val }\nF -> digit { F.val = digit.lexval }', '3 * 5 + 4 n'],
   ["T -> F T' { T'.inh = F.val ; T.val = T'.syn }\nT' -> * F T1' { T1'.inh = T'.inh * F.val ; T'.syn = T1'.syn }\nT' -> ε { T'.syn = T'.inh }\nF -> digit { F.val = digit.lexval }", '3 * 5'],
@@ -132,6 +136,7 @@ function collect() {
     buffering: attempt(() => LX.buffering('int count = 100 ; float averages = 3.5 ;', 8)),
     lexYacc: attempt(() => { const spec = LX.parseLex(LEX_SPEC), y = LX.parseYacc(YACC_SPEC); const run = LX.runLex(spec, '- 2 * 3 + ( 4 - 1 )'); return { spec, y, table: LX.yaccTable(y), run, parsed: LX.lexToYacc(y, run) }; })
   };
+  out.exprErrors = { codegen: CG_ERRORS.map((s) => attempt(() => CG.parseProgram(s).ins.map((x) => CG.insStr(x)))), phases: PH_ERRORS.map((s) => attempt(() => PH.run(s).tac.map(PH.tacStr))) };
   out.phases = ['position = initial + rate * 60', 'int i, n\nfloat avg, sum\navg = sum / n\ni = i + 1', 'x = -(a + 2 * 3) * b', 'int k\nk = 2.5 * 4'].map((s) => attempt(() => PH.run(s)));
   return out;
 }

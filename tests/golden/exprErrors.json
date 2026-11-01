@@ -1,0 +1,61 @@
+{
+ "codegen": [
+  {
+   "error": "Line \"x =\": An expression ends too early."
+  },
+  {
+   "error": "Line \"x = (a + b\": Expected \")\" at the end."
+  },
+  {
+   "error": "Line \"x = a[1\": Expected \"]\" at the end."
+  },
+  {
+   "error": "Line \"x = a + goto\": Unexpected \"goto\"."
+  },
+  {
+   "error": "Line \"x = * 3\": Unexpected \"*\"."
+  },
+  {
+   "error": "Line \"a[ ] = 1\": Cannot assign to \"a [ ]\"."
+  },
+  {
+   "error": "Line \"x = a b\": Unexpected \"b\"."
+  }
+ ],
+ "phases": [
+  {
+   "error": "Syntax error: the statement ends where an operand was expected."
+  },
+  {
+   "error": "Syntax error at \"=\": expected the end of the statement."
+  },
+  {
+   "error": "Syntax error at \"=\": expected the name being assigned."
+  },
+  {
+   "error": "Syntax error: the statement ends where an operand was expected."
+  },
+  {
+   "error": "Syntax error: the statement ends where \")\" was expected."
+  },
+  {
+   "error": "Syntax error: the statement ends where \")\" was expected."
+  },
+  {
+   "error": "Syntax error at \"1\": expected the name being assigned."
+  },
+  [
+   "t1 = minus id2",
+   "t2 = minus t1",
+   "t3 = minus t2",
+   "id1 = t3"
+  ],
+  [
+   "t1 = minus 3",
+   "t2 = inttofloat(t1)",
+   "t3 = id3 - t2",
+   "t4 = id2 * t3",
+   "id1 = t4"
+  ]
+ ]
+}

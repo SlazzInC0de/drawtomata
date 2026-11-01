@@ -36,7 +36,48 @@
     return N;
   }
 
+  // Arithmetic expressions, shared by code generation and the compiler phases:
+  //   rel  → add (relop add)?        (only when opts.rel)
+  //   add  → mul (('+' | '-') mul)*
+  //   mul  → unary (('*' | '/' | '%') unary)*   ('%' only when opts.mod)
+  //   unary → ('-' | 'minus') unary | ('!' | 'not') unary | primary
+  //   primary → '(' rel ')' | number | id | id '[' rel ']' (index only when opts.index)
+  // Tokens can be anything: opts.text(tok) gives its text and opts.kind(tok) gives 'id', 'num' or 'op'.
+  // opts.node builds the tree nodes and opts.error words the messages, so each caller keeps its own
+  // node shapes and wording while the grammar and precedence live here once.
+  const RELOPS = ['<', '<=', '>', '>=', '==', '!='];
+  function parseExpr(toks, opts, pos = 0) {
+    const { text, kind, node, error } = opts;
+    let p = pos;
+    const peekText = () => (p < toks.length ? text(toks[p]) : undefined);
+    const isOp = (...ops) => p < toks.length && kind(toks[p]) === 'op' && ops.includes(text(toks[p]));
+    const word = (w) => opts.words && p < toks.length && String(text(toks[p])).toLowerCase() === w;
+    const close = (c) => { if (!isOp(c)) error.expect(c, toks[p]); p++; };
+    function primary() {
+      if (p >= toks.length) return error.end();
+      const t = toks[p];
+      if (isOp('(')) { p++; const e = rel(); close(')'); return e; }
+      if (kind(t) === 'num') { p++; return node.num(t); }
+      if (kind(t) === 'id') {
+        p++;
+        if (opts.index && isOp('[')) { p++; const i = rel(); close(']'); return node.index(t, i); }
+        return node.id(t);
+      }
+      return error.unexpected(t);
+    }
+    function unary() {
+      if (isOp('-') || word('minus')) { p++; return node.neg(unary()); }
+      if (opts.not && (isOp('!') || word('not'))) { p++; return node.not(unary()); }
+      return primary();
+    }
+    const MUL = opts.mod ? ['*', '/', '%'] : ['*', '/'];
+    function mul() { let l = unary(); while (isOp(...MUL)) { const op = peekText(); p++; l = node.bin(op, l, unary()); } return l; }
+    function add() { let l = mul(); while (isOp('+', '-')) { const op = peekText(); p++; l = node.bin(op, l, mul()); } return l; }
+    function rel() { const l = add(); if (opts.rel && isOp(...RELOPS)) { const op = peekText(); p++; return node.bin(op, l, add()); } return l; }
+    return { e: rel(), pos: p };
+  }
+
   DT.EPS = EPS;
   DT.isEps = isEps;
-  DT.core = { EPS, EPS_CHARS, EPS_WORDS, isEps, ARROW, readProductions, nullableSet };
+  DT.core = { EPS, EPS_CHARS, EPS_WORDS, isEps, ARROW, readProductions, nullableSet, RELOPS, parseExpr };
 })(typeof window !== 'undefined' ? (window.DT = window.DT || {}) : (globalThis.DT = globalThis.DT || {}));

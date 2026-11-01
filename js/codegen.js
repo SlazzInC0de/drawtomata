@@ -29,38 +29,27 @@
     return out;
   }
   const KEYWORDS = new Set(['if', 'iffalse', 'goto', 'minus', 'not']);
-  function parseExpr(toks, pos = 0) {
-    let p = pos;
-    const peek = () => toks[p];
-    const eat = (t) => { if (toks[p] !== t) throw new Error(`Expected "${t}"${toks[p] ? ` but found "${toks[p]}"` : ' at the end'}.`); p++; };
-    function primary() {
-      const t = peek();
-      if (t === undefined) throw new Error('An expression ends too early.');
-      if (t === '(') { p++; const e = rel(); eat(')'); return e; }
-      if (isNum(t)) { p++; return { k: 'num', v: t }; }
-      if (/^[A-Za-z_]/.test(t) && !KEYWORDS.has(t.toLowerCase())) {
-        p++;
-        if (peek() === '[') { p++; const i = rel(); eat(']'); return { k: 'idx', arr: t, i }; }
-        return { k: 'id', v: t };
-      }
-      throw new Error(`Unexpected "${t}".`);
+  // the grammar is the shared one in core.js; this fixes the token kinds, node shapes and messages
+  const EXPR = {
+    rel: true, index: true, not: true, mod: true, words: true,
+    text: (t) => t,
+    kind: (t) => (isNum(t) ? 'num' : /^[A-Za-z_]/.test(t) && !KEYWORDS.has(t.toLowerCase()) ? 'id' : 'op'),
+    node: {
+      num: (t) => ({ k: 'num', v: t }),
+      id: (t) => ({ k: 'id', v: t }),
+      index: (t, i) => ({ k: 'idx', arr: t, i }),
+      // -60 is the number -60, not minus applied to 60
+      neg: (a) => (a.k === 'num' ? { k: 'num', v: a.v.startsWith('-') ? a.v.slice(1) : '-' + a.v } : { k: 'un', op: 'minus', a }),
+      not: (a) => ({ k: 'un', op: 'not', a }),
+      bin: (op, l, r) => ({ k: 'bin', op, l, r })
+    },
+    error: {
+      end: () => { throw new Error('An expression ends too early.'); },
+      unexpected: (t) => { throw new Error(`Unexpected "${t}".`); },
+      expect: (c, t) => { throw new Error(`Expected "${c}"${t !== undefined ? ` but found "${t}"` : ' at the end'}.`); }
     }
-    function unary() {
-      const t = peek();
-      if (t === '-' || (t && t.toLowerCase() === 'minus')) {
-        p++; const a = unary();
-        if (a.k === 'num') return { k: 'num', v: a.v.startsWith('-') ? a.v.slice(1) : '-' + a.v };
-        return { k: 'un', op: 'minus', a };
-      }
-      if (t === '!' || (t && t.toLowerCase() === 'not')) { p++; return { k: 'un', op: 'not', a: unary() }; }
-      return primary();
-    }
-    function mul() { let l = unary(); while (['*', '/', '%'].includes(peek())) { const op = toks[p++]; l = { k: 'bin', op, l, r: unary() }; } return l; }
-    function add() { let l = mul(); while (['+', '-'].includes(peek())) { const op = toks[p++]; l = { k: 'bin', op, l, r: mul() }; } return l; }
-    function rel() { const l = add(); if (REL.includes(peek())) { const op = toks[p++]; return { k: 'bin', op, l, r: add() }; } return l; }
-    const e = rel();
-    return { e, pos: p };
-  }
+  };
+  const parseExpr = (toks, pos = 0) => DT.core.parseExpr(toks, EXPR, pos);
   const fullExpr = (toks) => { const r = parseExpr(toks); if (r.pos !== toks.length) throw new Error(`Unexpected "${toks[r.pos]}".`); return r.e; };
 
   // Text → three-address program. Lines may be numbered "(3)", "3)" or "3." and may carry labels "L1:".
