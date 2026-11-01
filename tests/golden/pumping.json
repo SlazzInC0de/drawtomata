@@ -1,0 +1,4658 @@
+{
+ "game": [
+  [
+   "anbn",
+   {
+    "L": {
+     "why": "Because |xy| ≤ p, y holds only a's. Pumping changes the number of a's but not the number of b's.",
+     "name": "aⁿbⁿ, n ≥ 0",
+     "sigma": [
+      "a",
+      "b"
+     ],
+     "w": "aᵖbᵖ"
+    },
+    "w": "aaabbb",
+    "p": 3,
+    "problems": [],
+    "rows": [
+     {
+      "x": "",
+      "y": "a",
+      "z": "aabbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbb",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aa",
+      "z": "abbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "abbb",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "a",
+      "y": "a",
+      "z": "abbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbb",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aaa",
+      "z": "bbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "bbb",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "a",
+      "y": "aa",
+      "z": "bbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "abbb",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "aa",
+      "y": "a",
+      "z": "bbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbb",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     }
+    ],
+    "pumpable": [],
+    "sweep": [
+     {
+      "p": 1,
+      "w": "ab",
+      "defeated": true
+     },
+     {
+      "p": 2,
+      "w": "aabb",
+      "defeated": true
+     },
+     {
+      "p": 3,
+      "w": "aaabbb",
+      "defeated": true
+     },
+     {
+      "p": 4,
+      "w": "aaaabbbb",
+      "defeated": true
+     },
+     {
+      "p": 5,
+      "w": "aaaaabbbbb",
+      "defeated": true
+     },
+     {
+      "p": 6,
+      "w": "aaaaaabbbbbb",
+      "defeated": true
+     },
+     {
+      "p": 7,
+      "w": "aaaaaaabbbbbbb",
+      "defeated": true
+     },
+     {
+      "p": 8,
+      "w": "aaaaaaaabbbbbbbb",
+      "defeated": true
+     }
+    ]
+   }
+  ],
+  [
+   "anbm",
+   {
+    "L": {
+     "why": "y holds only a's, so xy²z has more a's than b's.",
+     "name": "aⁿbᵐ, n ≤ m",
+     "sigma": [
+      "a",
+      "b"
+     ],
+     "w": "aᵖbᵖ"
+    },
+    "w": "aaabbb",
+    "p": 3,
+    "problems": [],
+    "rows": [
+     {
+      "x": "",
+      "y": "a",
+      "z": "aabbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbb",
+        "inL": true
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 2
+     },
+     {
+      "x": "",
+      "y": "aa",
+      "z": "abbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "abbb",
+        "inL": true
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 2
+     },
+     {
+      "x": "a",
+      "y": "a",
+      "z": "abbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbb",
+        "inL": true
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 2
+     },
+     {
+      "x": "",
+      "y": "aaa",
+      "z": "bbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "bbb",
+        "inL": true
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 2
+     },
+     {
+      "x": "a",
+      "y": "aa",
+      "z": "bbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "abbb",
+        "inL": true
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 2
+     },
+     {
+      "x": "aa",
+      "y": "a",
+      "z": "bbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbb",
+        "inL": true
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 2
+     }
+    ],
+    "pumpable": [],
+    "sweep": [
+     {
+      "p": 1,
+      "w": "ab",
+      "defeated": true
+     },
+     {
+      "p": 2,
+      "w": "aabb",
+      "defeated": true
+     },
+     {
+      "p": 3,
+      "w": "aaabbb",
+      "defeated": true
+     },
+     {
+      "p": 4,
+      "w": "aaaabbbb",
+      "defeated": true
+     },
+     {
+      "p": 5,
+      "w": "aaaaabbbbb",
+      "defeated": true
+     },
+     {
+      "p": 6,
+      "w": "aaaaaabbbbbb",
+      "defeated": true
+     },
+     {
+      "p": 7,
+      "w": "aaaaaaabbbbbbb",
+      "defeated": true
+     },
+     {
+      "p": 8,
+      "w": "aaaaaaaabbbbbbbb",
+      "defeated": true
+     }
+    ]
+   }
+  ],
+  [
+   "eqab",
+   {
+    "L": {
+     "why": "y holds only a's, so pumping changes the a count but not the b count.",
+     "name": "equal numbers of a and b",
+     "sigma": [
+      "a",
+      "b"
+     ],
+     "w": "aᵖbᵖ"
+    },
+    "w": "aaabbb",
+    "p": 3,
+    "problems": [],
+    "rows": [
+     {
+      "x": "",
+      "y": "a",
+      "z": "aabbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbb",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aa",
+      "z": "abbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "abbb",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "a",
+      "y": "a",
+      "z": "abbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbb",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aaa",
+      "z": "bbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "bbb",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "a",
+      "y": "aa",
+      "z": "bbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "abbb",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "aa",
+      "y": "a",
+      "z": "bbb",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbb",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbb",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbb",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbb",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbb",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     }
+    ],
+    "pumpable": [],
+    "sweep": [
+     {
+      "p": 1,
+      "w": "ab",
+      "defeated": true
+     },
+     {
+      "p": 2,
+      "w": "aabb",
+      "defeated": true
+     },
+     {
+      "p": 3,
+      "w": "aaabbb",
+      "defeated": true
+     },
+     {
+      "p": 4,
+      "w": "aaaabbbb",
+      "defeated": true
+     },
+     {
+      "p": 5,
+      "w": "aaaaabbbbb",
+      "defeated": true
+     },
+     {
+      "p": 6,
+      "w": "aaaaaabbbbbb",
+      "defeated": true
+     },
+     {
+      "p": 7,
+      "w": "aaaaaaabbbbbbb",
+      "defeated": true
+     },
+     {
+      "p": 8,
+      "w": "aaaaaaaabbbbbbbb",
+      "defeated": true
+     }
+    ]
+   }
+  ],
+  [
+   "wwr",
+   {
+    "L": {
+     "why": "y lies in the first block of a's, so pumping makes the two sides of bb unequal.",
+     "name": "wwᴿ, w ∈ {a,b}*",
+     "sigma": [
+      "a",
+      "b"
+     ],
+     "w": "aᵖbbaᵖ"
+    },
+    "w": "aaabbaaa",
+    "p": 3,
+    "problems": [],
+    "rows": [
+     {
+      "x": "",
+      "y": "a",
+      "z": "aabbaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aa",
+      "z": "abbaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "abbaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaabbaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "a",
+      "y": "a",
+      "z": "abbaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aaa",
+      "z": "bbaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "bbaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaaaabbaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "a",
+      "y": "aa",
+      "z": "bbaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "abbaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaabbaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "aa",
+      "y": "a",
+      "z": "bbaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     }
+    ],
+    "pumpable": [],
+    "sweep": [
+     {
+      "p": 1,
+      "w": "abba",
+      "defeated": true
+     },
+     {
+      "p": 2,
+      "w": "aabbaa",
+      "defeated": true
+     },
+     {
+      "p": 3,
+      "w": "aaabbaaa",
+      "defeated": true
+     },
+     {
+      "p": 4,
+      "w": "aaaabbaaaa",
+      "defeated": true
+     },
+     {
+      "p": 5,
+      "w": "aaaaabbaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 6,
+      "w": "aaaaaabbaaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 7,
+      "w": "aaaaaaabbaaaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 8,
+      "w": "aaaaaaaabbaaaaaaaa",
+      "defeated": true
+     }
+    ]
+   }
+  ],
+  [
+   "pal",
+   {
+    "L": {
+     "why": "y lies in the first block of a's, so after pumping the string no longer reads the same backwards.",
+     "name": "palindromes over {a,b}",
+     "sigma": [
+      "a",
+      "b"
+     ],
+     "w": "aᵖbaᵖ"
+    },
+    "w": "aaabaaa",
+    "p": 3,
+    "problems": [],
+    "rows": [
+     {
+      "x": "",
+      "y": "a",
+      "z": "aabaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aa",
+      "z": "abaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "abaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaabaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "a",
+      "y": "a",
+      "z": "abaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aaa",
+      "z": "baaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "baaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaaaabaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "a",
+      "y": "aa",
+      "z": "baaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "abaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaabaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "aa",
+      "y": "a",
+      "z": "baaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     }
+    ],
+    "pumpable": [],
+    "sweep": [
+     {
+      "p": 1,
+      "w": "aba",
+      "defeated": true
+     },
+     {
+      "p": 2,
+      "w": "aabaa",
+      "defeated": true
+     },
+     {
+      "p": 3,
+      "w": "aaabaaa",
+      "defeated": true
+     },
+     {
+      "p": 4,
+      "w": "aaaabaaaa",
+      "defeated": true
+     },
+     {
+      "p": 5,
+      "w": "aaaaabaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 6,
+      "w": "aaaaaabaaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 7,
+      "w": "aaaaaaabaaaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 8,
+      "w": "aaaaaaaabaaaaaaaa",
+      "defeated": true
+     }
+    ]
+   }
+  ],
+  [
+   "ww",
+   {
+    "L": {
+     "why": "y lies in the first half, so pumping makes the two halves different.",
+     "name": "ww, w ∈ {a,b}*",
+     "sigma": [
+      "a",
+      "b"
+     ],
+     "w": "aᵖbaᵖb"
+    },
+    "w": "aaabaaab",
+    "p": 3,
+    "problems": [],
+    "rows": [
+     {
+      "x": "",
+      "y": "a",
+      "z": "aabaaab",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabaaab",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabaaab",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabaaab",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aa",
+      "z": "abaaab",
+      "results": [
+       {
+        "i": 0,
+        "s": "abaaab",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabaaab",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaabaaab",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "a",
+      "y": "a",
+      "z": "abaaab",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabaaab",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabaaab",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabaaab",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aaa",
+      "z": "baaab",
+      "results": [
+       {
+        "i": 0,
+        "s": "baaab",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabaaab",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaaaabaaab",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "a",
+      "y": "aa",
+      "z": "baaab",
+      "results": [
+       {
+        "i": 0,
+        "s": "abaaab",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabaaab",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaabaaab",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "aa",
+      "y": "a",
+      "z": "baaab",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabaaab",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabaaab",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabaaab",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabaaab",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     }
+    ],
+    "pumpable": [],
+    "sweep": [
+     {
+      "p": 1,
+      "w": "abab",
+      "defeated": true
+     },
+     {
+      "p": 2,
+      "w": "aabaab",
+      "defeated": true
+     },
+     {
+      "p": 3,
+      "w": "aaabaaab",
+      "defeated": true
+     },
+     {
+      "p": 4,
+      "w": "aaaabaaaab",
+      "defeated": true
+     },
+     {
+      "p": 5,
+      "w": "aaaaabaaaaab",
+      "defeated": true
+     },
+     {
+      "p": 6,
+      "w": "aaaaaabaaaaaab",
+      "defeated": true
+     },
+     {
+      "p": 7,
+      "w": "aaaaaaabaaaaaaab",
+      "defeated": true
+     },
+     {
+      "p": 8,
+      "w": "aaaaaaaabaaaaaaaab",
+      "defeated": true
+     }
+    ]
+   }
+  ],
+  [
+   "anbncn",
+   {
+    "L": {
+     "why": "y holds only a's, so pumping changes the a count while the b and c counts stay the same.",
+     "name": "aⁿbⁿcⁿ",
+     "sigma": [
+      "a",
+      "b",
+      "c"
+     ],
+     "w": "aᵖbᵖcᵖ"
+    },
+    "w": "aaabbbccc",
+    "p": 3,
+    "problems": [],
+    "rows": [
+     {
+      "x": "",
+      "y": "a",
+      "z": "aabbbccc",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbbccc",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbbccc",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbbccc",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aa",
+      "z": "abbbccc",
+      "results": [
+       {
+        "i": 0,
+        "s": "abbbccc",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbbccc",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaabbbccc",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "a",
+      "y": "a",
+      "z": "abbbccc",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbbccc",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbbccc",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbbccc",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aaa",
+      "z": "bbbccc",
+      "results": [
+       {
+        "i": 0,
+        "s": "bbbccc",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbbccc",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaaaabbbccc",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "a",
+      "y": "aa",
+      "z": "bbbccc",
+      "results": [
+       {
+        "i": 0,
+        "s": "abbbccc",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbbccc",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaabbbccc",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "aa",
+      "y": "a",
+      "z": "bbbccc",
+      "results": [
+       {
+        "i": 0,
+        "s": "aabbbccc",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaabbbccc",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaabbbccc",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaabbbccc",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     }
+    ],
+    "pumpable": [],
+    "sweep": [
+     {
+      "p": 1,
+      "w": "abc",
+      "defeated": true
+     },
+     {
+      "p": 2,
+      "w": "aabbcc",
+      "defeated": true
+     },
+     {
+      "p": 3,
+      "w": "aaabbbccc",
+      "defeated": true
+     },
+     {
+      "p": 4,
+      "w": "aaaabbbbcccc",
+      "defeated": true
+     },
+     {
+      "p": 5,
+      "w": "aaaaabbbbbccccc",
+      "defeated": true
+     },
+     {
+      "p": 6,
+      "w": "aaaaaabbbbbbcccccc",
+      "defeated": true
+     },
+     {
+      "p": 7,
+      "w": "aaaaaaabbbbbbbccccccc",
+      "defeated": true
+     },
+     {
+      "p": 8,
+      "w": "aaaaaaaabbbbbbbbcccccccc",
+      "defeated": true
+     }
+    ]
+   }
+  ],
+  [
+   "square",
+   {
+    "L": {
+     "why": "With |w| = p², pumping once gives a length between p² + 1 and p² + p, which lies strictly between p² and (p + 1)², so it is not a square.",
+     "name": "aⁿ where n is a perfect square",
+     "sigma": [
+      "a"
+     ],
+     "w": "a^(p²)"
+    },
+    "w": "aaaaaaaaa",
+    "p": 3,
+    "problems": [],
+    "rows": [
+     {
+      "x": "",
+      "y": "a",
+      "z": "aaaaaaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaaaaaaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aa",
+      "z": "aaaaaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaaaaaaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaaaaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "a",
+      "y": "a",
+      "z": "aaaaaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaaaaaaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aaa",
+      "z": "aaaaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aaaaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaaaaaaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaaaaaaaaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "a",
+      "y": "aa",
+      "z": "aaaaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaaaaaaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaaaaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "aa",
+      "y": "a",
+      "z": "aaaaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaaaaaaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     }
+    ],
+    "pumpable": [],
+    "sweep": [
+     {
+      "p": 1,
+      "w": "a",
+      "defeated": true
+     },
+     {
+      "p": 2,
+      "w": "aaaa",
+      "defeated": true
+     },
+     {
+      "p": 3,
+      "w": "aaaaaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 4,
+      "w": "aaaaaaaaaaaaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 5,
+      "w": "aaaaaaaaaaaaaaaaaaaaaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 6,
+      "w": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 7,
+      "w": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 8,
+      "w": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "defeated": true
+     }
+    ]
+   }
+  ],
+  [
+   "prime",
+   {
+    "L": {
+     "why": "With |w| = q and |y| = k, the string xy^(q+1)z has length q + qk = q(1 + k), which is not prime. A smaller i often works too.",
+     "name": "aⁿ where n is prime",
+     "sigma": [
+      "a"
+     ],
+     "w": "a^q, q the first prime ≥ p + 2"
+    },
+    "w": "aaaaa",
+    "p": 3,
+    "problems": [],
+    "rows": [
+     {
+      "x": "",
+      "y": "a",
+      "z": "aaaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaa",
+        "inL": true
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aa",
+      "z": "aaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aaa",
+        "inL": true
+       },
+       {
+        "i": 1,
+        "s": "aaaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaaa",
+        "inL": true
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaa",
+        "inL": true
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaa",
+        "inL": true
+       }
+      ],
+      "failsAt": 3
+     },
+     {
+      "x": "a",
+      "y": "a",
+      "z": "aaa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaa",
+        "inL": true
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "aaa",
+      "z": "aa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aa",
+        "inL": true
+       },
+       {
+        "i": 1,
+        "s": "aaaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaaaa",
+        "inL": true
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaaaaaa",
+        "inL": true
+       }
+      ],
+      "failsAt": 2
+     },
+     {
+      "x": "a",
+      "y": "aa",
+      "z": "aa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aaa",
+        "inL": true
+       },
+       {
+        "i": 1,
+        "s": "aaaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaaa",
+        "inL": true
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaaaaa",
+        "inL": true
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaaaaaa",
+        "inL": true
+       }
+      ],
+      "failsAt": 3
+     },
+     {
+      "x": "aa",
+      "y": "a",
+      "z": "aa",
+      "results": [
+       {
+        "i": 0,
+        "s": "aaaa",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "aaaaa",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "aaaaaa",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "aaaaaaa",
+        "inL": true
+       },
+       {
+        "i": 4,
+        "s": "aaaaaaaa",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "aaaaaaaaa",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     }
+    ],
+    "pumpable": [],
+    "sweep": [
+     {
+      "p": 1,
+      "w": "aaa",
+      "defeated": true
+     },
+     {
+      "p": 2,
+      "w": "aaaaa",
+      "defeated": true
+     },
+     {
+      "p": 3,
+      "w": "aaaaa",
+      "defeated": true
+     },
+     {
+      "p": 4,
+      "w": "aaaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 5,
+      "w": "aaaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 6,
+      "w": "aaaaaaaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 7,
+      "w": "aaaaaaaaaaa",
+      "defeated": true
+     },
+     {
+      "p": 8,
+      "w": "aaaaaaaaaaa",
+      "defeated": true
+     }
+    ]
+   }
+  ],
+  [
+   "paren",
+   {
+    "L": {
+     "why": "y holds only opening parentheses, so pumping leaves them unbalanced.",
+     "name": "balanced parentheses",
+     "sigma": [
+      "(",
+      ")"
+     ],
+     "w": "(ᵖ)ᵖ"
+    },
+    "w": "((()))",
+    "p": 3,
+    "problems": [],
+    "rows": [
+     {
+      "x": "",
+      "y": "(",
+      "z": "(()))",
+      "results": [
+       {
+        "i": 0,
+        "s": "(()))",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "((()))",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "(((()))",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "((((()))",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "(((((()))",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "((((((()))",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "((",
+      "z": "()))",
+      "results": [
+       {
+        "i": 0,
+        "s": "()))",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "((()))",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "((((()))",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "((((((()))",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "((((((((()))",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "((((((((((()))",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "(",
+      "y": "(",
+      "z": "()))",
+      "results": [
+       {
+        "i": 0,
+        "s": "(()))",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "((()))",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "(((()))",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "((((()))",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "(((((()))",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "((((((()))",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "",
+      "y": "(((",
+      "z": ")))",
+      "results": [
+       {
+        "i": 0,
+        "s": ")))",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "((()))",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "(((((()))",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "((((((((()))",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "(((((((((((()))",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "((((((((((((((()))",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "(",
+      "y": "((",
+      "z": ")))",
+      "results": [
+       {
+        "i": 0,
+        "s": "()))",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "((()))",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "((((()))",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "((((((()))",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "((((((((()))",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "((((((((((()))",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     },
+     {
+      "x": "((",
+      "y": "(",
+      "z": ")))",
+      "results": [
+       {
+        "i": 0,
+        "s": "(()))",
+        "inL": false
+       },
+       {
+        "i": 1,
+        "s": "((()))",
+        "inL": true
+       },
+       {
+        "i": 2,
+        "s": "(((()))",
+        "inL": false
+       },
+       {
+        "i": 3,
+        "s": "((((()))",
+        "inL": false
+       },
+       {
+        "i": 4,
+        "s": "(((((()))",
+        "inL": false
+       },
+       {
+        "i": 5,
+        "s": "((((((()))",
+        "inL": false
+       }
+      ],
+      "failsAt": 0
+     }
+    ],
+    "pumpable": [],
+    "sweep": [
+     {
+      "p": 1,
+      "w": "()",
+      "defeated": true
+     },
+     {
+      "p": 2,
+      "w": "(())",
+      "defeated": true
+     },
+     {
+      "p": 3,
+      "w": "((()))",
+      "defeated": true
+     },
+     {
+      "p": 4,
+      "w": "(((())))",
+      "defeated": true
+     },
+     {
+      "p": 5,
+      "w": "((((()))))",
+      "defeated": true
+     },
+     {
+      "p": 6,
+      "w": "(((((())))))",
+      "defeated": true
+     },
+     {
+      "p": 7,
+      "w": "((((((()))))))",
+      "defeated": true
+     },
+     {
+      "p": 8,
+      "w": "(((((((())))))))",
+      "defeated": true
+     }
+    ]
+   }
+  ]
+ ],
+ "regular": [
+  {
+   "dfa": {
+    "n": 3,
+    "start": 0,
+    "finals": {},
+    "trans": [
+     {
+      "from": 0,
+      "sym": "a",
+      "to": 0
+     },
+     {
+      "from": 0,
+      "sym": "b",
+      "to": 1
+     },
+     {
+      "from": 1,
+      "sym": "a",
+      "to": 2
+     },
+     {
+      "from": 1,
+      "sym": "b",
+      "to": 2
+     },
+     {
+      "from": 2,
+      "sym": "a",
+      "to": 2
+     },
+     {
+      "from": 2,
+      "sym": "b",
+      "to": 2
+     }
+    ],
+    "labels": [
+     "{A,B}",
+     "C",
+     "∅"
+    ]
+   },
+   "p": 3,
+   "w": "aaaab",
+   "problems": [],
+   "seq": [
+    "{A,B}",
+    "{A,B}",
+    "{A,B}",
+    "{A,B}",
+    "{A,B}",
+    "C"
+   ],
+   "split": {
+    "x": "",
+    "y": "a",
+    "z": "aaab",
+    "from": 0,
+    "to": 1,
+    "state": "{A,B}"
+   },
+   "check": [
+    {
+     "i": 0,
+     "s": "aaab",
+     "inL": true
+    },
+    {
+     "i": 1,
+     "s": "aaaab",
+     "inL": true
+    },
+    {
+     "i": 2,
+     "s": "aaaaab",
+     "inL": true
+    },
+    {
+     "i": 3,
+     "s": "aaaaaab",
+     "inL": true
+    },
+    {
+     "i": 4,
+     "s": "aaaaaaab",
+     "inL": true
+    },
+    {
+     "i": 5,
+     "s": "aaaaaaaab",
+     "inL": true
+    }
+   ],
+   "rows": [
+    {
+     "x": "",
+     "y": "a",
+     "z": "aaab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aaab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aaaab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaaaab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaaaab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaaaab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "",
+     "y": "aa",
+     "z": "aab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aaaab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaaaaab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaaaaaaaab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "a",
+     "y": "a",
+     "z": "aab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aaab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aaaab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaaaab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaaaab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaaaab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "",
+     "y": "aaa",
+     "z": "ab",
+     "results": [
+      {
+       "i": 0,
+       "s": "ab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aaaab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaaaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaaaaaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaaaaaaaaaaaab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "a",
+     "y": "aa",
+     "z": "ab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aaaab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaaaaab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaaaaaaaab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "aa",
+     "y": "a",
+     "z": "ab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aaab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aaaab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaaaab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaaaab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaaaab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    }
+   ],
+   "pumpable": [
+    {
+     "x": "",
+     "y": "a",
+     "z": "aaab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aaab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aaaab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaaaab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaaaab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaaaab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "",
+     "y": "aa",
+     "z": "aab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aaaab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaaaaab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaaaaaaaab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "a",
+     "y": "a",
+     "z": "aab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aaab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aaaab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaaaab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaaaab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaaaab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "",
+     "y": "aaa",
+     "z": "ab",
+     "results": [
+      {
+       "i": 0,
+       "s": "ab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aaaab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaaaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaaaaaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaaaaaaaaaaaab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "a",
+     "y": "aa",
+     "z": "ab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aaaab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaaaaab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaaaaaaaab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "aa",
+     "y": "a",
+     "z": "ab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aaab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aaaab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaaaab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaaaab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaaaab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaaaab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    }
+   ]
+  },
+  {
+   "dfa": {
+    "n": 3,
+    "start": 0,
+    "finals": {},
+    "trans": [
+     {
+      "from": 0,
+      "sym": "a",
+      "to": 1
+     },
+     {
+      "from": 0,
+      "sym": "b",
+      "to": 2
+     },
+     {
+      "from": 1,
+      "sym": "a",
+      "to": 2
+     },
+     {
+      "from": 1,
+      "sym": "b",
+      "to": 0
+     },
+     {
+      "from": 2,
+      "sym": "a",
+      "to": 2
+     },
+     {
+      "from": 2,
+      "sym": "b",
+      "to": 2
+     }
+    ],
+    "labels": [
+     "{A,C}",
+     "B",
+     "∅"
+    ]
+   },
+   "p": 3,
+   "w": "ababab",
+   "problems": [],
+   "seq": [
+    "{A,C}",
+    "B",
+    "{A,C}",
+    "B",
+    "{A,C}",
+    "B",
+    "{A,C}"
+   ],
+   "split": {
+    "x": "",
+    "y": "ab",
+    "z": "abab",
+    "from": 0,
+    "to": 2,
+    "state": "{A,C}"
+   },
+   "check": [
+    {
+     "i": 0,
+     "s": "abab",
+     "inL": true
+    },
+    {
+     "i": 1,
+     "s": "ababab",
+     "inL": true
+    },
+    {
+     "i": 2,
+     "s": "abababab",
+     "inL": true
+    },
+    {
+     "i": 3,
+     "s": "ababababab",
+     "inL": true
+    },
+    {
+     "i": 4,
+     "s": "abababababab",
+     "inL": true
+    },
+    {
+     "i": 5,
+     "s": "ababababababab",
+     "inL": true
+    }
+   ],
+   "rows": [
+    {
+     "x": "",
+     "y": "a",
+     "z": "babab",
+     "results": [
+      {
+       "i": 0,
+       "s": "babab",
+       "inL": false
+      },
+      {
+       "i": 1,
+       "s": "ababab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aababab",
+       "inL": false
+      },
+      {
+       "i": 3,
+       "s": "aaababab",
+       "inL": false
+      },
+      {
+       "i": 4,
+       "s": "aaaababab",
+       "inL": false
+      },
+      {
+       "i": 5,
+       "s": "aaaaababab",
+       "inL": false
+      }
+     ],
+     "failsAt": 0
+    },
+    {
+     "x": "",
+     "y": "ab",
+     "z": "abab",
+     "results": [
+      {
+       "i": 0,
+       "s": "abab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "ababab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "abababab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "ababababab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "abababababab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "ababababababab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "a",
+     "y": "b",
+     "z": "abab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aabab",
+       "inL": false
+      },
+      {
+       "i": 1,
+       "s": "ababab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "abbabab",
+       "inL": false
+      },
+      {
+       "i": 3,
+       "s": "abbbabab",
+       "inL": false
+      },
+      {
+       "i": 4,
+       "s": "abbbbabab",
+       "inL": false
+      },
+      {
+       "i": 5,
+       "s": "abbbbbabab",
+       "inL": false
+      }
+     ],
+     "failsAt": 0
+    },
+    {
+     "x": "",
+     "y": "aba",
+     "z": "bab",
+     "results": [
+      {
+       "i": 0,
+       "s": "bab",
+       "inL": false
+      },
+      {
+       "i": 1,
+       "s": "ababab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "abaababab",
+       "inL": false
+      },
+      {
+       "i": 3,
+       "s": "abaabaababab",
+       "inL": false
+      },
+      {
+       "i": 4,
+       "s": "abaabaabaababab",
+       "inL": false
+      },
+      {
+       "i": 5,
+       "s": "abaabaabaabaababab",
+       "inL": false
+      }
+     ],
+     "failsAt": 0
+    },
+    {
+     "x": "a",
+     "y": "ba",
+     "z": "bab",
+     "results": [
+      {
+       "i": 0,
+       "s": "abab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "ababab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "abababab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "ababababab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "abababababab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "ababababababab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "ab",
+     "y": "a",
+     "z": "bab",
+     "results": [
+      {
+       "i": 0,
+       "s": "abbab",
+       "inL": false
+      },
+      {
+       "i": 1,
+       "s": "ababab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "abaabab",
+       "inL": false
+      },
+      {
+       "i": 3,
+       "s": "abaaabab",
+       "inL": false
+      },
+      {
+       "i": 4,
+       "s": "abaaaabab",
+       "inL": false
+      },
+      {
+       "i": 5,
+       "s": "abaaaaabab",
+       "inL": false
+      }
+     ],
+     "failsAt": 0
+    }
+   ],
+   "pumpable": [
+    {
+     "x": "",
+     "y": "ab",
+     "z": "abab",
+     "results": [
+      {
+       "i": 0,
+       "s": "abab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "ababab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "abababab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "ababababab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "abababababab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "ababababababab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "a",
+     "y": "ba",
+     "z": "bab",
+     "results": [
+      {
+       "i": 0,
+       "s": "abab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "ababab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "abababab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "ababababab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "abababababab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "ababababababab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    }
+   ]
+  },
+  {
+   "dfa": {
+    "n": 4,
+    "start": 0,
+    "finals": {},
+    "trans": [
+     {
+      "from": 0,
+      "sym": "a",
+      "to": 1
+     },
+     {
+      "from": 0,
+      "sym": "b",
+      "to": 2
+     },
+     {
+      "from": 1,
+      "sym": "a",
+      "to": 1
+     },
+     {
+      "from": 1,
+      "sym": "b",
+      "to": 3
+     },
+     {
+      "from": 2,
+      "sym": "a",
+      "to": 2
+     },
+     {
+      "from": 2,
+      "sym": "b",
+      "to": 2
+     },
+     {
+      "from": 3,
+      "sym": "a",
+      "to": 1
+     },
+     {
+      "from": 3,
+      "sym": "b",
+      "to": 3
+     }
+    ],
+    "labels": [
+     "A",
+     "{B,C}",
+     "∅",
+     "D"
+    ]
+   },
+   "p": 4,
+   "w": "aabab",
+   "problems": [],
+   "seq": [
+    "A",
+    "{B,C}",
+    "{B,C}",
+    "D",
+    "{B,C}",
+    "D"
+   ],
+   "split": {
+    "x": "a",
+    "y": "a",
+    "z": "bab",
+    "from": 1,
+    "to": 2,
+    "state": "{B,C}"
+   },
+   "check": [
+    {
+     "i": 0,
+     "s": "abab",
+     "inL": true
+    },
+    {
+     "i": 1,
+     "s": "aabab",
+     "inL": true
+    },
+    {
+     "i": 2,
+     "s": "aaabab",
+     "inL": true
+    },
+    {
+     "i": 3,
+     "s": "aaaabab",
+     "inL": true
+    },
+    {
+     "i": 4,
+     "s": "aaaaabab",
+     "inL": true
+    },
+    {
+     "i": 5,
+     "s": "aaaaaabab",
+     "inL": true
+    }
+   ],
+   "rows": [
+    {
+     "x": "",
+     "y": "a",
+     "z": "abab",
+     "results": [
+      {
+       "i": 0,
+       "s": "abab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaabab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaabab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaabab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaabab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "",
+     "y": "aa",
+     "z": "bab",
+     "results": [
+      {
+       "i": 0,
+       "s": "bab",
+       "inL": false
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaaabab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaaaabab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaaaaabab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaaaaaabab",
+       "inL": true
+      }
+     ],
+     "failsAt": 0
+    },
+    {
+     "x": "a",
+     "y": "a",
+     "z": "bab",
+     "results": [
+      {
+       "i": 0,
+       "s": "abab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaabab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaabab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaabab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaabab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "",
+     "y": "aab",
+     "z": "ab",
+     "results": [
+      {
+       "i": 0,
+       "s": "ab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aabaabab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aabaabaabab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aabaabaabaabab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aabaabaabaabaabab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "a",
+     "y": "ab",
+     "z": "ab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aababab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aabababab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aababababab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aabababababab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "aa",
+     "y": "b",
+     "z": "ab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aaab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aabbab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aabbbab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aabbbbab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aabbbbbab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "",
+     "y": "aaba",
+     "z": "b",
+     "results": [
+      {
+       "i": 0,
+       "s": "b",
+       "inL": false
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aabaaabab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aabaaabaaabab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aabaaabaaabaaabab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aabaaabaaabaaabaaabab",
+       "inL": true
+      }
+     ],
+     "failsAt": 0
+    },
+    {
+     "x": "a",
+     "y": "aba",
+     "z": "b",
+     "results": [
+      {
+       "i": 0,
+       "s": "ab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aabaabab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aabaabaabab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aabaabaabaabab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aabaabaabaabaabab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "aa",
+     "y": "ba",
+     "z": "b",
+     "results": [
+      {
+       "i": 0,
+       "s": "aab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aababab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aabababab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aababababab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aabababababab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "aab",
+     "y": "a",
+     "z": "b",
+     "results": [
+      {
+       "i": 0,
+       "s": "aabb",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aabaab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aabaaab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aabaaaab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aabaaaaab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    }
+   ],
+   "pumpable": [
+    {
+     "x": "",
+     "y": "a",
+     "z": "abab",
+     "results": [
+      {
+       "i": 0,
+       "s": "abab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaabab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaabab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaabab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaabab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "a",
+     "y": "a",
+     "z": "bab",
+     "results": [
+      {
+       "i": 0,
+       "s": "abab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aaabab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aaaabab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aaaaabab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aaaaaabab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "",
+     "y": "aab",
+     "z": "ab",
+     "results": [
+      {
+       "i": 0,
+       "s": "ab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aabaabab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aabaabaabab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aabaabaabaabab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aabaabaabaabaabab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "a",
+     "y": "ab",
+     "z": "ab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aababab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aabababab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aababababab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aabababababab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "aa",
+     "y": "b",
+     "z": "ab",
+     "results": [
+      {
+       "i": 0,
+       "s": "aaab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aabbab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aabbbab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aabbbbab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aabbbbbab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "a",
+     "y": "aba",
+     "z": "b",
+     "results": [
+      {
+       "i": 0,
+       "s": "ab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aabaabab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aabaabaabab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aabaabaabaabab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aabaabaabaabaabab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "aa",
+     "y": "ba",
+     "z": "b",
+     "results": [
+      {
+       "i": 0,
+       "s": "aab",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aababab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aabababab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aababababab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aabababababab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    },
+    {
+     "x": "aab",
+     "y": "a",
+     "z": "b",
+     "results": [
+      {
+       "i": 0,
+       "s": "aabb",
+       "inL": true
+      },
+      {
+       "i": 1,
+       "s": "aabab",
+       "inL": true
+      },
+      {
+       "i": 2,
+       "s": "aabaab",
+       "inL": true
+      },
+      {
+       "i": 3,
+       "s": "aabaaab",
+       "inL": true
+      },
+      {
+       "i": 4,
+       "s": "aabaaaab",
+       "inL": true
+      },
+      {
+       "i": 5,
+       "s": "aabaaaaab",
+       "inL": true
+      }
+     ],
+     "failsAt": null
+    }
+   ]
+  }
+ ]
+}

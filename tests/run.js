@@ -574,6 +574,27 @@ test('every textbook example on /verified/ matches', () => {
   for (const r of res) assert.equal(r.actual, r.expected, `${r.id} (${r.source})`);
 });
 
+test('golden snapshots: every engine output is unchanged (node tests/golden.js --update after an intended change)', () => {
+  const { collect, DIR } = require('./golden.js');
+  const got = collect();
+  const files = fs.readdirSync(DIR).filter((f) => f.endsWith('.json')).map((f) => f.slice(0, -5)).sort();
+  assert.deepEqual(files, Object.keys(got).sort(), 'snapshot files and suites differ');
+  for (const [k, v] of Object.entries(got)) {
+    const want = JSON.parse(fs.readFileSync(path.join(DIR, k + '.json'), 'utf8'));
+    const have = JSON.parse(JSON.stringify(v));
+    if (JSON.stringify(want) === JSON.stringify(have)) continue;
+    // name the first differing path, so a failure says which converter changed
+    const where = (a, b, p) => {
+      if (JSON.stringify(a) === JSON.stringify(b)) return null;
+      if (a && b && typeof a === 'object' && typeof b === 'object') {
+        for (const key of new Set([...Object.keys(a), ...Object.keys(b)])) { const w = where(a[key], b[key], `${p}.${key}`); if (w) return w; }
+      }
+      return `${p}: expected ${JSON.stringify(a).slice(0, 120)}, got ${JSON.stringify(b).slice(0, 120)}`;
+    };
+    assert.fail(`${k} changed at ${where(want, have, k)}`);
+  }
+});
+
 const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const csp = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'))

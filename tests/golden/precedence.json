@@ -1,0 +1,188 @@
+{
+ "resolved": {
+  "kind": "lalr",
+  "action": [
+   {},
+   {},
+   {},
+   {},
+   {},
+   {},
+   {},
+   {},
+   {},
+   {}
+  ],
+  "go": [
+   {},
+   {},
+   {},
+   {},
+   {},
+   {},
+   {},
+   {},
+   {},
+   {}
+  ],
+  "terms": [
+   "+",
+   "*",
+   "(",
+   ")",
+   "id",
+   "$"
+  ],
+  "nts": [
+   "E"
+  ],
+  "conflicts": [],
+  "resolved": [
+   {
+    "s": 7,
+    "a": "+",
+    "before": "s4 / r1",
+    "after": "r1",
+    "reason": "'+' and '+' have the same precedence and are left-associative, so reduce."
+   },
+   {
+    "s": 7,
+    "a": "*",
+    "before": "s5 / r1",
+    "after": "s5",
+    "reason": "'*' binds tighter than '+' in E → E+E, so shift."
+   },
+   {
+    "s": 8,
+    "a": "+",
+    "before": "s4 / r2",
+    "after": "r2",
+    "reason": "'*' in E → E*E binds tighter than '+', so reduce."
+   },
+   {
+    "s": 8,
+    "a": "*",
+    "before": "s5 / r2",
+    "after": "r2",
+    "reason": "'*' and '*' have the same precedence and are left-associative, so reduce."
+   }
+  ]
+ },
+ "disambiguate": {
+  "G": {
+   "start": "E",
+   "nts": [
+    "E",
+    "T",
+    "F"
+   ],
+   "ntSet": {},
+   "terms": [
+    "+",
+    "*",
+    "(",
+    ")",
+    "id"
+   ],
+   "prods": [
+    {
+     "lhs": "E",
+     "rhs": [
+      "E",
+      "+",
+      "T"
+     ]
+    },
+    {
+     "lhs": "E",
+     "rhs": [
+      "T"
+     ]
+    },
+    {
+     "lhs": "T",
+     "rhs": [
+      "T",
+      "*",
+      "F"
+     ]
+    },
+    {
+     "lhs": "T",
+     "rhs": [
+      "F"
+     ]
+    },
+    {
+     "lhs": "F",
+     "rhs": [
+      "(",
+      "E",
+      ")"
+     ]
+    },
+    {
+     "lhs": "F",
+     "rhs": [
+      "id"
+     ]
+    }
+   ],
+   "warnings": []
+  },
+  "levels": [
+   {
+    "assoc": "left",
+    "ops": [
+     "+"
+    ],
+    "name": "E"
+   },
+   {
+    "assoc": "left",
+    "ops": [
+     "*"
+    ],
+    "name": "T"
+   }
+  ],
+  "atomName": "F"
+ },
+ "opPrec": {
+  "ok": true,
+  "LEAD": {},
+  "TRAIL": {},
+  "R": {},
+  "terms": [
+   "+",
+   "*",
+   "(",
+   ")",
+   "id",
+   "$"
+  ],
+  "conflicts": [],
+  "resolved": [
+   {
+    "a": "+",
+    "b": "+",
+    "r": ">"
+   },
+   {
+    "a": "+",
+    "b": "*",
+    "r": "<"
+   },
+   {
+    "a": "*",
+    "b": "+",
+    "r": ">"
+   },
+   {
+    "a": "*",
+    "b": "*",
+    "r": ">"
+   }
+  ]
+ }
+}

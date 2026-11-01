@@ -1,0 +1,396 @@
+[
+ {
+  "g": "S -> aA | b\nA -> bS | a",
+  "classify": {
+   "right": true,
+   "left": false,
+   "regular": true
+  },
+  "nfa": {
+   "kind": "right",
+   "fa": {
+    "n": 3,
+    "start": 0,
+    "finals": {},
+    "trans": [
+     {
+      "from": 0,
+      "sym": "a",
+      "to": 1
+     },
+     {
+      "from": 0,
+      "sym": "b",
+      "to": 2
+     },
+     {
+      "from": 1,
+      "sym": "b",
+      "to": 0
+     },
+     {
+      "from": 1,
+      "sym": "a",
+      "to": 2
+     }
+    ],
+    "labels": [
+     "S",
+     "A",
+     "F"
+    ]
+   },
+   "steps": [
+    {
+     "prod": "S → aA",
+     "added": [
+      "δ(S, a) = A"
+     ]
+    },
+    {
+     "prod": "S → b",
+     "added": [
+      "δ(S, b) = F"
+     ]
+    },
+    {
+     "prod": "A → bS",
+     "added": [
+      "δ(A, b) = S"
+     ]
+    },
+    {
+     "prod": "A → a",
+     "added": [
+      "δ(A, a) = F"
+     ]
+    }
+   ],
+   "finalName": "F"
+  }
+ },
+ {
+  "g": "S -> 0S | 1A\nA -> 0A | 1S | λ",
+  "classify": {
+   "right": true,
+   "left": false,
+   "regular": true
+  },
+  "nfa": {
+   "kind": "right",
+   "fa": {
+    "n": 3,
+    "start": 0,
+    "finals": {},
+    "trans": [
+     {
+      "from": 0,
+      "sym": "0",
+      "to": 0
+     },
+     {
+      "from": 0,
+      "sym": "1",
+      "to": 1
+     },
+     {
+      "from": 1,
+      "sym": "0",
+      "to": 1
+     },
+     {
+      "from": 1,
+      "sym": "1",
+      "to": 0
+     },
+     {
+      "from": 1,
+      "sym": "λ",
+      "to": 2
+     }
+    ],
+    "labels": [
+     "S",
+     "A",
+     "F"
+    ]
+   },
+   "steps": [
+    {
+     "prod": "S → 0S",
+     "added": [
+      "δ(S, 0) = S"
+     ]
+    },
+    {
+     "prod": "S → 1A",
+     "added": [
+      "δ(S, 1) = A"
+     ]
+    },
+    {
+     "prod": "A → 0A",
+     "added": [
+      "δ(A, 0) = A"
+     ]
+    },
+    {
+     "prod": "A → 1S",
+     "added": [
+      "δ(A, 1) = S"
+     ]
+    },
+    {
+     "prod": "A → λ",
+     "added": [
+      "δ(A, λ) = F"
+     ]
+    }
+   ],
+   "finalName": "F"
+  }
+ },
+ {
+  "g": "S -> Ab | b\nA -> Aa | a",
+  "classify": {
+   "right": false,
+   "left": true,
+   "regular": true
+  },
+  "nfa": {
+   "kind": "left",
+   "reversedGrammar": {
+    "start": "S",
+    "vars": [
+     "S",
+     "A"
+    ],
+    "terms": [
+     "a",
+     "b"
+    ],
+    "prods": [
+     {
+      "lhs": "S",
+      "rhs": [
+       "b",
+       "A"
+      ]
+     },
+     {
+      "lhs": "S",
+      "rhs": [
+       "b"
+      ]
+     },
+     {
+      "lhs": "A",
+      "rhs": [
+       "a",
+       "A"
+      ]
+     },
+     {
+      "lhs": "A",
+      "rhs": [
+       "a"
+      ]
+     }
+    ],
+    "undefinedVars": []
+   },
+   "revNFA": {
+    "fa": {
+     "n": 3,
+     "start": 0,
+     "finals": {},
+     "trans": [
+      {
+       "from": 0,
+       "sym": "b",
+       "to": 1
+      },
+      {
+       "from": 0,
+       "sym": "b",
+       "to": 2
+      },
+      {
+       "from": 1,
+       "sym": "a",
+       "to": 1
+      },
+      {
+       "from": 1,
+       "sym": "a",
+       "to": 2
+      }
+     ],
+     "labels": [
+      "S",
+      "A",
+      "F"
+     ]
+    },
+    "steps": [
+     {
+      "prod": "S → bA",
+      "added": [
+       "δ(S, b) = A"
+      ]
+     },
+     {
+      "prod": "S → b",
+      "added": [
+       "δ(S, b) = F"
+      ]
+     },
+     {
+      "prod": "A → aA",
+      "added": [
+       "δ(A, a) = A"
+      ]
+     },
+     {
+      "prod": "A → a",
+      "added": [
+       "δ(A, a) = F"
+      ]
+     }
+    ],
+    "finalName": "F"
+   },
+   "steps": [
+    {
+     "prod": "S → bA",
+     "added": [
+      "δ(S, b) = A"
+     ]
+    },
+    {
+     "prod": "S → b",
+     "added": [
+      "δ(S, b) = F"
+     ]
+    },
+    {
+     "prod": "A → aA",
+     "added": [
+      "δ(A, a) = A"
+     ]
+    },
+    {
+     "prod": "A → a",
+     "added": [
+      "δ(A, a) = F"
+     ]
+    }
+   ],
+   "fa": {
+    "n": 3,
+    "start": 2,
+    "finals": {},
+    "trans": [
+     {
+      "from": 1,
+      "sym": "b",
+      "to": 0
+     },
+     {
+      "from": 2,
+      "sym": "b",
+      "to": 0
+     },
+     {
+      "from": 1,
+      "sym": "a",
+      "to": 1
+     },
+     {
+      "from": 2,
+      "sym": "a",
+      "to": 1
+     }
+    ],
+    "labels": [
+     "S",
+     "A",
+     "F"
+    ]
+   },
+   "note": ""
+  }
+ },
+ {
+  "g": "S -> B1 | 0\nB -> B0 | 1",
+  "classify": {
+   "right": true,
+   "left": true,
+   "regular": true
+  },
+  "nfa": {
+   "kind": "right",
+   "fa": {
+    "n": 5,
+    "start": 0,
+    "finals": {},
+    "trans": [
+     {
+      "from": 0,
+      "sym": "λ",
+      "to": 2
+     },
+     {
+      "from": 0,
+      "sym": "0",
+      "to": 4
+     },
+     {
+      "from": 1,
+      "sym": "λ",
+      "to": 3
+     },
+     {
+      "from": 1,
+      "sym": "1",
+      "to": 4
+     }
+    ],
+    "labels": [
+     "S",
+     "B",
+     "B1",
+     "B0",
+     "F"
+    ]
+   },
+   "steps": [
+    {
+     "prod": "S → B1",
+     "added": [
+      "δ(S, λ) = B1"
+     ]
+    },
+    {
+     "prod": "S → 0",
+     "added": [
+      "δ(S, 0) = F"
+     ]
+    },
+    {
+     "prod": "B → B0",
+     "added": [
+      "δ(B, λ) = B0"
+     ]
+    },
+    {
+     "prod": "B → 1",
+     "added": [
+      "δ(B, 1) = F"
+     ]
+    }
+   ],
+   "finalName": "F"
+  }
+ }
+]

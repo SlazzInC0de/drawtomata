@@ -1,0 +1,5793 @@
+[
+ {
+  "pda": {
+   "start": "q0",
+   "z": "z",
+   "finals": [
+    "q2"
+   ],
+   "trans": [
+    {
+     "from": "q0",
+     "inp": "a",
+     "pop": "z",
+     "to": "q0",
+     "push": [
+      "a",
+      "z"
+     ]
+    },
+    {
+     "from": "q0",
+     "inp": "a",
+     "pop": "a",
+     "to": "q0",
+     "push": [
+      "a",
+      "a"
+     ]
+    },
+    {
+     "from": "q0",
+     "inp": "b",
+     "pop": "a",
+     "to": "q1",
+     "push": []
+    },
+    {
+     "from": "q1",
+     "inp": "b",
+     "pop": "a",
+     "to": "q1",
+     "push": []
+    },
+    {
+     "from": "q1",
+     "inp": "λ",
+     "pop": "z",
+     "to": "q2",
+     "push": [
+      "z"
+     ]
+    }
+   ]
+  },
+  "aabb": {
+   "accepted": true,
+   "path": [
+    {
+     "s": "q0",
+     "i": 0,
+     "st": [
+      "z"
+     ]
+    },
+    {
+     "s": "q0",
+     "i": 1,
+     "st": [
+      "a",
+      "z"
+     ]
+    },
+    {
+     "s": "q0",
+     "i": 2,
+     "st": [
+      "a",
+      "a",
+      "z"
+     ]
+    },
+    {
+     "s": "q1",
+     "i": 3,
+     "st": [
+      "a",
+      "z"
+     ]
+    },
+    {
+     "s": "q1",
+     "i": 4,
+     "st": [
+      "z"
+     ]
+    },
+    {
+     "s": "q2",
+     "i": 4,
+     "st": [
+      "z"
+     ]
+    }
+   ],
+   "explored": 6
+  },
+  "aab": {
+   "accepted": false,
+   "explored": 4,
+   "hitBudget": false
+  },
+  "toCfg": {
+   "moves": [
+    {
+     "from": "qs",
+     "inp": "λ",
+     "pop": "Z0",
+     "to": "q0",
+     "push": [
+      "z",
+      "Z0"
+     ],
+     "why": "new start: put Z0 under z so the stack can be emptied safely"
+    },
+    {
+     "from": "q0",
+     "inp": "a",
+     "pop": "z",
+     "to": "q0",
+     "push": [
+      "a",
+      "z"
+     ],
+     "why": "already in Linz form"
+    },
+    {
+     "from": "q0",
+     "inp": "a",
+     "pop": "a",
+     "to": "q0",
+     "push": [
+      "a",
+      "a"
+     ],
+     "why": "already in Linz form"
+    },
+    {
+     "from": "q0",
+     "inp": "b",
+     "pop": "a",
+     "to": "q1",
+     "push": [],
+     "why": "already in Linz form"
+    },
+    {
+     "from": "q1",
+     "inp": "b",
+     "pop": "a",
+     "to": "q1",
+     "push": [],
+     "why": "already in Linz form"
+    },
+    {
+     "from": "q1",
+     "inp": "λ",
+     "pop": "z",
+     "to": "r",
+     "push": [
+      "D",
+      "z"
+     ],
+     "why": "push Dz (dummy D on top), then pop D"
+    },
+    {
+     "from": "r",
+     "inp": "λ",
+     "pop": "D",
+     "to": "q2",
+     "push": [],
+     "why": "pop dummy D"
+    },
+    {
+     "from": "q2",
+     "inp": "λ",
+     "pop": "z",
+     "to": "qd",
+     "push": [],
+     "why": "final q2: start emptying the stack"
+    },
+    {
+     "from": "q2",
+     "inp": "λ",
+     "pop": "a",
+     "to": "qd",
+     "push": [],
+     "why": "final q2: start emptying the stack"
+    },
+    {
+     "from": "q2",
+     "inp": "λ",
+     "pop": "D",
+     "to": "qd",
+     "push": [],
+     "why": "final q2: start emptying the stack"
+    },
+    {
+     "from": "q2",
+     "inp": "λ",
+     "pop": "Z0",
+     "to": "qf",
+     "push": [],
+     "why": "stack already empty: accept"
+    },
+    {
+     "from": "qd",
+     "inp": "λ",
+     "pop": "z",
+     "to": "qd",
+     "push": [],
+     "why": "empty the stack"
+    },
+    {
+     "from": "qd",
+     "inp": "λ",
+     "pop": "a",
+     "to": "qd",
+     "push": [],
+     "why": "empty the stack"
+    },
+    {
+     "from": "qd",
+     "inp": "λ",
+     "pop": "D",
+     "to": "qd",
+     "push": [],
+     "why": "empty the stack"
+    },
+    {
+     "from": "qd",
+     "inp": "λ",
+     "pop": "Z0",
+     "to": "qf",
+     "push": [],
+     "why": "bottom marker reached: go to qf"
+    }
+   ],
+   "notes": [
+    "δ(q1, λ, z) ∋ (q2, z) replaces one symbol, so it becomes two moves through r.",
+    "Acceptance by final state is turned into \"reach qf with an empty stack\" through a draining state qd."
+   ],
+   "Q": [
+    "q0",
+    "q1",
+    "q2",
+    "qs",
+    "qf",
+    "r",
+    "qd"
+   ],
+   "Z0": "Z0",
+   "q0": "qs",
+   "qf": "qf",
+   "start": "[qs Z0 qf]",
+   "prods": [
+    {
+     "lhs": "[qs Z0 q0]",
+     "rhs": [
+      "[q0 z q0]",
+      "[q0 Z0 q0]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q0]",
+     "rhs": [
+      "[q0 z q1]",
+      "[q1 Z0 q0]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q0]",
+     "rhs": [
+      "[q0 z q2]",
+      "[q2 Z0 q0]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q0]",
+     "rhs": [
+      "[q0 z qs]",
+      "[qs Z0 q0]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q0]",
+     "rhs": [
+      "[q0 z qf]",
+      "[qf Z0 q0]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q0]",
+     "rhs": [
+      "[q0 z r]",
+      "[r Z0 q0]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q0]",
+     "rhs": [
+      "[q0 z qd]",
+      "[qd Z0 q0]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q1]",
+     "rhs": [
+      "[q0 z q0]",
+      "[q0 Z0 q1]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q1]",
+     "rhs": [
+      "[q0 z q1]",
+      "[q1 Z0 q1]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q1]",
+     "rhs": [
+      "[q0 z q2]",
+      "[q2 Z0 q1]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q1]",
+     "rhs": [
+      "[q0 z qs]",
+      "[qs Z0 q1]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q1]",
+     "rhs": [
+      "[q0 z qf]",
+      "[qf Z0 q1]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q1]",
+     "rhs": [
+      "[q0 z r]",
+      "[r Z0 q1]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q1]",
+     "rhs": [
+      "[q0 z qd]",
+      "[qd Z0 q1]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q2]",
+     "rhs": [
+      "[q0 z q0]",
+      "[q0 Z0 q2]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q2]",
+     "rhs": [
+      "[q0 z q1]",
+      "[q1 Z0 q2]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q2]",
+     "rhs": [
+      "[q0 z q2]",
+      "[q2 Z0 q2]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q2]",
+     "rhs": [
+      "[q0 z qs]",
+      "[qs Z0 q2]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q2]",
+     "rhs": [
+      "[q0 z qf]",
+      "[qf Z0 q2]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q2]",
+     "rhs": [
+      "[q0 z r]",
+      "[r Z0 q2]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 q2]",
+     "rhs": [
+      "[q0 z qd]",
+      "[qd Z0 q2]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qs]",
+     "rhs": [
+      "[q0 z q0]",
+      "[q0 Z0 qs]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qs]",
+     "rhs": [
+      "[q0 z q1]",
+      "[q1 Z0 qs]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qs]",
+     "rhs": [
+      "[q0 z q2]",
+      "[q2 Z0 qs]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qs]",
+     "rhs": [
+      "[q0 z qs]",
+      "[qs Z0 qs]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qs]",
+     "rhs": [
+      "[q0 z qf]",
+      "[qf Z0 qs]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qs]",
+     "rhs": [
+      "[q0 z r]",
+      "[r Z0 qs]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qs]",
+     "rhs": [
+      "[q0 z qd]",
+      "[qd Z0 qs]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qf]",
+     "rhs": [
+      "[q0 z q0]",
+      "[q0 Z0 qf]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qf]",
+     "rhs": [
+      "[q0 z q1]",
+      "[q1 Z0 qf]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qf]",
+     "rhs": [
+      "[q0 z q2]",
+      "[q2 Z0 qf]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qf]",
+     "rhs": [
+      "[q0 z qs]",
+      "[qs Z0 qf]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qf]",
+     "rhs": [
+      "[q0 z qf]",
+      "[qf Z0 qf]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qf]",
+     "rhs": [
+      "[q0 z r]",
+      "[r Z0 qf]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qf]",
+     "rhs": [
+      "[q0 z qd]",
+      "[qd Z0 qf]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 r]",
+     "rhs": [
+      "[q0 z q0]",
+      "[q0 Z0 r]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 r]",
+     "rhs": [
+      "[q0 z q1]",
+      "[q1 Z0 r]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 r]",
+     "rhs": [
+      "[q0 z q2]",
+      "[q2 Z0 r]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 r]",
+     "rhs": [
+      "[q0 z qs]",
+      "[qs Z0 r]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 r]",
+     "rhs": [
+      "[q0 z qf]",
+      "[qf Z0 r]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 r]",
+     "rhs": [
+      "[q0 z r]",
+      "[r Z0 r]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 r]",
+     "rhs": [
+      "[q0 z qd]",
+      "[qd Z0 r]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qd]",
+     "rhs": [
+      "[q0 z q0]",
+      "[q0 Z0 qd]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qd]",
+     "rhs": [
+      "[q0 z q1]",
+      "[q1 Z0 qd]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qd]",
+     "rhs": [
+      "[q0 z q2]",
+      "[q2 Z0 qd]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qd]",
+     "rhs": [
+      "[q0 z qs]",
+      "[qs Z0 qd]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qd]",
+     "rhs": [
+      "[q0 z qf]",
+      "[qf Z0 qd]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qd]",
+     "rhs": [
+      "[q0 z r]",
+      "[r Z0 qd]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[qs Z0 qd]",
+     "rhs": [
+      "[q0 z qd]",
+      "[qd Z0 qd]"
+     ],
+     "from": {
+      "from": "qs",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "q0",
+      "push": [
+       "z",
+       "Z0"
+      ],
+      "why": "new start: put Z0 under z so the stack can be emptied safely"
+     }
+    },
+    {
+     "lhs": "[q0 z q0]",
+     "rhs": [
+      "a",
+      "[q0 a q0]",
+      "[q0 z q0]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q0]",
+     "rhs": [
+      "a",
+      "[q0 a q1]",
+      "[q1 z q0]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q0]",
+     "rhs": [
+      "a",
+      "[q0 a q2]",
+      "[q2 z q0]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q0]",
+     "rhs": [
+      "a",
+      "[q0 a qs]",
+      "[qs z q0]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q0]",
+     "rhs": [
+      "a",
+      "[q0 a qf]",
+      "[qf z q0]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q0]",
+     "rhs": [
+      "a",
+      "[q0 a r]",
+      "[r z q0]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q0]",
+     "rhs": [
+      "a",
+      "[q0 a qd]",
+      "[qd z q0]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q1]",
+     "rhs": [
+      "a",
+      "[q0 a q0]",
+      "[q0 z q1]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q1]",
+     "rhs": [
+      "a",
+      "[q0 a q1]",
+      "[q1 z q1]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q1]",
+     "rhs": [
+      "a",
+      "[q0 a q2]",
+      "[q2 z q1]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q1]",
+     "rhs": [
+      "a",
+      "[q0 a qs]",
+      "[qs z q1]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q1]",
+     "rhs": [
+      "a",
+      "[q0 a qf]",
+      "[qf z q1]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q1]",
+     "rhs": [
+      "a",
+      "[q0 a r]",
+      "[r z q1]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q1]",
+     "rhs": [
+      "a",
+      "[q0 a qd]",
+      "[qd z q1]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q2]",
+     "rhs": [
+      "a",
+      "[q0 a q0]",
+      "[q0 z q2]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q2]",
+     "rhs": [
+      "a",
+      "[q0 a q1]",
+      "[q1 z q2]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q2]",
+     "rhs": [
+      "a",
+      "[q0 a q2]",
+      "[q2 z q2]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q2]",
+     "rhs": [
+      "a",
+      "[q0 a qs]",
+      "[qs z q2]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q2]",
+     "rhs": [
+      "a",
+      "[q0 a qf]",
+      "[qf z q2]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q2]",
+     "rhs": [
+      "a",
+      "[q0 a r]",
+      "[r z q2]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z q2]",
+     "rhs": [
+      "a",
+      "[q0 a qd]",
+      "[qd z q2]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qs]",
+     "rhs": [
+      "a",
+      "[q0 a q0]",
+      "[q0 z qs]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qs]",
+     "rhs": [
+      "a",
+      "[q0 a q1]",
+      "[q1 z qs]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qs]",
+     "rhs": [
+      "a",
+      "[q0 a q2]",
+      "[q2 z qs]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qs]",
+     "rhs": [
+      "a",
+      "[q0 a qs]",
+      "[qs z qs]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qs]",
+     "rhs": [
+      "a",
+      "[q0 a qf]",
+      "[qf z qs]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qs]",
+     "rhs": [
+      "a",
+      "[q0 a r]",
+      "[r z qs]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qs]",
+     "rhs": [
+      "a",
+      "[q0 a qd]",
+      "[qd z qs]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qf]",
+     "rhs": [
+      "a",
+      "[q0 a q0]",
+      "[q0 z qf]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qf]",
+     "rhs": [
+      "a",
+      "[q0 a q1]",
+      "[q1 z qf]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qf]",
+     "rhs": [
+      "a",
+      "[q0 a q2]",
+      "[q2 z qf]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qf]",
+     "rhs": [
+      "a",
+      "[q0 a qs]",
+      "[qs z qf]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qf]",
+     "rhs": [
+      "a",
+      "[q0 a qf]",
+      "[qf z qf]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qf]",
+     "rhs": [
+      "a",
+      "[q0 a r]",
+      "[r z qf]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qf]",
+     "rhs": [
+      "a",
+      "[q0 a qd]",
+      "[qd z qf]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z r]",
+     "rhs": [
+      "a",
+      "[q0 a q0]",
+      "[q0 z r]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z r]",
+     "rhs": [
+      "a",
+      "[q0 a q1]",
+      "[q1 z r]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z r]",
+     "rhs": [
+      "a",
+      "[q0 a q2]",
+      "[q2 z r]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z r]",
+     "rhs": [
+      "a",
+      "[q0 a qs]",
+      "[qs z r]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z r]",
+     "rhs": [
+      "a",
+      "[q0 a qf]",
+      "[qf z r]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z r]",
+     "rhs": [
+      "a",
+      "[q0 a r]",
+      "[r z r]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z r]",
+     "rhs": [
+      "a",
+      "[q0 a qd]",
+      "[qd z r]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qd]",
+     "rhs": [
+      "a",
+      "[q0 a q0]",
+      "[q0 z qd]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qd]",
+     "rhs": [
+      "a",
+      "[q0 a q1]",
+      "[q1 z qd]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qd]",
+     "rhs": [
+      "a",
+      "[q0 a q2]",
+      "[q2 z qd]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qd]",
+     "rhs": [
+      "a",
+      "[q0 a qs]",
+      "[qs z qd]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qd]",
+     "rhs": [
+      "a",
+      "[q0 a qf]",
+      "[qf z qd]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qd]",
+     "rhs": [
+      "a",
+      "[q0 a r]",
+      "[r z qd]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 z qd]",
+     "rhs": [
+      "a",
+      "[q0 a qd]",
+      "[qd z qd]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "z",
+      "to": "q0",
+      "push": [
+       "a",
+       "z"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q0]",
+     "rhs": [
+      "a",
+      "[q0 a q0]",
+      "[q0 a q0]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q0]",
+     "rhs": [
+      "a",
+      "[q0 a q1]",
+      "[q1 a q0]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q0]",
+     "rhs": [
+      "a",
+      "[q0 a q2]",
+      "[q2 a q0]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q0]",
+     "rhs": [
+      "a",
+      "[q0 a qs]",
+      "[qs a q0]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q0]",
+     "rhs": [
+      "a",
+      "[q0 a qf]",
+      "[qf a q0]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q0]",
+     "rhs": [
+      "a",
+      "[q0 a r]",
+      "[r a q0]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q0]",
+     "rhs": [
+      "a",
+      "[q0 a qd]",
+      "[qd a q0]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q1]",
+     "rhs": [
+      "a",
+      "[q0 a q0]",
+      "[q0 a q1]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q1]",
+     "rhs": [
+      "a",
+      "[q0 a q1]",
+      "[q1 a q1]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q1]",
+     "rhs": [
+      "a",
+      "[q0 a q2]",
+      "[q2 a q1]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q1]",
+     "rhs": [
+      "a",
+      "[q0 a qs]",
+      "[qs a q1]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q1]",
+     "rhs": [
+      "a",
+      "[q0 a qf]",
+      "[qf a q1]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q1]",
+     "rhs": [
+      "a",
+      "[q0 a r]",
+      "[r a q1]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q1]",
+     "rhs": [
+      "a",
+      "[q0 a qd]",
+      "[qd a q1]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q2]",
+     "rhs": [
+      "a",
+      "[q0 a q0]",
+      "[q0 a q2]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q2]",
+     "rhs": [
+      "a",
+      "[q0 a q1]",
+      "[q1 a q2]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q2]",
+     "rhs": [
+      "a",
+      "[q0 a q2]",
+      "[q2 a q2]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q2]",
+     "rhs": [
+      "a",
+      "[q0 a qs]",
+      "[qs a q2]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q2]",
+     "rhs": [
+      "a",
+      "[q0 a qf]",
+      "[qf a q2]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q2]",
+     "rhs": [
+      "a",
+      "[q0 a r]",
+      "[r a q2]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q2]",
+     "rhs": [
+      "a",
+      "[q0 a qd]",
+      "[qd a q2]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qs]",
+     "rhs": [
+      "a",
+      "[q0 a q0]",
+      "[q0 a qs]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qs]",
+     "rhs": [
+      "a",
+      "[q0 a q1]",
+      "[q1 a qs]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qs]",
+     "rhs": [
+      "a",
+      "[q0 a q2]",
+      "[q2 a qs]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qs]",
+     "rhs": [
+      "a",
+      "[q0 a qs]",
+      "[qs a qs]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qs]",
+     "rhs": [
+      "a",
+      "[q0 a qf]",
+      "[qf a qs]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qs]",
+     "rhs": [
+      "a",
+      "[q0 a r]",
+      "[r a qs]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qs]",
+     "rhs": [
+      "a",
+      "[q0 a qd]",
+      "[qd a qs]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qf]",
+     "rhs": [
+      "a",
+      "[q0 a q0]",
+      "[q0 a qf]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qf]",
+     "rhs": [
+      "a",
+      "[q0 a q1]",
+      "[q1 a qf]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qf]",
+     "rhs": [
+      "a",
+      "[q0 a q2]",
+      "[q2 a qf]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qf]",
+     "rhs": [
+      "a",
+      "[q0 a qs]",
+      "[qs a qf]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qf]",
+     "rhs": [
+      "a",
+      "[q0 a qf]",
+      "[qf a qf]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qf]",
+     "rhs": [
+      "a",
+      "[q0 a r]",
+      "[r a qf]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qf]",
+     "rhs": [
+      "a",
+      "[q0 a qd]",
+      "[qd a qf]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a r]",
+     "rhs": [
+      "a",
+      "[q0 a q0]",
+      "[q0 a r]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a r]",
+     "rhs": [
+      "a",
+      "[q0 a q1]",
+      "[q1 a r]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a r]",
+     "rhs": [
+      "a",
+      "[q0 a q2]",
+      "[q2 a r]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a r]",
+     "rhs": [
+      "a",
+      "[q0 a qs]",
+      "[qs a r]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a r]",
+     "rhs": [
+      "a",
+      "[q0 a qf]",
+      "[qf a r]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a r]",
+     "rhs": [
+      "a",
+      "[q0 a r]",
+      "[r a r]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a r]",
+     "rhs": [
+      "a",
+      "[q0 a qd]",
+      "[qd a r]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qd]",
+     "rhs": [
+      "a",
+      "[q0 a q0]",
+      "[q0 a qd]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qd]",
+     "rhs": [
+      "a",
+      "[q0 a q1]",
+      "[q1 a qd]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qd]",
+     "rhs": [
+      "a",
+      "[q0 a q2]",
+      "[q2 a qd]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qd]",
+     "rhs": [
+      "a",
+      "[q0 a qs]",
+      "[qs a qd]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qd]",
+     "rhs": [
+      "a",
+      "[q0 a qf]",
+      "[qf a qd]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qd]",
+     "rhs": [
+      "a",
+      "[q0 a r]",
+      "[r a qd]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a qd]",
+     "rhs": [
+      "a",
+      "[q0 a qd]",
+      "[qd a qd]"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "a",
+      "pop": "a",
+      "to": "q0",
+      "push": [
+       "a",
+       "a"
+      ],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q0 a q1]",
+     "rhs": [
+      "b"
+     ],
+     "from": {
+      "from": "q0",
+      "inp": "b",
+      "pop": "a",
+      "to": "q1",
+      "push": [],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q1 a q1]",
+     "rhs": [
+      "b"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "b",
+      "pop": "a",
+      "to": "q1",
+      "push": [],
+      "why": "already in Linz form"
+     }
+    },
+    {
+     "lhs": "[q1 z q0]",
+     "rhs": [
+      "[r D q0]",
+      "[q0 z q0]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q0]",
+     "rhs": [
+      "[r D q1]",
+      "[q1 z q0]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q0]",
+     "rhs": [
+      "[r D q2]",
+      "[q2 z q0]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q0]",
+     "rhs": [
+      "[r D qs]",
+      "[qs z q0]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q0]",
+     "rhs": [
+      "[r D qf]",
+      "[qf z q0]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q0]",
+     "rhs": [
+      "[r D r]",
+      "[r z q0]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q0]",
+     "rhs": [
+      "[r D qd]",
+      "[qd z q0]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q1]",
+     "rhs": [
+      "[r D q0]",
+      "[q0 z q1]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q1]",
+     "rhs": [
+      "[r D q1]",
+      "[q1 z q1]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q1]",
+     "rhs": [
+      "[r D q2]",
+      "[q2 z q1]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q1]",
+     "rhs": [
+      "[r D qs]",
+      "[qs z q1]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q1]",
+     "rhs": [
+      "[r D qf]",
+      "[qf z q1]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q1]",
+     "rhs": [
+      "[r D r]",
+      "[r z q1]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q1]",
+     "rhs": [
+      "[r D qd]",
+      "[qd z q1]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q2]",
+     "rhs": [
+      "[r D q0]",
+      "[q0 z q2]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q2]",
+     "rhs": [
+      "[r D q1]",
+      "[q1 z q2]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q2]",
+     "rhs": [
+      "[r D q2]",
+      "[q2 z q2]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q2]",
+     "rhs": [
+      "[r D qs]",
+      "[qs z q2]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q2]",
+     "rhs": [
+      "[r D qf]",
+      "[qf z q2]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q2]",
+     "rhs": [
+      "[r D r]",
+      "[r z q2]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z q2]",
+     "rhs": [
+      "[r D qd]",
+      "[qd z q2]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qs]",
+     "rhs": [
+      "[r D q0]",
+      "[q0 z qs]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qs]",
+     "rhs": [
+      "[r D q1]",
+      "[q1 z qs]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qs]",
+     "rhs": [
+      "[r D q2]",
+      "[q2 z qs]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qs]",
+     "rhs": [
+      "[r D qs]",
+      "[qs z qs]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qs]",
+     "rhs": [
+      "[r D qf]",
+      "[qf z qs]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qs]",
+     "rhs": [
+      "[r D r]",
+      "[r z qs]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qs]",
+     "rhs": [
+      "[r D qd]",
+      "[qd z qs]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qf]",
+     "rhs": [
+      "[r D q0]",
+      "[q0 z qf]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qf]",
+     "rhs": [
+      "[r D q1]",
+      "[q1 z qf]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qf]",
+     "rhs": [
+      "[r D q2]",
+      "[q2 z qf]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qf]",
+     "rhs": [
+      "[r D qs]",
+      "[qs z qf]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qf]",
+     "rhs": [
+      "[r D qf]",
+      "[qf z qf]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qf]",
+     "rhs": [
+      "[r D r]",
+      "[r z qf]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qf]",
+     "rhs": [
+      "[r D qd]",
+      "[qd z qf]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z r]",
+     "rhs": [
+      "[r D q0]",
+      "[q0 z r]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z r]",
+     "rhs": [
+      "[r D q1]",
+      "[q1 z r]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z r]",
+     "rhs": [
+      "[r D q2]",
+      "[q2 z r]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z r]",
+     "rhs": [
+      "[r D qs]",
+      "[qs z r]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z r]",
+     "rhs": [
+      "[r D qf]",
+      "[qf z r]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z r]",
+     "rhs": [
+      "[r D r]",
+      "[r z r]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z r]",
+     "rhs": [
+      "[r D qd]",
+      "[qd z r]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qd]",
+     "rhs": [
+      "[r D q0]",
+      "[q0 z qd]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qd]",
+     "rhs": [
+      "[r D q1]",
+      "[q1 z qd]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qd]",
+     "rhs": [
+      "[r D q2]",
+      "[q2 z qd]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qd]",
+     "rhs": [
+      "[r D qs]",
+      "[qs z qd]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qd]",
+     "rhs": [
+      "[r D qf]",
+      "[qf z qd]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qd]",
+     "rhs": [
+      "[r D r]",
+      "[r z qd]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[q1 z qd]",
+     "rhs": [
+      "[r D qd]",
+      "[qd z qd]"
+     ],
+     "from": {
+      "from": "q1",
+      "inp": "λ",
+      "pop": "z",
+      "to": "r",
+      "push": [
+       "D",
+       "z"
+      ],
+      "why": "push Dz (dummy D on top), then pop D"
+     }
+    },
+    {
+     "lhs": "[r D q2]",
+     "rhs": [],
+     "from": {
+      "from": "r",
+      "inp": "λ",
+      "pop": "D",
+      "to": "q2",
+      "push": [],
+      "why": "pop dummy D"
+     }
+    },
+    {
+     "lhs": "[q2 z qd]",
+     "rhs": [],
+     "from": {
+      "from": "q2",
+      "inp": "λ",
+      "pop": "z",
+      "to": "qd",
+      "push": [],
+      "why": "final q2: start emptying the stack"
+     }
+    },
+    {
+     "lhs": "[q2 a qd]",
+     "rhs": [],
+     "from": {
+      "from": "q2",
+      "inp": "λ",
+      "pop": "a",
+      "to": "qd",
+      "push": [],
+      "why": "final q2: start emptying the stack"
+     }
+    },
+    {
+     "lhs": "[q2 D qd]",
+     "rhs": [],
+     "from": {
+      "from": "q2",
+      "inp": "λ",
+      "pop": "D",
+      "to": "qd",
+      "push": [],
+      "why": "final q2: start emptying the stack"
+     }
+    },
+    {
+     "lhs": "[q2 Z0 qf]",
+     "rhs": [],
+     "from": {
+      "from": "q2",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "qf",
+      "push": [],
+      "why": "stack already empty: accept"
+     }
+    },
+    {
+     "lhs": "[qd z qd]",
+     "rhs": [],
+     "from": {
+      "from": "qd",
+      "inp": "λ",
+      "pop": "z",
+      "to": "qd",
+      "push": [],
+      "why": "empty the stack"
+     }
+    },
+    {
+     "lhs": "[qd a qd]",
+     "rhs": [],
+     "from": {
+      "from": "qd",
+      "inp": "λ",
+      "pop": "a",
+      "to": "qd",
+      "push": [],
+      "why": "empty the stack"
+     }
+    },
+    {
+     "lhs": "[qd D qd]",
+     "rhs": [],
+     "from": {
+      "from": "qd",
+      "inp": "λ",
+      "pop": "D",
+      "to": "qd",
+      "push": [],
+      "why": "empty the stack"
+     }
+    },
+    {
+     "lhs": "[qd Z0 qf]",
+     "rhs": [],
+     "from": {
+      "from": "qd",
+      "inp": "λ",
+      "pop": "Z0",
+      "to": "qf",
+      "push": [],
+      "why": "bottom marker reached: go to qf"
+     }
+    }
+   ],
+   "full": {
+    "start": "V0",
+    "nts": [
+     "V0",
+     "V1",
+     "V2",
+     "V3",
+     "V4",
+     "V5",
+     "V6",
+     "V7",
+     "V8",
+     "V9",
+     "V10",
+     "V11",
+     "V12",
+     "V13",
+     "V14",
+     "V15",
+     "V16",
+     "V17",
+     "V18",
+     "V19",
+     "V20",
+     "V21",
+     "V22",
+     "V23",
+     "V24",
+     "V25",
+     "V26",
+     "V27",
+     "V28",
+     "V29",
+     "V30",
+     "V31",
+     "V32",
+     "V33",
+     "V34",
+     "V35",
+     "V36",
+     "V37",
+     "V38",
+     "V39",
+     "V40",
+     "V41",
+     "V42",
+     "V43",
+     "V44",
+     "V45",
+     "V46",
+     "V47",
+     "V48",
+     "V49",
+     "V50",
+     "V51",
+     "V52",
+     "V53",
+     "V54",
+     "V55",
+     "V56",
+     "V57",
+     "V58",
+     "V59",
+     "V60",
+     "V61",
+     "V62",
+     "V63",
+     "V64",
+     "V65",
+     "V66",
+     "V67",
+     "V68",
+     "V69",
+     "V70",
+     "V71",
+     "V72",
+     "V73",
+     "V74",
+     "V75",
+     "V76",
+     "V77",
+     "V78",
+     "V79",
+     "V80",
+     "V81",
+     "V82",
+     "V83",
+     "V84",
+     "V85",
+     "V86",
+     "V87",
+     "V88",
+     "V89",
+     "V90",
+     "V91",
+     "V92",
+     "V93",
+     "V94",
+     "V95",
+     "V96",
+     "V97",
+     "V98",
+     "V99",
+     "V100",
+     "V101",
+     "V102",
+     "V103",
+     "V104",
+     "V105",
+     "V106",
+     "V107",
+     "V108",
+     "V109",
+     "V110",
+     "V111",
+     "V112",
+     "V113",
+     "V114",
+     "V115",
+     "V116",
+     "V117",
+     "V118",
+     "V119",
+     "V120",
+     "V121",
+     "V122",
+     "V123",
+     "V124",
+     "V125",
+     "V126",
+     "V127",
+     "V128",
+     "V129",
+     "V130",
+     "V131",
+     "V132",
+     "V133",
+     "V134",
+     "V135",
+     "V136",
+     "V137",
+     "V138",
+     "V139",
+     "V140",
+     "V141",
+     "V142",
+     "V143",
+     "V144",
+     "V145",
+     "V146",
+     "V147",
+     "V148",
+     "V149",
+     "V150",
+     "V151",
+     "V152",
+     "V153",
+     "V154",
+     "V155"
+    ],
+    "ntSet": {},
+    "terms": [
+     "a",
+     "b"
+    ],
+    "prods": [
+     {
+      "lhs": "V1",
+      "rhs": [
+       "V2",
+       "V3"
+      ]
+     },
+     {
+      "lhs": "V1",
+      "rhs": [
+       "V4",
+       "V5"
+      ]
+     },
+     {
+      "lhs": "V1",
+      "rhs": [
+       "V6",
+       "V7"
+      ]
+     },
+     {
+      "lhs": "V1",
+      "rhs": [
+       "V8",
+       "V1"
+      ]
+     },
+     {
+      "lhs": "V1",
+      "rhs": [
+       "V9",
+       "V10"
+      ]
+     },
+     {
+      "lhs": "V1",
+      "rhs": [
+       "V11",
+       "V12"
+      ]
+     },
+     {
+      "lhs": "V1",
+      "rhs": [
+       "V13",
+       "V14"
+      ]
+     },
+     {
+      "lhs": "V15",
+      "rhs": [
+       "V2",
+       "V16"
+      ]
+     },
+     {
+      "lhs": "V15",
+      "rhs": [
+       "V4",
+       "V17"
+      ]
+     },
+     {
+      "lhs": "V15",
+      "rhs": [
+       "V6",
+       "V18"
+      ]
+     },
+     {
+      "lhs": "V15",
+      "rhs": [
+       "V8",
+       "V15"
+      ]
+     },
+     {
+      "lhs": "V15",
+      "rhs": [
+       "V9",
+       "V19"
+      ]
+     },
+     {
+      "lhs": "V15",
+      "rhs": [
+       "V11",
+       "V20"
+      ]
+     },
+     {
+      "lhs": "V15",
+      "rhs": [
+       "V13",
+       "V21"
+      ]
+     },
+     {
+      "lhs": "V22",
+      "rhs": [
+       "V2",
+       "V23"
+      ]
+     },
+     {
+      "lhs": "V22",
+      "rhs": [
+       "V4",
+       "V24"
+      ]
+     },
+     {
+      "lhs": "V22",
+      "rhs": [
+       "V6",
+       "V25"
+      ]
+     },
+     {
+      "lhs": "V22",
+      "rhs": [
+       "V8",
+       "V22"
+      ]
+     },
+     {
+      "lhs": "V22",
+      "rhs": [
+       "V9",
+       "V26"
+      ]
+     },
+     {
+      "lhs": "V22",
+      "rhs": [
+       "V11",
+       "V27"
+      ]
+     },
+     {
+      "lhs": "V22",
+      "rhs": [
+       "V13",
+       "V28"
+      ]
+     },
+     {
+      "lhs": "V29",
+      "rhs": [
+       "V2",
+       "V30"
+      ]
+     },
+     {
+      "lhs": "V29",
+      "rhs": [
+       "V4",
+       "V31"
+      ]
+     },
+     {
+      "lhs": "V29",
+      "rhs": [
+       "V6",
+       "V32"
+      ]
+     },
+     {
+      "lhs": "V29",
+      "rhs": [
+       "V8",
+       "V29"
+      ]
+     },
+     {
+      "lhs": "V29",
+      "rhs": [
+       "V9",
+       "V33"
+      ]
+     },
+     {
+      "lhs": "V29",
+      "rhs": [
+       "V11",
+       "V34"
+      ]
+     },
+     {
+      "lhs": "V29",
+      "rhs": [
+       "V13",
+       "V35"
+      ]
+     },
+     {
+      "lhs": "V0",
+      "rhs": [
+       "V2",
+       "V36"
+      ]
+     },
+     {
+      "lhs": "V0",
+      "rhs": [
+       "V4",
+       "V37"
+      ]
+     },
+     {
+      "lhs": "V0",
+      "rhs": [
+       "V6",
+       "V38"
+      ]
+     },
+     {
+      "lhs": "V0",
+      "rhs": [
+       "V8",
+       "V0"
+      ]
+     },
+     {
+      "lhs": "V0",
+      "rhs": [
+       "V9",
+       "V39"
+      ]
+     },
+     {
+      "lhs": "V0",
+      "rhs": [
+       "V11",
+       "V40"
+      ]
+     },
+     {
+      "lhs": "V0",
+      "rhs": [
+       "V13",
+       "V41"
+      ]
+     },
+     {
+      "lhs": "V42",
+      "rhs": [
+       "V2",
+       "V43"
+      ]
+     },
+     {
+      "lhs": "V42",
+      "rhs": [
+       "V4",
+       "V44"
+      ]
+     },
+     {
+      "lhs": "V42",
+      "rhs": [
+       "V6",
+       "V45"
+      ]
+     },
+     {
+      "lhs": "V42",
+      "rhs": [
+       "V8",
+       "V42"
+      ]
+     },
+     {
+      "lhs": "V42",
+      "rhs": [
+       "V9",
+       "V46"
+      ]
+     },
+     {
+      "lhs": "V42",
+      "rhs": [
+       "V11",
+       "V47"
+      ]
+     },
+     {
+      "lhs": "V42",
+      "rhs": [
+       "V13",
+       "V48"
+      ]
+     },
+     {
+      "lhs": "V49",
+      "rhs": [
+       "V2",
+       "V50"
+      ]
+     },
+     {
+      "lhs": "V49",
+      "rhs": [
+       "V4",
+       "V51"
+      ]
+     },
+     {
+      "lhs": "V49",
+      "rhs": [
+       "V6",
+       "V52"
+      ]
+     },
+     {
+      "lhs": "V49",
+      "rhs": [
+       "V8",
+       "V49"
+      ]
+     },
+     {
+      "lhs": "V49",
+      "rhs": [
+       "V9",
+       "V53"
+      ]
+     },
+     {
+      "lhs": "V49",
+      "rhs": [
+       "V11",
+       "V54"
+      ]
+     },
+     {
+      "lhs": "V49",
+      "rhs": [
+       "V13",
+       "V55"
+      ]
+     },
+     {
+      "lhs": "V2",
+      "rhs": [
+       "a",
+       "V56",
+       "V2"
+      ]
+     },
+     {
+      "lhs": "V2",
+      "rhs": [
+       "a",
+       "V57",
+       "V58"
+      ]
+     },
+     {
+      "lhs": "V2",
+      "rhs": [
+       "a",
+       "V59",
+       "V60"
+      ]
+     },
+     {
+      "lhs": "V2",
+      "rhs": [
+       "a",
+       "V61",
+       "V62"
+      ]
+     },
+     {
+      "lhs": "V2",
+      "rhs": [
+       "a",
+       "V63",
+       "V64"
+      ]
+     },
+     {
+      "lhs": "V2",
+      "rhs": [
+       "a",
+       "V65",
+       "V66"
+      ]
+     },
+     {
+      "lhs": "V2",
+      "rhs": [
+       "a",
+       "V67",
+       "V68"
+      ]
+     },
+     {
+      "lhs": "V4",
+      "rhs": [
+       "a",
+       "V56",
+       "V4"
+      ]
+     },
+     {
+      "lhs": "V4",
+      "rhs": [
+       "a",
+       "V57",
+       "V69"
+      ]
+     },
+     {
+      "lhs": "V4",
+      "rhs": [
+       "a",
+       "V59",
+       "V70"
+      ]
+     },
+     {
+      "lhs": "V4",
+      "rhs": [
+       "a",
+       "V61",
+       "V71"
+      ]
+     },
+     {
+      "lhs": "V4",
+      "rhs": [
+       "a",
+       "V63",
+       "V72"
+      ]
+     },
+     {
+      "lhs": "V4",
+      "rhs": [
+       "a",
+       "V65",
+       "V73"
+      ]
+     },
+     {
+      "lhs": "V4",
+      "rhs": [
+       "a",
+       "V67",
+       "V74"
+      ]
+     },
+     {
+      "lhs": "V6",
+      "rhs": [
+       "a",
+       "V56",
+       "V6"
+      ]
+     },
+     {
+      "lhs": "V6",
+      "rhs": [
+       "a",
+       "V57",
+       "V75"
+      ]
+     },
+     {
+      "lhs": "V6",
+      "rhs": [
+       "a",
+       "V59",
+       "V76"
+      ]
+     },
+     {
+      "lhs": "V6",
+      "rhs": [
+       "a",
+       "V61",
+       "V77"
+      ]
+     },
+     {
+      "lhs": "V6",
+      "rhs": [
+       "a",
+       "V63",
+       "V78"
+      ]
+     },
+     {
+      "lhs": "V6",
+      "rhs": [
+       "a",
+       "V65",
+       "V79"
+      ]
+     },
+     {
+      "lhs": "V6",
+      "rhs": [
+       "a",
+       "V67",
+       "V80"
+      ]
+     },
+     {
+      "lhs": "V8",
+      "rhs": [
+       "a",
+       "V56",
+       "V8"
+      ]
+     },
+     {
+      "lhs": "V8",
+      "rhs": [
+       "a",
+       "V57",
+       "V81"
+      ]
+     },
+     {
+      "lhs": "V8",
+      "rhs": [
+       "a",
+       "V59",
+       "V82"
+      ]
+     },
+     {
+      "lhs": "V8",
+      "rhs": [
+       "a",
+       "V61",
+       "V83"
+      ]
+     },
+     {
+      "lhs": "V8",
+      "rhs": [
+       "a",
+       "V63",
+       "V84"
+      ]
+     },
+     {
+      "lhs": "V8",
+      "rhs": [
+       "a",
+       "V65",
+       "V85"
+      ]
+     },
+     {
+      "lhs": "V8",
+      "rhs": [
+       "a",
+       "V67",
+       "V86"
+      ]
+     },
+     {
+      "lhs": "V9",
+      "rhs": [
+       "a",
+       "V56",
+       "V9"
+      ]
+     },
+     {
+      "lhs": "V9",
+      "rhs": [
+       "a",
+       "V57",
+       "V87"
+      ]
+     },
+     {
+      "lhs": "V9",
+      "rhs": [
+       "a",
+       "V59",
+       "V88"
+      ]
+     },
+     {
+      "lhs": "V9",
+      "rhs": [
+       "a",
+       "V61",
+       "V89"
+      ]
+     },
+     {
+      "lhs": "V9",
+      "rhs": [
+       "a",
+       "V63",
+       "V90"
+      ]
+     },
+     {
+      "lhs": "V9",
+      "rhs": [
+       "a",
+       "V65",
+       "V91"
+      ]
+     },
+     {
+      "lhs": "V9",
+      "rhs": [
+       "a",
+       "V67",
+       "V92"
+      ]
+     },
+     {
+      "lhs": "V11",
+      "rhs": [
+       "a",
+       "V56",
+       "V11"
+      ]
+     },
+     {
+      "lhs": "V11",
+      "rhs": [
+       "a",
+       "V57",
+       "V93"
+      ]
+     },
+     {
+      "lhs": "V11",
+      "rhs": [
+       "a",
+       "V59",
+       "V94"
+      ]
+     },
+     {
+      "lhs": "V11",
+      "rhs": [
+       "a",
+       "V61",
+       "V95"
+      ]
+     },
+     {
+      "lhs": "V11",
+      "rhs": [
+       "a",
+       "V63",
+       "V96"
+      ]
+     },
+     {
+      "lhs": "V11",
+      "rhs": [
+       "a",
+       "V65",
+       "V97"
+      ]
+     },
+     {
+      "lhs": "V11",
+      "rhs": [
+       "a",
+       "V67",
+       "V98"
+      ]
+     },
+     {
+      "lhs": "V13",
+      "rhs": [
+       "a",
+       "V56",
+       "V13"
+      ]
+     },
+     {
+      "lhs": "V13",
+      "rhs": [
+       "a",
+       "V57",
+       "V99"
+      ]
+     },
+     {
+      "lhs": "V13",
+      "rhs": [
+       "a",
+       "V59",
+       "V100"
+      ]
+     },
+     {
+      "lhs": "V13",
+      "rhs": [
+       "a",
+       "V61",
+       "V101"
+      ]
+     },
+     {
+      "lhs": "V13",
+      "rhs": [
+       "a",
+       "V63",
+       "V102"
+      ]
+     },
+     {
+      "lhs": "V13",
+      "rhs": [
+       "a",
+       "V65",
+       "V103"
+      ]
+     },
+     {
+      "lhs": "V13",
+      "rhs": [
+       "a",
+       "V67",
+       "V104"
+      ]
+     },
+     {
+      "lhs": "V56",
+      "rhs": [
+       "a",
+       "V56",
+       "V56"
+      ]
+     },
+     {
+      "lhs": "V56",
+      "rhs": [
+       "a",
+       "V57",
+       "V105"
+      ]
+     },
+     {
+      "lhs": "V56",
+      "rhs": [
+       "a",
+       "V59",
+       "V106"
+      ]
+     },
+     {
+      "lhs": "V56",
+      "rhs": [
+       "a",
+       "V61",
+       "V107"
+      ]
+     },
+     {
+      "lhs": "V56",
+      "rhs": [
+       "a",
+       "V63",
+       "V108"
+      ]
+     },
+     {
+      "lhs": "V56",
+      "rhs": [
+       "a",
+       "V65",
+       "V109"
+      ]
+     },
+     {
+      "lhs": "V56",
+      "rhs": [
+       "a",
+       "V67",
+       "V110"
+      ]
+     },
+     {
+      "lhs": "V57",
+      "rhs": [
+       "a",
+       "V56",
+       "V57"
+      ]
+     },
+     {
+      "lhs": "V57",
+      "rhs": [
+       "a",
+       "V57",
+       "V111"
+      ]
+     },
+     {
+      "lhs": "V57",
+      "rhs": [
+       "a",
+       "V59",
+       "V112"
+      ]
+     },
+     {
+      "lhs": "V57",
+      "rhs": [
+       "a",
+       "V61",
+       "V113"
+      ]
+     },
+     {
+      "lhs": "V57",
+      "rhs": [
+       "a",
+       "V63",
+       "V114"
+      ]
+     },
+     {
+      "lhs": "V57",
+      "rhs": [
+       "a",
+       "V65",
+       "V115"
+      ]
+     },
+     {
+      "lhs": "V57",
+      "rhs": [
+       "a",
+       "V67",
+       "V116"
+      ]
+     },
+     {
+      "lhs": "V59",
+      "rhs": [
+       "a",
+       "V56",
+       "V59"
+      ]
+     },
+     {
+      "lhs": "V59",
+      "rhs": [
+       "a",
+       "V57",
+       "V117"
+      ]
+     },
+     {
+      "lhs": "V59",
+      "rhs": [
+       "a",
+       "V59",
+       "V118"
+      ]
+     },
+     {
+      "lhs": "V59",
+      "rhs": [
+       "a",
+       "V61",
+       "V119"
+      ]
+     },
+     {
+      "lhs": "V59",
+      "rhs": [
+       "a",
+       "V63",
+       "V120"
+      ]
+     },
+     {
+      "lhs": "V59",
+      "rhs": [
+       "a",
+       "V65",
+       "V121"
+      ]
+     },
+     {
+      "lhs": "V59",
+      "rhs": [
+       "a",
+       "V67",
+       "V122"
+      ]
+     },
+     {
+      "lhs": "V61",
+      "rhs": [
+       "a",
+       "V56",
+       "V61"
+      ]
+     },
+     {
+      "lhs": "V61",
+      "rhs": [
+       "a",
+       "V57",
+       "V123"
+      ]
+     },
+     {
+      "lhs": "V61",
+      "rhs": [
+       "a",
+       "V59",
+       "V124"
+      ]
+     },
+     {
+      "lhs": "V61",
+      "rhs": [
+       "a",
+       "V61",
+       "V125"
+      ]
+     },
+     {
+      "lhs": "V61",
+      "rhs": [
+       "a",
+       "V63",
+       "V126"
+      ]
+     },
+     {
+      "lhs": "V61",
+      "rhs": [
+       "a",
+       "V65",
+       "V127"
+      ]
+     },
+     {
+      "lhs": "V61",
+      "rhs": [
+       "a",
+       "V67",
+       "V128"
+      ]
+     },
+     {
+      "lhs": "V63",
+      "rhs": [
+       "a",
+       "V56",
+       "V63"
+      ]
+     },
+     {
+      "lhs": "V63",
+      "rhs": [
+       "a",
+       "V57",
+       "V129"
+      ]
+     },
+     {
+      "lhs": "V63",
+      "rhs": [
+       "a",
+       "V59",
+       "V130"
+      ]
+     },
+     {
+      "lhs": "V63",
+      "rhs": [
+       "a",
+       "V61",
+       "V131"
+      ]
+     },
+     {
+      "lhs": "V63",
+      "rhs": [
+       "a",
+       "V63",
+       "V132"
+      ]
+     },
+     {
+      "lhs": "V63",
+      "rhs": [
+       "a",
+       "V65",
+       "V133"
+      ]
+     },
+     {
+      "lhs": "V63",
+      "rhs": [
+       "a",
+       "V67",
+       "V134"
+      ]
+     },
+     {
+      "lhs": "V65",
+      "rhs": [
+       "a",
+       "V56",
+       "V65"
+      ]
+     },
+     {
+      "lhs": "V65",
+      "rhs": [
+       "a",
+       "V57",
+       "V135"
+      ]
+     },
+     {
+      "lhs": "V65",
+      "rhs": [
+       "a",
+       "V59",
+       "V136"
+      ]
+     },
+     {
+      "lhs": "V65",
+      "rhs": [
+       "a",
+       "V61",
+       "V137"
+      ]
+     },
+     {
+      "lhs": "V65",
+      "rhs": [
+       "a",
+       "V63",
+       "V138"
+      ]
+     },
+     {
+      "lhs": "V65",
+      "rhs": [
+       "a",
+       "V65",
+       "V139"
+      ]
+     },
+     {
+      "lhs": "V65",
+      "rhs": [
+       "a",
+       "V67",
+       "V140"
+      ]
+     },
+     {
+      "lhs": "V67",
+      "rhs": [
+       "a",
+       "V56",
+       "V67"
+      ]
+     },
+     {
+      "lhs": "V67",
+      "rhs": [
+       "a",
+       "V57",
+       "V141"
+      ]
+     },
+     {
+      "lhs": "V67",
+      "rhs": [
+       "a",
+       "V59",
+       "V142"
+      ]
+     },
+     {
+      "lhs": "V67",
+      "rhs": [
+       "a",
+       "V61",
+       "V143"
+      ]
+     },
+     {
+      "lhs": "V67",
+      "rhs": [
+       "a",
+       "V63",
+       "V144"
+      ]
+     },
+     {
+      "lhs": "V67",
+      "rhs": [
+       "a",
+       "V65",
+       "V145"
+      ]
+     },
+     {
+      "lhs": "V67",
+      "rhs": [
+       "a",
+       "V67",
+       "V146"
+      ]
+     },
+     {
+      "lhs": "V57",
+      "rhs": [
+       "b"
+      ]
+     },
+     {
+      "lhs": "V111",
+      "rhs": [
+       "b"
+      ]
+     },
+     {
+      "lhs": "V58",
+      "rhs": [
+       "V147",
+       "V2"
+      ]
+     },
+     {
+      "lhs": "V58",
+      "rhs": [
+       "V148",
+       "V58"
+      ]
+     },
+     {
+      "lhs": "V58",
+      "rhs": [
+       "V149",
+       "V60"
+      ]
+     },
+     {
+      "lhs": "V58",
+      "rhs": [
+       "V150",
+       "V62"
+      ]
+     },
+     {
+      "lhs": "V58",
+      "rhs": [
+       "V151",
+       "V64"
+      ]
+     },
+     {
+      "lhs": "V58",
+      "rhs": [
+       "V152",
+       "V66"
+      ]
+     },
+     {
+      "lhs": "V58",
+      "rhs": [
+       "V153",
+       "V68"
+      ]
+     },
+     {
+      "lhs": "V69",
+      "rhs": [
+       "V147",
+       "V4"
+      ]
+     },
+     {
+      "lhs": "V69",
+      "rhs": [
+       "V148",
+       "V69"
+      ]
+     },
+     {
+      "lhs": "V69",
+      "rhs": [
+       "V149",
+       "V70"
+      ]
+     },
+     {
+      "lhs": "V69",
+      "rhs": [
+       "V150",
+       "V71"
+      ]
+     },
+     {
+      "lhs": "V69",
+      "rhs": [
+       "V151",
+       "V72"
+      ]
+     },
+     {
+      "lhs": "V69",
+      "rhs": [
+       "V152",
+       "V73"
+      ]
+     },
+     {
+      "lhs": "V69",
+      "rhs": [
+       "V153",
+       "V74"
+      ]
+     },
+     {
+      "lhs": "V75",
+      "rhs": [
+       "V147",
+       "V6"
+      ]
+     },
+     {
+      "lhs": "V75",
+      "rhs": [
+       "V148",
+       "V75"
+      ]
+     },
+     {
+      "lhs": "V75",
+      "rhs": [
+       "V149",
+       "V76"
+      ]
+     },
+     {
+      "lhs": "V75",
+      "rhs": [
+       "V150",
+       "V77"
+      ]
+     },
+     {
+      "lhs": "V75",
+      "rhs": [
+       "V151",
+       "V78"
+      ]
+     },
+     {
+      "lhs": "V75",
+      "rhs": [
+       "V152",
+       "V79"
+      ]
+     },
+     {
+      "lhs": "V75",
+      "rhs": [
+       "V153",
+       "V80"
+      ]
+     },
+     {
+      "lhs": "V81",
+      "rhs": [
+       "V147",
+       "V8"
+      ]
+     },
+     {
+      "lhs": "V81",
+      "rhs": [
+       "V148",
+       "V81"
+      ]
+     },
+     {
+      "lhs": "V81",
+      "rhs": [
+       "V149",
+       "V82"
+      ]
+     },
+     {
+      "lhs": "V81",
+      "rhs": [
+       "V150",
+       "V83"
+      ]
+     },
+     {
+      "lhs": "V81",
+      "rhs": [
+       "V151",
+       "V84"
+      ]
+     },
+     {
+      "lhs": "V81",
+      "rhs": [
+       "V152",
+       "V85"
+      ]
+     },
+     {
+      "lhs": "V81",
+      "rhs": [
+       "V153",
+       "V86"
+      ]
+     },
+     {
+      "lhs": "V87",
+      "rhs": [
+       "V147",
+       "V9"
+      ]
+     },
+     {
+      "lhs": "V87",
+      "rhs": [
+       "V148",
+       "V87"
+      ]
+     },
+     {
+      "lhs": "V87",
+      "rhs": [
+       "V149",
+       "V88"
+      ]
+     },
+     {
+      "lhs": "V87",
+      "rhs": [
+       "V150",
+       "V89"
+      ]
+     },
+     {
+      "lhs": "V87",
+      "rhs": [
+       "V151",
+       "V90"
+      ]
+     },
+     {
+      "lhs": "V87",
+      "rhs": [
+       "V152",
+       "V91"
+      ]
+     },
+     {
+      "lhs": "V87",
+      "rhs": [
+       "V153",
+       "V92"
+      ]
+     },
+     {
+      "lhs": "V93",
+      "rhs": [
+       "V147",
+       "V11"
+      ]
+     },
+     {
+      "lhs": "V93",
+      "rhs": [
+       "V148",
+       "V93"
+      ]
+     },
+     {
+      "lhs": "V93",
+      "rhs": [
+       "V149",
+       "V94"
+      ]
+     },
+     {
+      "lhs": "V93",
+      "rhs": [
+       "V150",
+       "V95"
+      ]
+     },
+     {
+      "lhs": "V93",
+      "rhs": [
+       "V151",
+       "V96"
+      ]
+     },
+     {
+      "lhs": "V93",
+      "rhs": [
+       "V152",
+       "V97"
+      ]
+     },
+     {
+      "lhs": "V93",
+      "rhs": [
+       "V153",
+       "V98"
+      ]
+     },
+     {
+      "lhs": "V99",
+      "rhs": [
+       "V147",
+       "V13"
+      ]
+     },
+     {
+      "lhs": "V99",
+      "rhs": [
+       "V148",
+       "V99"
+      ]
+     },
+     {
+      "lhs": "V99",
+      "rhs": [
+       "V149",
+       "V100"
+      ]
+     },
+     {
+      "lhs": "V99",
+      "rhs": [
+       "V150",
+       "V101"
+      ]
+     },
+     {
+      "lhs": "V99",
+      "rhs": [
+       "V151",
+       "V102"
+      ]
+     },
+     {
+      "lhs": "V99",
+      "rhs": [
+       "V152",
+       "V103"
+      ]
+     },
+     {
+      "lhs": "V99",
+      "rhs": [
+       "V153",
+       "V104"
+      ]
+     },
+     {
+      "lhs": "V149",
+      "rhs": []
+     },
+     {
+      "lhs": "V100",
+      "rhs": []
+     },
+     {
+      "lhs": "V142",
+      "rhs": []
+     },
+     {
+      "lhs": "V154",
+      "rhs": []
+     },
+     {
+      "lhs": "V38",
+      "rhs": []
+     },
+     {
+      "lhs": "V104",
+      "rhs": []
+     },
+     {
+      "lhs": "V146",
+      "rhs": []
+     },
+     {
+      "lhs": "V155",
+      "rhs": []
+     },
+     {
+      "lhs": "V41",
+      "rhs": []
+     }
+    ],
+    "warnings": []
+   },
+   "trimmed": {
+    "start": "V0",
+    "nts": [
+     "V0",
+     "V13",
+     "V41",
+     "V57",
+     "V99",
+     "V100",
+     "V111",
+     "V149"
+    ],
+    "ntSet": {},
+    "terms": [
+     "a",
+     "b"
+    ],
+    "prods": [
+     {
+      "lhs": "V0",
+      "rhs": [
+       "V13",
+       "V41"
+      ]
+     },
+     {
+      "lhs": "V13",
+      "rhs": [
+       "a",
+       "V57",
+       "V99"
+      ]
+     },
+     {
+      "lhs": "V57",
+      "rhs": [
+       "a",
+       "V57",
+       "V111"
+      ]
+     },
+     {
+      "lhs": "V57",
+      "rhs": [
+       "b"
+      ]
+     },
+     {
+      "lhs": "V111",
+      "rhs": [
+       "b"
+      ]
+     },
+     {
+      "lhs": "V99",
+      "rhs": [
+       "V149",
+       "V100"
+      ]
+     },
+     {
+      "lhs": "V149",
+      "rhs": []
+     },
+     {
+      "lhs": "V100",
+      "rhs": []
+     },
+     {
+      "lhs": "V41",
+      "rhs": []
+     }
+    ],
+    "warnings": []
+   },
+   "empty": false
+  }
+ }
+]

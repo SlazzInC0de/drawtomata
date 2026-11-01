@@ -1,0 +1,1235 @@
+[
+ {
+  "decls": {},
+  "source": "position = initial + rate * 60",
+  "tokens": [
+   {
+    "lexeme": "position",
+    "token": "id",
+    "cat": "identifier",
+    "attr": 1,
+    "start": 0,
+    "end": 8,
+    "line": 1,
+    "col": 1
+   },
+   {
+    "lexeme": "=",
+    "token": "=",
+    "cat": "operator",
+    "attr": "",
+    "start": 9,
+    "end": 10,
+    "line": 1,
+    "col": 10
+   },
+   {
+    "lexeme": "initial",
+    "token": "id",
+    "cat": "identifier",
+    "attr": 2,
+    "start": 11,
+    "end": 18,
+    "line": 1,
+    "col": 12
+   },
+   {
+    "lexeme": "+",
+    "token": "+",
+    "cat": "operator",
+    "attr": "",
+    "start": 19,
+    "end": 20,
+    "line": 1,
+    "col": 20
+   },
+   {
+    "lexeme": "rate",
+    "token": "id",
+    "cat": "identifier",
+    "attr": 3,
+    "start": 21,
+    "end": 25,
+    "line": 1,
+    "col": 22
+   },
+   {
+    "lexeme": "*",
+    "token": "*",
+    "cat": "operator",
+    "attr": "",
+    "start": 26,
+    "end": 27,
+    "line": 1,
+    "col": 27
+   },
+   {
+    "lexeme": "60",
+    "token": "number",
+    "cat": "constant",
+    "attr": "60",
+    "start": 28,
+    "end": 30,
+    "line": 1,
+    "col": 29
+   }
+  ],
+  "symtab": [
+   {
+    "name": "position",
+    "line": 1,
+    "uses": 1,
+    "type": "float"
+   },
+   {
+    "name": "initial",
+    "line": 1,
+    "uses": 1,
+    "type": "float"
+   },
+   {
+    "name": "rate",
+    "line": 1,
+    "uses": 1,
+    "type": "float"
+   }
+  ],
+  "trees": [
+   {
+    "k": "assign",
+    "target": {
+     "k": "id",
+     "name": "position",
+     "entry": 1
+    },
+    "e": {
+     "k": "bin",
+     "op": "+",
+     "l": {
+      "k": "id",
+      "name": "initial",
+      "entry": 2
+     },
+     "r": {
+      "k": "bin",
+      "op": "*",
+      "l": {
+       "k": "id",
+       "name": "rate",
+       "entry": 3
+      },
+      "r": {
+       "k": "num",
+       "text": "60",
+       "float": false
+      }
+     }
+    }
+   }
+  ],
+  "typed": [
+   {
+    "k": "assign",
+    "target": {
+     "k": "id",
+     "name": "position",
+     "entry": 1,
+     "type": "float"
+    },
+    "e": {
+     "k": "bin",
+     "op": "+",
+     "l": {
+      "k": "id",
+      "name": "initial",
+      "entry": 2,
+      "type": "float"
+     },
+     "r": {
+      "k": "bin",
+      "op": "*",
+      "l": {
+       "k": "id",
+       "name": "rate",
+       "entry": 3,
+       "type": "float"
+      },
+      "r": {
+       "k": "conv",
+       "to": "float",
+       "a": {
+        "k": "num",
+        "text": "60",
+        "float": false,
+        "type": "int"
+       },
+       "type": "float"
+      },
+      "type": "float"
+     },
+     "type": "float"
+    }
+   }
+  ],
+  "notes": [
+   "60 is an int used with a float in *, so inttofloat is inserted"
+  ],
+  "tac": [
+   {
+    "dst": "t1",
+    "op": "inttofloat",
+    "a": "60",
+    "type": "float"
+   },
+   {
+    "dst": "t2",
+    "op": "*",
+    "a": "id3",
+    "b": "t1",
+    "type": "float"
+   },
+   {
+    "dst": "t3",
+    "op": "+",
+    "a": "id2",
+    "b": "t2",
+    "type": "float"
+   },
+   {
+    "dst": "id1",
+    "op": "copy",
+    "a": "t3",
+    "type": "float"
+   }
+  ],
+  "opt": {
+   "code": [
+    {
+     "dst": "t1",
+     "op": "*",
+     "a": "id3",
+     "b": "60.0",
+     "type": "float"
+    },
+    {
+     "dst": "id1",
+     "op": "+",
+     "a": "id2",
+     "b": "t1",
+     "type": "float"
+    }
+   ],
+   "log": [
+    "t1 = inttofloat(60) is computed now, at compile time: t1 is 60.0",
+    "id1 = t3 only copies t3, so t3 is computed straight into id1"
+   ]
+  },
+  "prog": [
+   {
+    "op": "LDF",
+    "args": [
+     "R1",
+     "id3"
+    ],
+    "r": 1,
+    "src": "id3",
+    "text": "LDF R1, id3"
+   },
+   {
+    "op": "MULF",
+    "args": [
+     "R1",
+     "R1",
+     "#60.0"
+    ],
+    "text": "MULF R1, R1, #60.0"
+   },
+   {
+    "op": "LDF",
+    "args": [
+     "R2",
+     "id2"
+    ],
+    "r": 2,
+    "src": "id2",
+    "text": "LDF R2, id2"
+   },
+   {
+    "op": "ADDF",
+    "args": [
+     "R2",
+     "R2",
+     "R1"
+    ],
+    "text": "ADDF R2, R2, R1"
+   },
+   {
+    "op": "STF",
+    "args": [
+     "id1",
+     "R2"
+    ],
+    "text": "STF id1, R2"
+   }
+  ],
+  "check": {
+   "ok": true
+  }
+ },
+ {
+  "decls": {},
+  "source": "avg = sum / n\ni = i + 1",
+  "tokens": [
+   {
+    "lexeme": "avg",
+    "token": "id",
+    "cat": "identifier",
+    "attr": 1,
+    "start": 0,
+    "end": 3,
+    "line": 1,
+    "col": 1
+   },
+   {
+    "lexeme": "=",
+    "token": "=",
+    "cat": "operator",
+    "attr": "",
+    "start": 4,
+    "end": 5,
+    "line": 1,
+    "col": 5
+   },
+   {
+    "lexeme": "sum",
+    "token": "id",
+    "cat": "identifier",
+    "attr": 2,
+    "start": 6,
+    "end": 9,
+    "line": 1,
+    "col": 7
+   },
+   {
+    "lexeme": "/",
+    "token": "/",
+    "cat": "operator",
+    "attr": "",
+    "start": 10,
+    "end": 11,
+    "line": 1,
+    "col": 11
+   },
+   {
+    "lexeme": "n",
+    "token": "id",
+    "cat": "identifier",
+    "attr": 3,
+    "start": 12,
+    "end": 13,
+    "line": 1,
+    "col": 13
+   },
+   {
+    "lexeme": "i",
+    "token": "id",
+    "cat": "identifier",
+    "attr": 4,
+    "start": 14,
+    "end": 15,
+    "line": 2,
+    "col": 1
+   },
+   {
+    "lexeme": "=",
+    "token": "=",
+    "cat": "operator",
+    "attr": "",
+    "start": 16,
+    "end": 17,
+    "line": 2,
+    "col": 3
+   },
+   {
+    "lexeme": "i",
+    "token": "id",
+    "cat": "identifier",
+    "attr": 4,
+    "start": 18,
+    "end": 19,
+    "line": 2,
+    "col": 5
+   },
+   {
+    "lexeme": "+",
+    "token": "+",
+    "cat": "operator",
+    "attr": "",
+    "start": 20,
+    "end": 21,
+    "line": 2,
+    "col": 7
+   },
+   {
+    "lexeme": "1",
+    "token": "number",
+    "cat": "constant",
+    "attr": "1",
+    "start": 22,
+    "end": 23,
+    "line": 2,
+    "col": 9
+   }
+  ],
+  "symtab": [
+   {
+    "name": "avg",
+    "line": 1,
+    "uses": 1,
+    "type": "float"
+   },
+   {
+    "name": "sum",
+    "line": 1,
+    "uses": 1,
+    "type": "float"
+   },
+   {
+    "name": "n",
+    "line": 1,
+    "uses": 1,
+    "type": "int"
+   },
+   {
+    "name": "i",
+    "line": 2,
+    "uses": 2,
+    "type": "int"
+   }
+  ],
+  "trees": [
+   {
+    "k": "assign",
+    "target": {
+     "k": "id",
+     "name": "avg",
+     "entry": 1
+    },
+    "e": {
+     "k": "bin",
+     "op": "/",
+     "l": {
+      "k": "id",
+      "name": "sum",
+      "entry": 2
+     },
+     "r": {
+      "k": "id",
+      "name": "n",
+      "entry": 3
+     }
+    }
+   },
+   {
+    "k": "assign",
+    "target": {
+     "k": "id",
+     "name": "i",
+     "entry": 4
+    },
+    "e": {
+     "k": "bin",
+     "op": "+",
+     "l": {
+      "k": "id",
+      "name": "i",
+      "entry": 4
+     },
+     "r": {
+      "k": "num",
+      "text": "1",
+      "float": false
+     }
+    }
+   }
+  ],
+  "typed": [
+   {
+    "k": "assign",
+    "target": {
+     "k": "id",
+     "name": "avg",
+     "entry": 1,
+     "type": "float"
+    },
+    "e": {
+     "k": "bin",
+     "op": "/",
+     "l": {
+      "k": "id",
+      "name": "sum",
+      "entry": 2,
+      "type": "float"
+     },
+     "r": {
+      "k": "conv",
+      "to": "float",
+      "a": {
+       "k": "id",
+       "name": "n",
+       "entry": 3,
+       "type": "int"
+      },
+      "type": "float"
+     },
+     "type": "float"
+    }
+   },
+   {
+    "k": "assign",
+    "target": {
+     "k": "id",
+     "name": "i",
+     "entry": 4,
+     "type": "int"
+    },
+    "e": {
+     "k": "bin",
+     "op": "+",
+     "l": {
+      "k": "id",
+      "name": "i",
+      "entry": 4,
+      "type": "int"
+     },
+     "r": {
+      "k": "num",
+      "text": "1",
+      "float": false,
+      "type": "int"
+     },
+     "type": "int"
+    }
+   }
+  ],
+  "notes": [
+   "id3 is an int used with a float in /, so inttofloat is inserted"
+  ],
+  "tac": [
+   {
+    "dst": "t1",
+    "op": "inttofloat",
+    "a": "id3",
+    "type": "float"
+   },
+   {
+    "dst": "t2",
+    "op": "/",
+    "a": "id2",
+    "b": "t1",
+    "type": "float"
+   },
+   {
+    "dst": "id1",
+    "op": "copy",
+    "a": "t2",
+    "type": "float"
+   },
+   {
+    "dst": "t3",
+    "op": "+",
+    "a": "id4",
+    "b": "1",
+    "type": "int"
+   },
+   {
+    "dst": "id4",
+    "op": "copy",
+    "a": "t3",
+    "type": "int"
+   }
+  ],
+  "opt": {
+   "code": [
+    {
+     "dst": "t1",
+     "op": "inttofloat",
+     "a": "id3",
+     "type": "float"
+    },
+    {
+     "dst": "id1",
+     "op": "/",
+     "a": "id2",
+     "b": "t1",
+     "type": "float"
+    },
+    {
+     "dst": "id4",
+     "op": "+",
+     "a": "id4",
+     "b": "1",
+     "type": "int"
+    }
+   ],
+   "log": [
+    "id1 = t2 only copies t2, so t2 is computed straight into id1",
+    "id4 = t3 only copies t3, so t3 is computed straight into id4"
+   ]
+  },
+  "prog": [
+   {
+    "op": "LD",
+    "args": [
+     "R1",
+     "id3"
+    ],
+    "r": 1,
+    "src": "id3",
+    "text": "LD R1, id3"
+   },
+   {
+    "op": "ITOF",
+    "args": [
+     "R1",
+     "R1"
+    ],
+    "text": "ITOF R1, R1"
+   },
+   {
+    "op": "LDF",
+    "args": [
+     "R2",
+     "id2"
+    ],
+    "r": 2,
+    "src": "id2",
+    "text": "LDF R2, id2"
+   },
+   {
+    "op": "DIVF",
+    "args": [
+     "R2",
+     "R2",
+     "R1"
+    ],
+    "text": "DIVF R2, R2, R1"
+   },
+   {
+    "op": "STF",
+    "args": [
+     "id1",
+     "R2"
+    ],
+    "text": "STF id1, R2"
+   },
+   {
+    "op": "LD",
+    "args": [
+     "R1",
+     "id4"
+    ],
+    "r": 1,
+    "src": "id4",
+    "text": "LD R1, id4"
+   },
+   {
+    "op": "ADD",
+    "args": [
+     "R1",
+     "R1",
+     "#1"
+    ],
+    "text": "ADD R1, R1, #1"
+   },
+   {
+    "op": "ST",
+    "args": [
+     "id4",
+     "R1"
+    ],
+    "text": "ST id4, R1"
+   }
+  ],
+  "check": {
+   "ok": true
+  }
+ },
+ {
+  "decls": {},
+  "source": "x = -(a + 2 * 3) * b",
+  "tokens": [
+   {
+    "lexeme": "x",
+    "token": "id",
+    "cat": "identifier",
+    "attr": 1,
+    "start": 0,
+    "end": 1,
+    "line": 1,
+    "col": 1
+   },
+   {
+    "lexeme": "=",
+    "token": "=",
+    "cat": "operator",
+    "attr": "",
+    "start": 2,
+    "end": 3,
+    "line": 1,
+    "col": 3
+   },
+   {
+    "lexeme": "-",
+    "token": "-",
+    "cat": "operator",
+    "attr": "",
+    "start": 4,
+    "end": 5,
+    "line": 1,
+    "col": 5
+   },
+   {
+    "lexeme": "(",
+    "token": "(",
+    "cat": "separator",
+    "attr": "",
+    "start": 5,
+    "end": 6,
+    "line": 1,
+    "col": 6
+   },
+   {
+    "lexeme": "a",
+    "token": "id",
+    "cat": "identifier",
+    "attr": 2,
+    "start": 6,
+    "end": 7,
+    "line": 1,
+    "col": 7
+   },
+   {
+    "lexeme": "+",
+    "token": "+",
+    "cat": "operator",
+    "attr": "",
+    "start": 8,
+    "end": 9,
+    "line": 1,
+    "col": 9
+   },
+   {
+    "lexeme": "2",
+    "token": "number",
+    "cat": "constant",
+    "attr": "2",
+    "start": 10,
+    "end": 11,
+    "line": 1,
+    "col": 11
+   },
+   {
+    "lexeme": "*",
+    "token": "*",
+    "cat": "operator",
+    "attr": "",
+    "start": 12,
+    "end": 13,
+    "line": 1,
+    "col": 13
+   },
+   {
+    "lexeme": "3",
+    "token": "number",
+    "cat": "constant",
+    "attr": "3",
+    "start": 14,
+    "end": 15,
+    "line": 1,
+    "col": 15
+   },
+   {
+    "lexeme": ")",
+    "token": ")",
+    "cat": "separator",
+    "attr": "",
+    "start": 15,
+    "end": 16,
+    "line": 1,
+    "col": 16
+   },
+   {
+    "lexeme": "*",
+    "token": "*",
+    "cat": "operator",
+    "attr": "",
+    "start": 17,
+    "end": 18,
+    "line": 1,
+    "col": 18
+   },
+   {
+    "lexeme": "b",
+    "token": "id",
+    "cat": "identifier",
+    "attr": 3,
+    "start": 19,
+    "end": 20,
+    "line": 1,
+    "col": 20
+   }
+  ],
+  "symtab": [
+   {
+    "name": "x",
+    "line": 1,
+    "uses": 1,
+    "type": "float"
+   },
+   {
+    "name": "a",
+    "line": 1,
+    "uses": 1,
+    "type": "float"
+   },
+   {
+    "name": "b",
+    "line": 1,
+    "uses": 1,
+    "type": "float"
+   }
+  ],
+  "trees": [
+   {
+    "k": "assign",
+    "target": {
+     "k": "id",
+     "name": "x",
+     "entry": 1
+    },
+    "e": {
+     "k": "bin",
+     "op": "*",
+     "l": {
+      "k": "neg",
+      "a": {
+       "k": "bin",
+       "op": "+",
+       "l": {
+        "k": "id",
+        "name": "a",
+        "entry": 2
+       },
+       "r": {
+        "k": "bin",
+        "op": "*",
+        "l": {
+         "k": "num",
+         "text": "2",
+         "float": false
+        },
+        "r": {
+         "k": "num",
+         "text": "3",
+         "float": false
+        }
+       }
+      }
+     },
+     "r": {
+      "k": "id",
+      "name": "b",
+      "entry": 3
+     }
+    }
+   }
+  ],
+  "typed": [
+   {
+    "k": "assign",
+    "target": {
+     "k": "id",
+     "name": "x",
+     "entry": 1,
+     "type": "float"
+    },
+    "e": {
+     "k": "bin",
+     "op": "*",
+     "l": {
+      "k": "neg",
+      "a": {
+       "k": "bin",
+       "op": "+",
+       "l": {
+        "k": "id",
+        "name": "a",
+        "entry": 2,
+        "type": "float"
+       },
+       "r": {
+        "k": "conv",
+        "to": "float",
+        "a": {
+         "k": "bin",
+         "op": "*",
+         "l": {
+          "k": "num",
+          "text": "2",
+          "float": false,
+          "type": "int"
+         },
+         "r": {
+          "k": "num",
+          "text": "3",
+          "float": false,
+          "type": "int"
+         },
+         "type": "int"
+        },
+        "type": "float"
+       },
+       "type": "float"
+      },
+      "type": "float"
+     },
+     "r": {
+      "k": "id",
+      "name": "b",
+      "entry": 3,
+      "type": "float"
+     },
+     "type": "float"
+    }
+   }
+  ],
+  "notes": [
+   "2 * 3 is an int used with a float in +, so inttofloat is inserted"
+  ],
+  "tac": [
+   {
+    "dst": "t1",
+    "op": "*",
+    "a": "2",
+    "b": "3",
+    "type": "int"
+   },
+   {
+    "dst": "t2",
+    "op": "inttofloat",
+    "a": "t1",
+    "type": "float"
+   },
+   {
+    "dst": "t3",
+    "op": "+",
+    "a": "id2",
+    "b": "t2",
+    "type": "float"
+   },
+   {
+    "dst": "t4",
+    "op": "minus",
+    "a": "t3",
+    "type": "float"
+   },
+   {
+    "dst": "t5",
+    "op": "*",
+    "a": "t4",
+    "b": "id3",
+    "type": "float"
+   },
+   {
+    "dst": "id1",
+    "op": "copy",
+    "a": "t5",
+    "type": "float"
+   }
+  ],
+  "opt": {
+   "code": [
+    {
+     "dst": "t1",
+     "op": "+",
+     "a": "id2",
+     "b": "6.0",
+     "type": "float"
+    },
+    {
+     "dst": "t2",
+     "op": "minus",
+     "a": "t1",
+     "type": "float"
+    },
+    {
+     "dst": "id1",
+     "op": "*",
+     "a": "t2",
+     "b": "id3",
+     "type": "float"
+    }
+   ],
+   "log": [
+    "t1 = 2 * 3 is computed now, at compile time: t1 is 6",
+    "t2 = inttofloat(6) is computed now, at compile time: t2 is 6.0",
+    "id1 = t5 only copies t5, so t5 is computed straight into id1"
+   ]
+  },
+  "prog": [
+   {
+    "op": "LDF",
+    "args": [
+     "R1",
+     "id2"
+    ],
+    "r": 1,
+    "src": "id2",
+    "text": "LDF R1, id2"
+   },
+   {
+    "op": "ADDF",
+    "args": [
+     "R1",
+     "R1",
+     "#6.0"
+    ],
+    "text": "ADDF R1, R1, #6.0"
+   },
+   {
+    "op": "NEGF",
+    "args": [
+     "R1",
+     "R1"
+    ],
+    "text": "NEGF R1, R1"
+   },
+   {
+    "op": "LDF",
+    "args": [
+     "R2",
+     "id3"
+    ],
+    "r": 2,
+    "src": "id3",
+    "text": "LDF R2, id3"
+   },
+   {
+    "op": "MULF",
+    "args": [
+     "R1",
+     "R1",
+     "R2"
+    ],
+    "text": "MULF R1, R1, R2"
+   },
+   {
+    "op": "STF",
+    "args": [
+     "id1",
+     "R1"
+    ],
+    "text": "STF id1, R1"
+   }
+  ],
+  "check": {
+   "ok": true
+  }
+ },
+ {
+  "decls": {},
+  "source": "k = 2.5 * 4",
+  "tokens": [
+   {
+    "lexeme": "k",
+    "token": "id",
+    "cat": "identifier",
+    "attr": 1,
+    "start": 0,
+    "end": 1,
+    "line": 1,
+    "col": 1
+   },
+   {
+    "lexeme": "=",
+    "token": "=",
+    "cat": "operator",
+    "attr": "",
+    "start": 2,
+    "end": 3,
+    "line": 1,
+    "col": 3
+   },
+   {
+    "lexeme": "2.5",
+    "token": "number",
+    "cat": "constant",
+    "attr": "2.5",
+    "start": 4,
+    "end": 7,
+    "line": 1,
+    "col": 5
+   },
+   {
+    "lexeme": "*",
+    "token": "*",
+    "cat": "operator",
+    "attr": "",
+    "start": 8,
+    "end": 9,
+    "line": 1,
+    "col": 9
+   },
+   {
+    "lexeme": "4",
+    "token": "number",
+    "cat": "constant",
+    "attr": "4",
+    "start": 10,
+    "end": 11,
+    "line": 1,
+    "col": 11
+   }
+  ],
+  "symtab": [
+   {
+    "name": "k",
+    "line": 1,
+    "uses": 1,
+    "type": "int"
+   }
+  ],
+  "trees": [
+   {
+    "k": "assign",
+    "target": {
+     "k": "id",
+     "name": "k",
+     "entry": 1
+    },
+    "e": {
+     "k": "bin",
+     "op": "*",
+     "l": {
+      "k": "num",
+      "text": "2.5",
+      "float": true
+     },
+     "r": {
+      "k": "num",
+      "text": "4",
+      "float": false
+     }
+    }
+   }
+  ],
+  "typed": [
+   {
+    "k": "assign",
+    "target": {
+     "k": "id",
+     "name": "k",
+     "entry": 1,
+     "type": "int"
+    },
+    "e": {
+     "k": "conv",
+     "to": "int",
+     "a": {
+      "k": "bin",
+      "op": "*",
+      "l": {
+       "k": "num",
+       "text": "2.5",
+       "float": true,
+       "type": "float"
+      },
+      "r": {
+       "k": "conv",
+       "to": "float",
+       "a": {
+        "k": "num",
+        "text": "4",
+        "float": false,
+        "type": "int"
+       },
+       "type": "float"
+      },
+      "type": "float"
+     },
+     "type": "int"
+    }
+   }
+  ],
+  "notes": [
+   "4 is an int used with a float in *, so inttofloat is inserted",
+   "k is an int, so the float value is truncated with floattoint (a possible loss of precision)"
+  ],
+  "tac": [
+   {
+    "dst": "t1",
+    "op": "inttofloat",
+    "a": "4",
+    "type": "float"
+   },
+   {
+    "dst": "t2",
+    "op": "*",
+    "a": "2.5",
+    "b": "t1",
+    "type": "float"
+   },
+   {
+    "dst": "t3",
+    "op": "floattoint",
+    "a": "t2",
+    "type": "int"
+   },
+   {
+    "dst": "id1",
+    "op": "copy",
+    "a": "t3",
+    "type": "int"
+   }
+  ],
+  "opt": {
+   "code": [
+    {
+     "dst": "id1",
+     "op": "copy",
+     "a": "10",
+     "type": "int"
+    }
+   ],
+   "log": [
+    "t1 = inttofloat(4) is computed now, at compile time: t1 is 4.0",
+    "t2 = 2.5 * 4.0 is computed now, at compile time: t2 is 10.0",
+    "t3 = floattoint(10.0) is computed now, at compile time: t3 is 10"
+   ]
+  },
+  "prog": [
+   {
+    "op": "LD",
+    "args": [
+     "R1",
+     "#10"
+    ],
+    "r": 1,
+    "src": "10",
+    "text": "LD R1, #10"
+   },
+   {
+    "op": "ST",
+    "args": [
+     "id1",
+     "R1"
+    ],
+    "text": "ST id1, R1"
+   }
+  ],
+  "check": {
+   "ok": true
+  }
+ }
+]
