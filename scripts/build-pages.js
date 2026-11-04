@@ -387,7 +387,13 @@ function verifiedPage(indexHtml) {
     .replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="${SITE}/verified/">`)
     .replace(/<meta property="og:title" content="[^"]*">/, '<meta property="og:title" content="Verified against the textbook | Drawtomata">')
     .replace(/<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="${SITE}/verified/">`)
-    .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>\n/, '')
+    .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, `<script type="application/ld+json">${JSON.stringify({
+      '@context': 'https://schema.org', '@type': 'WebPage', name: 'Verified against the textbook',
+      url: `${SITE}/verified/`,
+      description: 'Worked examples from Aho, Lam, Sethi and Ullman and from Linz, with the textbook answer next to what Drawtomata computes.',
+      isPartOf: { '@type': 'WebSite', name: 'Drawtomata', url: `${SITE}/` },
+      author: { '@type': 'Person', name: 'Suryansh Verma', url: 'https://github.com/SlazzInC0de' }
+    })}</script>`)
     .replace(/<script src="js\/vendor\/viz-standalone\.js"[^>]*><\/script>\n/, '')
     .replace(/(href|src)="(assets|css|js)\//g, '$1="../$2/');
   const areas = [...new Set(results.map((r) => r.area))];
