@@ -143,7 +143,7 @@ tests/golden.js  golden snapshots of every engine (tests/golden/*.json)
 
 ## Security and privacy
 
-Drawtomata runs entirely in your browser. There are no accounts, no backend and no analytics, and your diagrams are autosaved only to this browser's `localStorage`. The site ships with a strict Content Security Policy and security headers (`vercel.json`).
+Drawtomata runs entirely in your browser. There are no accounts and no backend: your inputs and diagrams never leave the browser and are autosaved only to its `localStorage`. The site counts page views with [Vercel Web Analytics](https://vercel.com/docs/analytics/privacy-policy), which uses no cookies and records only the page visited, the referrer, the country and the device type. The site ships with a strict Content Security Policy and security headers (`vercel.json`).
 
 Found a vulnerability? Please report it privately as described in [SECURITY.md](SECURITY.md).
 

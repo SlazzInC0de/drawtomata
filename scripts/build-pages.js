@@ -420,6 +420,10 @@ ${areas.map((a) => `<h2>${esc(a)}</h2>\n${results.filter((r) => r.area === a).ma
 </article>
 ${siteFooter('../', 'verified')}
 ${VERIFIED_SCRIPTS.map((f) => `<script src="../js/${f}.js"></script>`).join('\n')}
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
 `;

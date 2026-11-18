@@ -1,6 +1,6 @@
 # Drawtomata
 
-> Drawtomata is a free, browser-only tool for Theory of Computation and Compiler Design. Type a regular expression, grammar or NPDA, or draw a finite automaton, and it shows every conversion step: closure tables, subset tables, minimization tables, state elimination, derivations, parse trees and parsing tables. Every result is checked against its input for language equivalence before it is shown. No sign-up, no build step, nothing is sent to a server.
+> Drawtomata is a free, browser-only tool for Theory of Computation and Compiler Design. Type a regular expression, grammar or NPDA, or draw a finite automaton, and it shows every conversion step: closure tables, subset tables, minimization tables, state elimination, derivations, parse trees and parsing tables. Every result is checked against its input for language equivalence before it is shown. No sign-up, no build step, your inputs are never sent to a server (only anonymous, cookie-free page views are counted).
 
 Notation follows Peter Linz (An Introduction to Formal Languages and Automata) for automata and Aho, Lam, Sethi and Ullman (Compilers) for parsing and code generation. The empty string can be shown as λ or ε.
 
