@@ -74,7 +74,7 @@
     const re = d.empty ? '∅' : [FA.toRegex(src).regex, FA.toRegex(d.min).regex].sort((x, y) => x.length - y.length)[0];
     const yes = (b) => (b ? 'yes' : 'no');
     let html = main
-      ? `<div class="answer">${esc(ui.D(setOf(main)))}</div><p><span class="chip ok">✓ exact: checked by language equivalence with a DFA built from this description</span></p>`
+      ? `<div class="answer">${esc(ui.D(setOf(main)))}</div><p><span class="chip ok">✓ exact, checked by DFA equivalence</span></p>`
       : `<p>No description of the form “starts with / ends with / contains / count or length mod m / count or length compared to k / k-th symbol from the right”, alone or two joined by AND / OR, fits this automaton exactly. The regular expression below always does.</p>`;
     if (d.descriptions.length > 1) html += `<div class="sub">Also the same language</div><ul class="steps" style="font-family:inherit;font-size:14px">${d.descriptions.slice(1).map((x) => `<li class="mono">${esc(ui.D(setOf(x)))}</li>`).join('')}</ul>`;
     html += `<div class="sub">Regular expression</div><div class="answer">${esc(ui.D(re))}</div><div class="btnRow"><button type="button" class="ghost" data-copy="${esc(re)}">Copy RE</button><button type="button" class="ghost" data-op-go="re">Show the elimination steps</button></div>`;
