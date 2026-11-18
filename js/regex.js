@@ -8,8 +8,14 @@
     for (let i = 0; i < src.length; i++) {
       const c = src[i];
       if (/\s/.test(c)) continue;
-      if (c === '+' || c === '|' || c === '∪') out.push({ k: 'or', i });
-      else if (c === '*') out.push({ k: 'star', i });
+      if (c === '⁺' || (c === '^' && src[i + 1] === '+')) { out.push({ k: 'plus', i }); if (c === '^') i++; }
+      // a '+' with no operand after it ("a+", "(ab)+)", "a+*") is the one-or-more operator, not union
+      else if (c === '+' && !/^\s*($|[)+|∪*⁺∗⁎＊˟])/.test(src.slice(i + 1))) out.push({ k: 'or', i });
+      else if (c === '+') out.push({ k: 'plus', i });
+      else if (c === '|' || c === '∪') out.push({ k: 'or', i });
+      // star as pasted from PDFs and Word: ∗ ⁎ ＊ ˟ or a^*
+      else if (c === '*' || c === '∗' || c === '⁎' || c === '＊' || c === '˟') out.push({ k: 'star', i });
+      else if (c === '^' && src[i + 1] === '*') { out.push({ k: 'star', i }); i++; }
       else if (c === '(') out.push({ k: '(', i });
       else if (c === ')') out.push({ k: ')', i });
       else if (c === '.' || c === '·') out.push({ k: 'dot', i });
@@ -48,7 +54,11 @@
     }
     function star() {
       let a = atom();
-      while (peek() && peek().k === 'star') { p++; if (a.t !== 'star') a = { t: 'star', a }; }
+      while (peek() && (peek().k === 'star' || peek().k === 'plus')) {
+        const k = t[p++].k;
+        // r⁺ = r r*
+        if (k === 'star') { if (a.t !== 'star') a = { t: 'star', a }; } else if (a.t !== 'star') a = { t: 'cat', a, b: { t: 'star', a } };
+      }
       return a;
     }
     function atom() {

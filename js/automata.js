@@ -479,9 +479,127 @@
     throw new Error('Unknown condition.');
   }
 
+  // Describe the language of an automaton in words: try simple conditions (and pairs of them
+  // joined by AND / OR) whose acceptance pattern on every short string matches, then confirm
+  // each guess by language equivalence, so a description is shown only when it is exact.
+  const CMP_TEXT = { eq: '=', ge: '≥', le: '≤' };
+  function conditionText(c) {
+    const t = {
+      starts: () => `starts with ${c.w}`, ends: () => `ends with ${c.w}`, contains: () => `contains ${c.w}`,
+      countmod: () => `#${c.x}(w) ≡ ${c.r} (mod ${c.m})`, lenmod: () => `|w| ≡ ${c.r} (mod ${c.m})`,
+      countcmp: () => `#${c.x}(w) ${CMP_TEXT[c.cmp]} ${c.m}`, lencmp: () => `|w| ${CMP_TEXT[c.cmp]} ${c.m}`,
+      nthright: () => `${c.m}-th symbol from the right is ${c.x}`
+    }[c.type]();
+    return c.not ? (['starts', 'ends', 'contains'].includes(c.type) ? `does not ${t.replace(/^(\w+)s /, '$1 ')}` : `NOT (${t})`) : t;
+  }
+  function describe(fa, opts = {}) {
+    const A = alphabetOf(fa);
+    const m = minimize(fa).min;
+    const T = new Map(m.trans.map((t) => [t.from + '|' + t.sym, t.to]));
+    const run = (w) => { let q = m.start; for (const ch of w) { q = T.get(q + '|' + ch); if (q === undefined) return false; } return m.finals.has(q); };
+    // useful states: reachable and able to reach a final state
+    const fwd = new Set([m.start]), st = [m.start];
+    while (st.length) { const q = st.pop(); for (const t of m.trans) if (t.from === q && !fwd.has(t.to)) { fwd.add(t.to); st.push(t.to); } }
+    const back = new Set([...m.finals]), st2 = [...m.finals];
+    while (st2.length) { const q = st2.pop(); for (const t of m.trans) if (t.to === q && !back.has(t.from)) { back.add(t.from); st2.push(t.from); } }
+    const useful = new Set([...fwd].filter((q) => back.has(q)));
+    const color = new Map();
+    let cyclic = false;
+    const dfs = (q) => { color.set(q, 1); for (const t of m.trans) { if (t.from !== q || !useful.has(t.to)) continue; const c = color.get(t.to); if (c === 1) cyclic = true; else if (!c) dfs(t.to); } color.set(q, 2); };
+    if (useful.has(m.start)) dfs(m.start);
+    const finite = !cyclic;
+    // short strings, shortest first
+    let L = 0, count = 1, pow = 1;
+    while (A.length && L < 9) { pow *= A.length; if (count + pow > (opts.maxStrings || 800)) break; count += pow; L++; }
+    const words = [''];
+    for (let i = 0; i < words.length; i++) if (words[i].length < L) for (const a of A) words.push(words[i] + a);
+    const acc = words.map(run);
+    const sig = (pred) => { let b = 0n; words.forEach((w, i) => { if (pred(w)) b |= 1n << BigInt(i); }); return b; };
+    const target = acc.reduce((b, v, i) => (v ? b | (1n << BigInt(i)) : b), 0n);
+    const all = (1n << BigInt(words.length)) - 1n;
+    const accepted = words.filter((w, i) => acc[i]), rejected = words.filter((w, i) => !acc[i]);
+    const facts = { alphabet: A, states: m.n, acceptsEmpty: run(''), finite, empty: !useful.has(m.start), shortestAccepted: accepted.slice(0, 8), shortestRejected: rejected.slice(0, 8), checkedUpTo: L };
+    const out = { ...facts, min: m, descriptions: [] };
+    if (!useful.has(m.start)) { out.descriptions.push({ text: '∅ (no string is accepted)', kind: 'empty', score: 0 }); return out; }
+    if (finite) {
+      const list = [];
+      const walk = (q, w) => { if (list.length > 40) return; if (m.finals.has(q)) list.push(w); for (const a of A) { const r = T.get(q + '|' + a); if (r !== undefined && useful.has(r)) walk(r, w + a); } };
+      walk(m.start, '');
+      list.sort((x, y) => x.length - y.length || (x < y ? -1 : 1));
+      if (list.length <= 40) out.descriptions.push({ text: `{ ${list.map((w) => w || EPS).join(', ')} }`, kind: 'finite', score: list.length, list });
+    }
+    if (!A.length) return out;
+    // candidate conditions
+    const strs = [];
+    const maxW = A.length <= 2 ? 3 : A.length === 3 ? 2 : 1;
+    const grow = (w) => { if (w) strs.push(w); if (w.length < maxW) for (const a of A) grow(w + a); };
+    grow('');
+    const base = [];
+    for (const w of strs) for (const type of ['starts', 'ends', 'contains']) base.push({ type, w, score: 2 + w.length });
+    for (let mm = 2; mm <= 4; mm++) for (let r = 0; r < mm; r++) {
+      base.push({ type: 'lenmod', m: mm, r, score: 3 + mm });
+      if (A.length > 1) for (const x of A) base.push({ type: 'countmod', x, m: mm, r, score: 4 + mm });
+    }
+    for (let k = 0; k <= 4; k++) for (const cmp of ['eq', 'ge', 'le']) {
+      if (k === 0 && cmp !== 'eq') continue;
+      base.push({ type: 'lencmp', m: k, cmp, score: 1 + k });
+      if (A.length > 1 && k <= 3) for (const x of A) base.push({ type: 'countcmp', x, m: k, cmp, score: 3 + k });
+    }
+    if (A.length > 1) for (let k = 2; k <= 3; k++) for (const x of A) base.push({ type: 'nthright', m: k, x, score: 4 + k });
+    const pred = (c) => {
+      const f = {
+        starts: (s) => s.startsWith(c.w), ends: (s) => s.endsWith(c.w), contains: (s) => s.includes(c.w),
+        countmod: (s) => [...s].filter((y) => y === c.x).length % c.m === c.r, lenmod: (s) => s.length % c.m === c.r,
+        countcmp: (s) => { const k = [...s].filter((y) => y === c.x).length; return c.cmp === 'eq' ? k === c.m : c.cmp === 'ge' ? k >= c.m : k <= c.m; },
+        lencmp: (s) => (c.cmp === 'eq' ? s.length === c.m : c.cmp === 'ge' ? s.length >= c.m : s.length <= c.m),
+        nthright: (s) => s.length >= c.m && s[s.length - c.m] === c.x
+      }[c.type];
+      return f;
+    };
+    const singles = [];
+    const seen = new Set();
+    for (const c of base) {
+      const b = sig(pred(c));
+      for (const [cc, bb] of [[{ ...c, not: false }, b], [{ ...c, not: true, score: c.score + 2 }, all ^ b]]) {
+        if (bb === 0n || bb === all) continue;
+        const k = bb.toString(36);
+        if (seen.has(k) && bb !== target) continue;
+        seen.add(k);
+        singles.push({ c: cc, b: bb });
+      }
+    }
+    const dfaOf = (c) => { const d = buildCondition({ ...c, not: false }, A); return c.not ? complementDFA(d, A) : d; };
+    const exact = (d) => equivalent(m, d).eq;
+    const found = [];
+    const limit = opts.limit || 4;
+    if (target === all) { if (exact({ n: 1, start: 0, finals: new Set([0]), trans: A.map((a) => ({ from: 0, sym: a, to: 0 })), labels: ['q0'] })) found.push({ text: `${'{' + A.join(', ') + '}'}* (every string)`, kind: 'all', score: 0 }); }
+    for (const s1 of singles.filter((x) => x.b === target).sort((x, y) => x.c.score - y.c.score)) {
+      if (found.length >= limit) break;
+      if (exact(dfaOf(s1.c))) found.push({ text: conditionText(s1.c), conds: [s1.c], kind: 'one', score: s1.c.score });
+    }
+    if (!found.length) {
+      const pairs = [];
+      for (let i = 0; i < singles.length; i++) for (let j = i + 1; j < singles.length; j++) {
+        const a = singles[i], b = singles[j];
+        if ((a.b & b.b) === target) pairs.push({ op: 'and', a, b, score: a.c.score + b.c.score + 1 });
+        if ((a.b | b.b) === target) pairs.push({ op: 'or', a, b, score: a.c.score + b.c.score + 1 });
+      }
+      pairs.sort((x, y) => x.score - y.score);
+      for (const p of pairs.slice(0, 60)) {
+        if (found.length >= limit) break;
+        if (exact(product(dfaOf(p.a.c), dfaOf(p.b.c), p.op, A))) found.push({ text: `${conditionText(p.a.c)} ${p.op.toUpperCase()} ${conditionText(p.b.c)}`, conds: [p.a.c, p.b.c], op: p.op, kind: 'two', score: p.score });
+      }
+    }
+    // a negated condition adds nothing when a plain one already says the same thing
+    const plain1 = found.some((f) => f.kind === 'one' && !f.conds[0].not);
+    out.descriptions.push(...found.filter((f) => !(plain1 && f.conds && f.conds.some((c) => c.not))));
+    out.descriptions.sort((x, y) => x.score - y.score);
+    return out;
+  }
+
   DT.fa = {
     letterName, alphabetOf, delta, closure, move, hasEps, isDFA, isComplete, setStr, clone, sortNum,
     thompson, removeEps, subset, trimUnreachable, complete, deadStates, minimize, toRegex,
-    varNames, toRightLinear, toLeftLinear, reverse, accepts, equivalent, complementDFA, product, buildCondition
+    varNames, toRightLinear, toLeftLinear, reverse, accepts, equivalent, complementDFA, product, buildCondition, describe, conditionText
   };
 })(typeof window !== 'undefined' ? window.DT : globalThis.DT);

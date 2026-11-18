@@ -120,6 +120,7 @@ function collect() {
       learnLL: head(LN.llSteps(G, P.predictiveParse(G, t, toks))), learnLR: LN.lrSteps(GA, P.lrParse(GA, tables.lalr, toks))
     };
   }));
+  out.describe = REs.map((re) => attempt(() => { const { min, ...rest } = FA.describe(FA.thompson(RX.parse(re)).fa); return { re, ...rest }; }));
   out.precedence = attempt(() => {
     const G = P.parseGrammar('E -> E + E | E * E | ( E ) | id'), prec = P.parsePrecedence('%left +\n%left *');
     const GA = P.augment(G), ff = P.firstFollow(GA), table = P.lrTable(GA, P.lalrFromLr1(GA, P.lr1Collection(GA, ff)), 'lalr');

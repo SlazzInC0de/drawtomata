@@ -32,6 +32,7 @@ The tools sit in four workspaces: **Automata**, **Grammars & PDA**, **Parsing** 
 - FA → RE by state elimination (tries elimination orders and keeps the shortest result, or uses yours)
 - FA → right-linear and left-linear grammar
 - string tests
+- describe the language in words (starts with, ends with, contains, count or length mod m or compared to k, k-th symbol from the right, or two of these joined by AND / OR), confirmed by language equivalence, with the regular expression and facts such as finite or infinite and the shortest accepted and rejected strings
 
 The canvas has pan and zoom, undo/redo, autosave, auto-layout, and PNG / SVG / JSON export.
 
@@ -69,7 +70,7 @@ Notation follows Peter Linz, *An Introduction to Formal Languages and Automata*,
 
 | What | Example |
 | --- | --- |
-| Regular expression | `(a+b)*abb` with `+` union, `*` star, `λ`/`ε`/`@` empty string, `∅` empty set |
+| Regular expression | `(a+b)*abb` with `+` union, `*` star, `a+` or `a⁺` with nothing after the `+` for one or more (`aa*`), `λ`/`ε`/`@` empty string, `∅` empty set |
 | Grammar | `S -> aSb \| λ` one production per line; variables are capitals like `S` or `A1` |
 | Parsing grammar | `E -> E + T \| T`, `F -> ( E ) \| id`; words like `id`, `if`, `num` are single terminals |
 | Precedence | `%left + -` then `%left * /`, lowest precedence first |
@@ -139,7 +140,7 @@ tests/golden.js  golden snapshots of every engine (tests/golden/*.json)
 | 27 Oct 2026 | Syntax-directed translation: annotated parse trees, dependency graphs and evaluation order, S/L-attributed checks, syntax trees |
 | 29 Oct 2026 | Lexical analysis: transition diagrams, patterns to one DFA, lexer and symbol table, input buffering, Lex/Yacc files |
 | 30 Oct 2026 | Workspaces, first-visit examples, learning mode, limits for very large inputs |
-| 18 Nov 2026 | Handle pruning table, pointers in three-address code, array element width, target machine view with addressing modes |
+| 18 Nov 2026 | Handle pruning table, pointers in three-address code, array element width, target machine view with addressing modes, Describe L in Draw FA |
 
 ## Security and privacy
 

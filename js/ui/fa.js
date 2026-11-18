@@ -21,7 +21,7 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => (t.hidden = true), 3200);
   }
-  const OP_TITLES = { eps: 'Remove λ-moves', dfa: 'NFA → DFA', min: 'Minimize DFA', re: 'FA → regular expression', rlg: 'Right-linear grammar', llg: 'Left-linear grammar', test: 'Test strings' };
+  const OP_TITLES = { eps: 'Remove λ-moves', dfa: 'NFA → DFA', min: 'Minimize DFA', re: 'FA → regular expression', rlg: 'Right-linear grammar', llg: 'Left-linear grammar', test: 'Test strings', desc: 'Describe the language' };
   function openDrawer(title) { const wasHidden = $('#drawer').hidden; $('#drawer').hidden = false; if (wasHidden) requestAnimationFrame(() => editor.fit()); $('#drawerTitle').textContent = ui.D(title); $('#drawerBtn').setAttribute('aria-pressed', 'true'); editor.redraw(); }
   function closeDrawer() { $('#drawer').hidden = true; $('#drawerBtn').setAttribute('aria-pressed', 'false'); $$('.op[data-op]').forEach((b) => b.setAttribute('aria-pressed', 'false')); editor.redraw(); }
   $('#drawerClose').addEventListener('click', closeDrawer);
@@ -62,6 +62,31 @@
     toast('Your saved automaton could not be opened. A copy was kept in browser storage as dt-editor-backup.');
   }
 
+  // what the drawing accepts, in words, plus the facts that help guess it
+  function describeHTML(src) {
+    const big = FA.isDFA(src) ? src.n : FA.subset(src).fa.n;
+    if (big > STEP_MAX) throw new Error(stepLimit(big, 'The DFA'));
+    const d = FA.describe(src);
+    const S = `{${d.alphabet.join(', ')}}`;
+    const word = (w) => esc(ui.D(w || EPS));
+    const main = d.descriptions[0];
+    const setOf = (x) => (x.kind === 'one' || x.kind === 'two' ? `L = { w ∈ ${S}* : ${x.text} }` : `L = ${x.text}`);
+    const re = d.empty ? '∅' : [FA.toRegex(src).regex, FA.toRegex(d.min).regex].sort((x, y) => x.length - y.length)[0];
+    const yes = (b) => (b ? 'yes' : 'no');
+    let html = main
+      ? `<div class="answer">${esc(ui.D(setOf(main)))}</div><p><span class="chip ok">✓ exact: checked by language equivalence with a DFA built from this description</span></p>`
+      : `<p>No description of the form “starts with / ends with / contains / count or length mod m / count or length compared to k / k-th symbol from the right”, alone or two joined by AND / OR, fits this automaton exactly. The regular expression below always does.</p>`;
+    if (d.descriptions.length > 1) html += `<div class="sub">Also the same language</div><ul class="steps" style="font-family:inherit;font-size:14px">${d.descriptions.slice(1).map((x) => `<li class="mono">${esc(ui.D(setOf(x)))}</li>`).join('')}</ul>`;
+    html += `<div class="sub">Regular expression</div><div class="answer">${esc(ui.D(re))}</div><div class="btnRow"><button type="button" class="ghost" data-copy="${esc(re)}">Copy RE</button><button type="button" class="ghost" data-op-go="re">Show the elimination steps</button></div>`;
+    html += `<div class="sub">Facts</div>` + ui.table(['Property', 'Value'], [
+      ['Σ', esc(S)], ['States in the minimal DFA', String(d.states)], [`Accepts ${ui.eps}`, yes(d.acceptsEmpty)],
+      ['Language is', d.empty ? 'empty' : d.finite ? 'finite' : 'infinite'],
+      ['Shortest accepted', d.shortestAccepted.map(word).join(', ') || 'none'],
+      ['Shortest rejected', d.shortestRejected.map(word).join(', ') || `none up to length ${d.checkedUpTo}`]
+    ], 'mono');
+    return html;
+  }
+
   let lastOp = null;
   const elimOrder = () => store.get('elim') || '';
   const testList = () => store.get('fatest') || '';
@@ -88,7 +113,8 @@
         const order = splitList(elimOrder());
         html = `<form class="drawerForm" id="elimForm"><div class="field"><label class="lbl" for="elimOrder">Elimination order (optional)</label><input id="elimOrder" class="mono" placeholder="shortest result, or e.g. q1, q2" value="${esc(elimOrder())}" autocomplete="off"></div><button class="ghost" type="submit">Apply</button></form>` +
           regexHTML(src, FA.toRegex(src, order.length ? order : null));
-      } else if (op === 'rlg') html = rlgHTML(src);
+      } else if (op === 'desc') html = describeHTML(src);
+      else if (op === 'rlg') html = rlgHTML(src);
       else if (op === 'llg') html = llgHTML(src);
       else if (op === 'test') {
         html = `<form class="drawerForm" id="faTestForm"><div class="field"><label class="lbl" for="faTest">Strings, comma separated</label><input id="faTest" class="mono" placeholder="e.g. ab, aab, ${ui.eps}" value="${esc(ui.D(testList()))}" autocomplete="off"></div><button class="primary" type="submit">Run</button></form>` +
@@ -99,6 +125,7 @@
     ui.put($('#faOut'), html);
   }
   $$('.op[data-op]').forEach((b) => b.addEventListener('click', () => runOp(b.dataset.op)));
+  $('#faOut').addEventListener('click', (e) => { const b = e.target.closest('[data-op-go]'); if (b) runOp(b.dataset.opGo); });
   document.addEventListener('submit', (e) => {
     if (e.target.id === 'elimForm') { e.preventDefault(); store.set('elim', $('#elimOrder').value); runOp('re'); }
     if (e.target.id === 'faTestForm') { e.preventDefault(); store.set('fatest', $('#faTest').value); runOp('test'); }

@@ -46,7 +46,15 @@ test('known minimal sizes', () => {
 
 test('regex parser rejects bad input', () => {
   assert.throws(() => regex.parse('(a+b'));
-  assert.throws(() => regex.parse('a+'));
+  assert.throws(() => regex.parse('+a'));
+  assert.throws(() => regex.parse('a+('));
+  // a '+' with nothing after it is one-or-more: a+ = aa*, and a+b stays a union
+  assert.equal(regex.astStr(regex.parse('a+')), 'aa*');
+  assert.equal(regex.astStr(regex.parse('((ab)+)c')), 'ab(ab)*c');
+  assert.equal(regex.astStr(regex.parse('(ab)+c')), 'ab+c');
+  assert.equal(regex.astStr(regex.parse('a⁺b')), 'aa*b');
+  assert.equal(regex.astStr(regex.parse('a+b')), 'a+b');
+  for (const s of ['a∗', 'a⁎', 'a^*', 'a＊']) assert.equal(regex.astStr(regex.parse(s)), 'a*', s);
   assert.throws(() => regex.parse('a)'));
   assert.throws(() => regex.parse(''));
 });
@@ -166,6 +174,18 @@ const lrAll = (text) => {
   const c0 = P.lr0Collection(GA), c1 = P.lr1Collection(GA, ff), la = P.lalrFromLr1(GA, c1);
   return { G, GA, c0, c1, la, slr: P.lrTable(GA, c0, 'slr', ff), clr: P.lrTable(GA, c1, 'clr'), lalr: P.lrTable(GA, la, 'lalr') };
 };
+test('Describe L: guessed descriptions are exact', () => {
+  const FAx = ctx.DT.fa, RXx = ctx.DT.regex;
+  const cases = [['a(a)*', '|w| ≥ 1'], ['(a+b)*ab', 'ends with ab'], ['(0+1)*01(0+1)*', 'contains 01'], ['a*b*', 'does not contain ba'], ['a(a+b)*b', 'starts with a AND ends with b'], ['(b*ab*a)*b*', '#a(w) ≡ 0 (mod 2)']];
+  for (const [re, text] of cases) {
+    const d = FAx.describe(FAx.thompson(RXx.parse(re)).fa);
+    assert.equal(d.descriptions[0] && d.descriptions[0].text, text, re);
+  }
+  const fin = FAx.describe(FAx.thompson(RXx.parse('a+ab')).fa);
+  assert.ok(fin.finite && fin.descriptions[0].text === '{ a, ab }');
+  assert.ok(FAx.describe(FAx.thompson(RXx.parse('∅')).fa).empty);
+});
+
 test('LR state counts and conflicts match the textbook', () => {
   const e = lrAll('E -> E + T | T\nT -> T * F | F\nF -> ( E ) | id');
   assert.equal(e.c0.states.length, 12);

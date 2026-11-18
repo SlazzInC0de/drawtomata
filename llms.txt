@@ -7,7 +7,7 @@ Notation follows Peter Linz (An Introduction to Formal Languages and Automata) f
 ## Tools
 
 - [RE → FA](https://drawtomata.vercel.app/#re): Thompson construction to a λ-NFA, λ-closure method to an NFA, subset construction to a DFA, then DFA minimization with the mark (table-filling) procedure and the π-partition method
-- [Draw FA](https://drawtomata.vercel.app/#fa): draw any DFA, NFA or λ-NFA on a canvas; remove λ-moves, NFA → DFA, minimize, FA → RE by state elimination, FA → right-linear and left-linear grammar, string tests; PNG, SVG and JSON export
+- [Draw FA](https://drawtomata.vercel.app/#fa): draw any DFA, NFA or λ-NFA on a canvas; remove λ-moves, NFA → DFA, minimize, FA → RE by state elimination, FA → right-linear and left-linear grammar, string tests, describe the language in words (checked by equivalence); PNG, SVG and JSON export
 - [Language → DFA](https://drawtomata.vercel.app/#lang): build a DFA from a description such as starts with, ends with, contains, count or length mod m, k-th symbol from the right; conditions combine with AND / OR by product construction
 - [Grammar ⇄ FA](https://drawtomata.vercel.app/#rg): right-linear and left-linear regular grammars to NFA
 - [CFG & PDA](https://drawtomata.vercel.app/#cfg): leftmost and rightmost derivations, parse trees, bounded ambiguity search, strings of L(G) up to a length, CFG → NPDA (GNF or general method), NPDA simulator with instantaneous descriptions, NPDA → CFG, grammar simplification and Chomsky normal form
@@ -21,7 +21,7 @@ Notation follows Peter Linz (An Introduction to Formal Languages and Automata) f
 
 ## Input format
 
-- Regular expression: `(a+b)*abb` with `+` for union, `*` for star, `λ`, `ε` or `@` for the empty string, `∅` for the empty set
+- Regular expression: `(a+b)*abb` with `+` for union, `*` for star, `a+` or `a⁺` at the end of a group for one or more, `λ`, `ε` or `@` for the empty string, `∅` for the empty set
 - Grammar: one production per line, e.g. `S -> aSb | λ`; variables are capitals like `S` or `A1`
 - Parsing grammar: `E -> E + T | T`, `F -> ( E ) | id`; words like `id`, `if`, `num` are single terminals
 - NPDA: `δ(q0, a, z) = {(q0, az), (q1, λ)}` with the stack top written first

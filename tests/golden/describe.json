@@ -1,0 +1,620 @@
+[
+ {
+  "re": "(a+b)*abb",
+  "alphabet": [
+   "a",
+   "b"
+  ],
+  "states": 4,
+  "acceptsEmpty": false,
+  "finite": false,
+  "empty": false,
+  "shortestAccepted": [
+   "abb",
+   "aabb",
+   "babb",
+   "aaabb",
+   "ababb",
+   "baabb",
+   "bbabb",
+   "aaaabb"
+  ],
+  "shortestRejected": [
+   "",
+   "a",
+   "b",
+   "aa",
+   "ab",
+   "ba",
+   "bb",
+   "aaa"
+  ],
+  "checkedUpTo": 8,
+  "descriptions": [
+   {
+    "text": "ends with abb",
+    "conds": [
+     {
+      "type": "ends",
+      "w": "abb",
+      "score": 5,
+      "not": false
+     }
+    ],
+    "kind": "one",
+    "score": 5
+   }
+  ]
+ },
+ {
+  "re": "(0+1)*01",
+  "alphabet": [
+   "0",
+   "1"
+  ],
+  "states": 3,
+  "acceptsEmpty": false,
+  "finite": false,
+  "empty": false,
+  "shortestAccepted": [
+   "01",
+   "001",
+   "101",
+   "0001",
+   "0101",
+   "1001",
+   "1101",
+   "00001"
+  ],
+  "shortestRejected": [
+   "",
+   "0",
+   "1",
+   "00",
+   "10",
+   "11",
+   "000",
+   "010"
+  ],
+  "checkedUpTo": 8,
+  "descriptions": [
+   {
+    "text": "ends with 01",
+    "conds": [
+     {
+      "type": "ends",
+      "w": "01",
+      "score": 4,
+      "not": false
+     }
+    ],
+    "kind": "one",
+    "score": 4
+   }
+  ]
+ },
+ {
+  "re": "a*b*",
+  "alphabet": [
+   "a",
+   "b"
+  ],
+  "states": 3,
+  "acceptsEmpty": true,
+  "finite": false,
+  "empty": false,
+  "shortestAccepted": [
+   "",
+   "a",
+   "b",
+   "aa",
+   "ab",
+   "bb",
+   "aaa",
+   "aab"
+  ],
+  "shortestRejected": [
+   "ba",
+   "aba",
+   "baa",
+   "bab",
+   "bba",
+   "aaba",
+   "abaa",
+   "abab"
+  ],
+  "checkedUpTo": 8,
+  "descriptions": [
+   {
+    "text": "does not contain ba",
+    "conds": [
+     {
+      "type": "contains",
+      "w": "ba",
+      "score": 6,
+      "not": true
+     }
+    ],
+    "kind": "one",
+    "score": 6
+   }
+  ]
+ },
+ {
+  "re": "(ab+ba)*",
+  "alphabet": [
+   "a",
+   "b"
+  ],
+  "states": 4,
+  "acceptsEmpty": true,
+  "finite": false,
+  "empty": false,
+  "shortestAccepted": [
+   "",
+   "ab",
+   "ba",
+   "abab",
+   "abba",
+   "baab",
+   "baba",
+   "ababab"
+  ],
+  "shortestRejected": [
+   "a",
+   "b",
+   "aa",
+   "bb",
+   "aaa",
+   "aab",
+   "aba",
+   "abb"
+  ],
+  "checkedUpTo": 8,
+  "descriptions": []
+ },
+ {
+  "re": "a(a+b)*b",
+  "alphabet": [
+   "a",
+   "b"
+  ],
+  "states": 4,
+  "acceptsEmpty": false,
+  "finite": false,
+  "empty": false,
+  "shortestAccepted": [
+   "ab",
+   "aab",
+   "abb",
+   "aaab",
+   "aabb",
+   "abab",
+   "abbb",
+   "aaaab"
+  ],
+  "shortestRejected": [
+   "",
+   "a",
+   "b",
+   "aa",
+   "ba",
+   "bb",
+   "aaa",
+   "aba"
+  ],
+  "checkedUpTo": 8,
+  "descriptions": [
+   {
+    "text": "starts with a AND ends with b",
+    "conds": [
+     {
+      "type": "starts",
+      "w": "a",
+      "score": 3,
+      "not": false
+     },
+     {
+      "type": "ends",
+      "w": "b",
+      "score": 3,
+      "not": false
+     }
+    ],
+    "op": "and",
+    "kind": "two",
+    "score": 7
+   },
+   {
+    "text": "starts with a AND does not end with a",
+    "conds": [
+     {
+      "type": "starts",
+      "w": "a",
+      "score": 3,
+      "not": false
+     },
+     {
+      "type": "ends",
+      "w": "a",
+      "score": 5,
+      "not": true
+     }
+    ],
+    "op": "and",
+    "kind": "two",
+    "score": 9
+   },
+   {
+    "text": "does not start with b AND ends with b",
+    "conds": [
+     {
+      "type": "starts",
+      "w": "b",
+      "score": 5,
+      "not": true
+     },
+     {
+      "type": "ends",
+      "w": "b",
+      "score": 3,
+      "not": false
+     }
+    ],
+    "op": "and",
+    "kind": "two",
+    "score": 9
+   }
+  ]
+ },
+ {
+  "re": "λ",
+  "alphabet": [],
+  "states": 1,
+  "acceptsEmpty": true,
+  "finite": true,
+  "empty": false,
+  "shortestAccepted": [
+   ""
+  ],
+  "shortestRejected": [],
+  "checkedUpTo": 0,
+  "descriptions": [
+   {
+    "text": "{ λ }",
+    "kind": "finite",
+    "score": 1,
+    "list": [
+     ""
+    ]
+   }
+  ]
+ },
+ {
+  "re": "∅",
+  "alphabet": [],
+  "states": 1,
+  "acceptsEmpty": false,
+  "finite": true,
+  "empty": true,
+  "shortestAccepted": [],
+  "shortestRejected": [
+   ""
+  ],
+  "checkedUpTo": 0,
+  "descriptions": [
+   {
+    "text": "∅ (no string is accepted)",
+    "kind": "empty",
+    "score": 0
+   }
+  ]
+ },
+ {
+  "re": "(a+λ)(b+λ)",
+  "alphabet": [
+   "a",
+   "b"
+  ],
+  "states": 4,
+  "acceptsEmpty": true,
+  "finite": true,
+  "empty": false,
+  "shortestAccepted": [
+   "",
+   "a",
+   "b",
+   "ab"
+  ],
+  "shortestRejected": [
+   "aa",
+   "ba",
+   "bb",
+   "aaa",
+   "aab",
+   "aba",
+   "abb",
+   "baa"
+  ],
+  "checkedUpTo": 8,
+  "descriptions": [
+   {
+    "text": "{ λ, a, b, ab }",
+    "kind": "finite",
+    "score": 4,
+    "list": [
+     "",
+     "a",
+     "b",
+     "ab"
+    ]
+   }
+  ]
+ },
+ {
+  "re": "((aab)*ab)*",
+  "alphabet": [
+   "a",
+   "b"
+  ],
+  "states": 5,
+  "acceptsEmpty": true,
+  "finite": false,
+  "empty": false,
+  "shortestAccepted": [
+   "",
+   "ab",
+   "abab",
+   "aabab",
+   "ababab",
+   "aababab",
+   "abaabab",
+   "aabaabab"
+  ],
+  "shortestRejected": [
+   "a",
+   "b",
+   "aa",
+   "ba",
+   "bb",
+   "aaa",
+   "aab",
+   "aba"
+  ],
+  "checkedUpTo": 8,
+  "descriptions": []
+ },
+ {
+  "re": "a*+b*",
+  "alphabet": [
+   "a",
+   "b"
+  ],
+  "states": 4,
+  "acceptsEmpty": true,
+  "finite": false,
+  "empty": false,
+  "shortestAccepted": [
+   "",
+   "a",
+   "b",
+   "aa",
+   "bb",
+   "aaa",
+   "bbb",
+   "aaaa"
+  ],
+  "shortestRejected": [
+   "ab",
+   "ba",
+   "aab",
+   "aba",
+   "abb",
+   "baa",
+   "bab",
+   "bba"
+  ],
+  "checkedUpTo": 8,
+  "descriptions": [
+   {
+    "text": "does not contain a OR does not contain b",
+    "conds": [
+     {
+      "type": "contains",
+      "w": "a",
+      "score": 5,
+      "not": true
+     },
+     {
+      "type": "contains",
+      "w": "b",
+      "score": 5,
+      "not": true
+     }
+    ],
+    "op": "or",
+    "kind": "two",
+    "score": 11
+   },
+   {
+    "text": "does not contain ab AND does not contain ba",
+    "conds": [
+     {
+      "type": "contains",
+      "w": "ab",
+      "score": 6,
+      "not": true
+     },
+     {
+      "type": "contains",
+      "w": "ba",
+      "score": 6,
+      "not": true
+     }
+    ],
+    "op": "and",
+    "kind": "two",
+    "score": 13
+   }
+  ]
+ },
+ {
+  "re": "(a*b*)*",
+  "alphabet": [
+   "a",
+   "b"
+  ],
+  "states": 1,
+  "acceptsEmpty": true,
+  "finite": false,
+  "empty": false,
+  "shortestAccepted": [
+   "",
+   "a",
+   "b",
+   "aa",
+   "ab",
+   "ba",
+   "bb",
+   "aaa"
+  ],
+  "shortestRejected": [],
+  "checkedUpTo": 8,
+  "descriptions": [
+   {
+    "text": "{a, b}* (every string)",
+    "kind": "all",
+    "score": 0
+   }
+  ]
+ },
+ {
+  "re": "ab*(c+λ)",
+  "alphabet": [
+   "a",
+   "b",
+   "c"
+  ],
+  "states": 4,
+  "acceptsEmpty": false,
+  "finite": false,
+  "empty": false,
+  "shortestAccepted": [
+   "a",
+   "ab",
+   "ac",
+   "abb",
+   "abc",
+   "abbb",
+   "abbc",
+   "abbbb"
+  ],
+  "shortestRejected": [
+   "",
+   "b",
+   "c",
+   "aa",
+   "ba",
+   "bb",
+   "bc",
+   "ca"
+  ],
+  "checkedUpTo": 5,
+  "descriptions": []
+ },
+ {
+  "re": "(a+b)*a(a+b)",
+  "alphabet": [
+   "a",
+   "b"
+  ],
+  "states": 4,
+  "acceptsEmpty": false,
+  "finite": false,
+  "empty": false,
+  "shortestAccepted": [
+   "aa",
+   "ab",
+   "aaa",
+   "aab",
+   "baa",
+   "bab",
+   "aaaa",
+   "aaab"
+  ],
+  "shortestRejected": [
+   "",
+   "a",
+   "b",
+   "ba",
+   "bb",
+   "aba",
+   "abb",
+   "bba"
+  ],
+  "checkedUpTo": 8,
+  "descriptions": [
+   {
+    "text": "2-th symbol from the right is a",
+    "conds": [
+     {
+      "type": "nthright",
+      "m": 2,
+      "x": "a",
+      "score": 6,
+      "not": false
+     }
+    ],
+    "kind": "one",
+    "score": 6
+   }
+  ]
+ },
+ {
+  "re": "(1+01)*(0+λ)",
+  "alphabet": [
+   "0",
+   "1"
+  ],
+  "states": 3,
+  "acceptsEmpty": true,
+  "finite": false,
+  "empty": false,
+  "shortestAccepted": [
+   "",
+   "0",
+   "1",
+   "01",
+   "10",
+   "11",
+   "010",
+   "011"
+  ],
+  "shortestRejected": [
+   "00",
+   "000",
+   "001",
+   "100",
+   "0000",
+   "0001",
+   "0010",
+   "0011"
+  ],
+  "checkedUpTo": 8,
+  "descriptions": [
+   {
+    "text": "does not contain 00",
+    "conds": [
+     {
+      "type": "contains",
+      "w": "00",
+      "score": 6,
+      "not": true
+     }
+    ],
+    "kind": "one",
+    "score": 6
+   }
+  ]
+ }
+]
