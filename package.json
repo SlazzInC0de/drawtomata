@@ -8,5 +8,8 @@
     "start": "python3 -m http.server 8000"
   },
   "author": "Suryansh Verma",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
 }
