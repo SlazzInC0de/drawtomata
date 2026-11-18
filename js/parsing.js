@@ -582,6 +582,9 @@
       const p = GA.prods[e.v];
       const n = p.rhs.length;
       const handle = syms.slice(syms.length - n);
+      // the right-sentential form being reduced (Aho 4.5.2): stack symbols, then the unread input
+      row.form = [...syms, ...input.slice(ip, -1)];
+      row.at = syms.length - n; row.lhs = p.lhs;
       stack.splice(stack.length - n, n); syms.splice(syms.length - n, n);
       const g = table.go[stack[stack.length - 1]].get(p.lhs);
       if (g === undefined) { row.action = `error: no GOTO for ${p.lhs}`; error = row.action; break; }

@@ -181,6 +181,14 @@ test('LR state counts and conflicts match the textbook', () => {
   assert.ok(P.checkRecognizer(l.G, (w) => P.lrParse(l.GA, l.lalr, w).accepted).ok);
 });
 
+test('handle pruning: the right-sentential forms of Aho fig. 4.25', () => {
+  const e = lrAll('E -> E + T | T\nT -> T * F | F\nF -> ( E ) | id');
+  const t = P.lrParse(e.GA, e.slr, P.tokenizeInput('id*id', e.G));
+  const red = t.rows.filter((x) => x.form);
+  assert.equal(red.map((x) => x.form.join(' ')).join(' | '), 'id * id | F * id | T * id | T * F | T');
+  for (const x of red) assert.equal(x.form.slice(x.at, x.at + (x.handle === 'ε' ? 0 : x.handle.split(' ').length)).join(' '), x.handle === 'ε' ? '' : x.handle);
+});
+
 test('precedence declarations resolve the ambiguous expression grammar', () => {
   const a = lrAll('E -> E + E | E * E | ( E ) | id');
   assert.equal(a.slr.conflicts.length, 4);
@@ -331,6 +339,26 @@ test('code generator output runs like the three-address code', () => {
       assert.equal(g.total, g.code.reduce((s, m) => s + CG.mCost(m), 0));
     }
   }
+});
+
+test('pointers and array element width (Aho 8.2)', () => {
+  const p = CG.parseProgram('x = y - z\nb = a[i]\na[j] = c\nx = *p\n*p = y\nif x < y goto L\nL:');
+  assert.deepEqual(plain(p.ins.map((x) => CG.insStr(x)).slice(3, 5)), ['x = *p', '*p = y']);
+  const naive = CG.naiveCode(p.ins, 8).map(CG.mStr);
+  assert.deepEqual(plain(naive.slice(4, 8)), ['LD R1, i', 'MUL R1, R1, #8', 'LD R0, a(R1)', 'ST b, R0']);
+  assert.ok(naive.includes('LD R0, 0(R1)') && naive.includes('ST 0(R1), R0'));
+  for (const w of [1, 4, 8]) {
+    assert.ok(CG.checkMachine(p.ins, CG.naiveCode(p.ins, w)).ok, `naive, width ${w}`);
+    for (const n of [2, 3]) assert.ok(CG.checkMachine(p.ins, CG.generate(p, n, w).code, 40, CG.observedOf(p)).ok, `${n} registers, width ${w}`);
+  }
+  // a store through a pointer kills every earlier load, a load through one survives other loads
+  const q = CG.parseProgram('x = *p\ny = *p\nu = a[i]\n*q = x\nz = *p\nv = a[i]');
+  const d = CG.blockDAG(q.ins);
+  assert.equal(d.steps[1].kind, 'cse');
+  assert.equal(d.steps[4].kind, 'new');
+  assert.equal(d.steps[5].kind, 'new');
+  const o = CG.optimize(q);
+  assert.ok(CG.equivalent(q.ins, o.ins, { names: CG.observedOf(q) }).ok);
 });
 
 test('peephole keeps the results and lowers the cost', () => {

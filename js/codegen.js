@@ -115,7 +115,13 @@
         } else {
           const eq = toks.indexOf('=');
           if (eq < 1) throw new Error('Expected an assignment "x = …", "goto L" or "if … goto L".');
-          const lhs = toks.slice(0, eq), rhs = fullExpr(toks.slice(eq + 1));
+          const lhs = toks.slice(0, eq), rt = toks.slice(eq + 1);
+          const isName = (t) => /^[A-Za-z_]/.test(t || '') && !KEYWORDS.has(t.toLowerCase());
+          // pointer forms of Aho 6.2.1 / 8.2: x = *p and *p = y
+          if (lhs.length === 1 && isName(lhs[0]) && rt.length === 2 && rt[0] === '*' && isName(rt[1])) { emit({ k: 'deref', dst: lhs[0], a: rt[1] }); }
+          else if (lhs.length === 2 && lhs[0] === '*' && isName(lhs[1])) { const a = operand(fullExpr(rt)); emit({ k: 'pstore', p: lhs[1], a }); }
+          else {
+          const rhs = fullExpr(rt);
           if (lhs.length === 1 && /^[A-Za-z_]/.test(lhs[0]) && !KEYWORDS.has(lhs[0].toLowerCase())) {
             if (simple(rhs)) emitInto(rhs, lhs[0]);
             else { const t = operand(rhs); emit({ k: 'copy', dst: lhs[0], a: t }); }
@@ -124,6 +130,7 @@
             const a = operand(rhs);
             emit({ k: 'store', arr: lhs[0], idx, a });
           } else throw new Error(`Cannot assign to "${lhs.join(' ')}".`);
+          }
         }
       } catch (e) { throw new Error(`Line "${raw.trim()}": ${e.message}`); }
       for (const L of pending) labelAt.set(L, startIdx);
@@ -149,11 +156,12 @@
   }
 
   // ---------- printing ----------
-  const defOf = (x) => (x.k === 'bin' || x.k === 'un' || x.k === 'copy' || x.k === 'load' ? x.dst : null);
+  const defOf = (x) => (x.k === 'bin' || x.k === 'un' || x.k === 'copy' || x.k === 'load' || x.k === 'deref' ? x.dst : null);
   function usesOf(x) {
     const u = [];
     const add = (v) => { if (v != null && !isNum(v) && !u.includes(v)) u.push(v); };
-    if (x.k === 'bin') { add(x.a); add(x.b); } else if (x.k === 'un' || x.k === 'copy') add(x.a);
+    if (x.k === 'bin') { add(x.a); add(x.b); } else if (x.k === 'un' || x.k === 'copy' || x.k === 'deref') add(x.a);
+    else if (x.k === 'pstore') { add(x.p); add(x.a); }
     else if (x.k === 'load') add(x.idx); else if (x.k === 'store') { add(x.idx); add(x.a); } else if (x.k === 'if') { add(x.a); add(x.b); }
     return u;
   }
@@ -165,6 +173,8 @@
       case 'copy': return `${x.dst} = ${x.a}`;
       case 'load': return `${x.dst} = ${x.arr}[${x.idx}]`;
       case 'store': return `${x.arr}[${x.idx}] = ${x.a}`;
+      case 'deref': return `${x.dst} = *${x.a}`;
+      case 'pstore': return `*${x.p} = ${x.a}`;
       case 'if': return `if ${condStr(x)} goto ${T(x)}`;
       case 'goto': return `goto ${T(x)}`;
       case 'phi': return `${x.dst} = φ(${x.args.map((a) => a.name).join(', ')})`;
@@ -203,6 +213,8 @@
       case 'copy': M.env.set(x.dst, M.val(x.a)); break;
       case 'load': M.env.set(x.dst, M.aget(x.arr, M.val(x.idx))); break;
       case 'store': M.aset(x.arr, M.val(x.idx), M.val(x.a)); break;
+      case 'deref': M.env.set(x.dst, M.aget('*', M.val(x.a))); break;
+      case 'pstore': M.aset('*', M.val(x.p), M.val(x.a)); break;
       case 'if': return arith(x.rel, M.val(x.a), M.val(x.b)) ? 'jump' : 'next';
       case 'goto': return 'jump';
     }
@@ -445,10 +457,23 @@
         const r2 = interior('=[]', [arr, i2], { arr: x.arr });
         attach(x.dst, r2.id); S.node = r2.id;
         S.note = r2.reused ? `node ${r2.id} already loads ${x.arr}[${x.idx}] and ${x.arr} has not been written since: common subexpression` : `new node ${r2.id}: =[](${arr}, ${i2})`; S.kind = r2.reused ? 'cse' : 'new';
+      } else if (x.k === 'deref') {
+        const p = get(x.a);
+        const r2 = interior('=*', [p]);
+        attach(x.dst, r2.id); S.node = r2.id;
+        S.note = r2.reused ? `node ${r2.id} already loads *${x.a} and nothing has been stored through a pointer or into an array since: common subexpression` : `new node ${r2.id}: =*(${p})`; S.kind = r2.reused ? 'cse' : 'new';
+      } else if (x.k === 'pstore') {
+        const p = get(x.p), a = get(x.a);
+        // p may point anywhere, so every earlier load from memory is killed
+        let killed = 0;
+        for (const o of nodes) if (o.kind === 'op' && (o.op === '=[]' || o.op === '=*') && !o.killed) { o.killed = true; killed++; }
+        const id = mkNode({ kind: 'op', op: '*=', kids: [p, a], store: true });
+        S.node = id; S.kind = 'new';
+        S.note = `new node ${id}: *=(${p}, ${a})${killed ? `; p could point anywhere, so it kills ${killed} earlier load${killed > 1 ? 's' : ''}, which can no longer be reused` : ''}`;
       } else if (x.k === 'store') {
         const arr = get(x.arr), i2 = get(x.idx), a = get(x.a);
         let killed = 0;
-        for (const o of nodes) if (o.kind === 'op' && o.op === '=[]' && o.arr === x.arr && !o.killed) { o.killed = true; killed++; }
+        for (const o of nodes) if (o.kind === 'op' && ((o.op === '=[]' && o.arr === x.arr) || o.op === '=*') && !o.killed) { o.killed = true; killed++; }
         const id = mkNode({ kind: 'op', op: '[]=', kids: [arr, i2, a], arr: x.arr, store: true });
         S.node = id; S.kind = 'new';
         S.note = `new node ${id}: []=(${arr}, ${i2}, ${a})${killed ? `; it kills ${killed} earlier load${killed > 1 ? 's' : ''} from ${x.arr}, which can no longer be reused` : ''}`;
@@ -500,7 +525,8 @@
     };
     order.forEach((o, k) => {
       if (o.store) {
-        out.push({ k: 'store', arr: o.arr, idx: nameOf(o.kids[1]), a: nameOf(o.kids[2]) });
+        if (o.op === '*=') out.push({ k: 'pstore', p: nameOf(o.kids[0]), a: nameOf(o.kids[1]) });
+        else out.push({ k: 'store', arr: o.arr, idx: nameOf(o.kids[1]), a: nameOf(o.kids[2]) });
         return;
       }
       const live = liveIds(o);
@@ -510,6 +536,7 @@
       write(X, k + 1);
       let x;
       if (o.op === '=[]') x = { k: 'load', dst: X, arr: o.arr, idx: args[1] };
+      else if (o.op === '=*') x = { k: 'deref', dst: X, a: args[0] };
       else if (o.op === 'minus' || o.op === 'not') x = { k: 'un', dst: X, op: o.op, a: args[0] };
       else x = { k: 'bin', dst: X, op: o.op, a: args[0], b: args[1] };
       out.push(x);
@@ -574,6 +601,8 @@
         case 'copy': return ['=', x.a, '', x.dst];
         case 'load': return ['=[]', x.arr, x.idx, x.dst];
         case 'store': return ['[]=', x.a, x.idx, x.arr];
+        case 'deref': return ['=*', x.a, '', x.dst];
+        case 'pstore': return ['*=', x.a, '', x.p];
         case 'if': return x.rel === '!=' && x.b === '0' ? ['if', x.a, '', T(x)] : ['if ' + x.rel, x.a, x.b, T(x)];
         case 'goto': return ['goto', '', '', T(x)];
       }
@@ -597,6 +626,8 @@
         case 'copy': if (asRef(x.dst) && ref.has(x.a)) ref.set(x.dst, ref.get(x.a)); else push(['=', x.dst, arg(x.a)]); break;
         case 'load': result(push(['=[]', x.arr, arg(x.idx)])); break;
         case 'store': { const k = push(['[]=', x.arr, arg(x.idx)]); push(['=', `(${k})`, arg(x.a)]); break; }
+        case 'deref': result(push(['=*', arg(x.a), ''])); break;
+        case 'pstore': push(['*=', arg(x.p), arg(x.a)]); break;
         case 'if': { const k = push([x.rel === '!=' && x.b === '0' ? 'if' : 'if ' + x.rel, arg(x.a), x.rel === '!=' && x.b === '0' ? '' : arg(x.b), null]); pending.push([k, x.ti]); break; }
         case 'goto': { const k = push(['goto', '', '', null]); pending.push([k, x.ti]); break; }
       }
@@ -667,6 +698,7 @@
           if ('a' in y && y.a != null) y.a = top(y.a);
           if ('b' in y && y.b != null) y.b = top(y.b);
           if ('idx' in y) y.idx = top(y.idx);
+          if ('p' in y) y.p = top(y.p);
           const d = defOf(x);
           if (d) { y.dst = fresh(d); if (rename.has(d)) pushed.push(d); }
           return y;
@@ -725,11 +757,13 @@
   }
 
   // ---------- target machine (Aho 8.2) ----------
-  // LD R, x | LD R, #c | LD R, a(Ri) | ST x, R | ST a(Ri), R | OP Rd, Rs, Rt | NEG Rd, Rs
-  // BR L | Bcc R, L | INC x. Cost = 1 + one per operand that is a memory address, a constant or a label.
+  // LD R, x | LD R, #c | LD R, a(Ri) | LD R, 0(Ri) | ST x, R | ST a(Ri), R | ST 0(Ri), R
+  // OP Rd, Rs, Rt | OP Rd, Rs, #c | NEG Rd, Rs | BR L | Bcc R, L | INC x.
+  // Cost = 1 + one per operand that is a memory address, a constant, an indexed address or a label.
+  // a(Ri) with element width w > 1 means byte offset Ri, so it reaches element Ri / w.
   const OPN = { '+': 'ADD', '-': 'SUB', '*': 'MUL', '/': 'DIV', '%': 'MOD', '<': 'LT', '<=': 'LE', '>': 'GT', '>=': 'GE', '==': 'EQ', '!=': 'NE' };
   const BR = { '<': 'BLTZ', '<=': 'BLEZ', '>': 'BGTZ', '>=': 'BGEZ', '==': 'BEQZ', '!=': 'BNEZ' };
-  const opnd = (o) => (o.kind === 'reg' ? 'R' + o.r : o.kind === 'imm' ? '#' + o.v : o.kind === 'idx' ? `${o.arr}(R${o.r})` : o.name);
+  const opnd = (o) => (o.kind === 'reg' ? 'R' + o.r : o.kind === 'imm' ? '#' + o.v : o.kind === 'idx' ? `${o.arr}(R${o.r})` : o.kind === 'ind' ? `0(R${o.r})` : o.name);
   function mStr(m) {
     switch (m.op) {
       case 'LD': return `LD R${m.d}, ${opnd(m.src)}`;
@@ -740,6 +774,7 @@
       case 'LABEL': return `${m.L}:`;
     }
     if (m.L) return `${m.op} R${m.s}, ${m.L}`;
+    if (m.c !== undefined) return `${m.op} R${m.d}, R${m.s}, #${m.c}`;
     return `${m.op} R${m.d}, R${m.s}, R${m.t}`;
   }
   function mCost(m) {
@@ -751,7 +786,7 @@
       case 'INC': return 2;
       case 'NEG': return 1;
     }
-    return m.L ? 2 : 1;
+    return m.L || m.c !== undefined ? 2 : 1;
   }
   function runMachine(code, seed, limit = 40000) {
     const M = machine(seed);
@@ -759,7 +794,8 @@
     const labels = new Map();
     code.forEach((m, i) => { if (m.op === 'LABEL') labels.set(m.L, i); });
     const rv = (r) => (R[r] === undefined ? 0 : R[r]);
-    const src = (o) => (o.kind === 'imm' ? +o.v : o.kind === 'reg' ? rv(o.r) : o.kind === 'idx' ? M.aget(o.arr, rv(o.r)) : M.val(o.name));
+    const cell = (o) => (o.kind === 'ind' ? ['*', rv(o.r)] : [o.arr, rv(o.r) / (o.w || 1)]);
+    const src = (o) => (o.kind === 'imm' ? +o.v : o.kind === 'reg' ? rv(o.r) : o.kind === 'idx' || o.kind === 'ind' ? M.aget(...cell(o)) : M.val(o.name));
     let pc = 0, n = 0;
     while (pc < code.length) {
       if (++n > limit) return { M, timeout: true };
@@ -768,7 +804,7 @@
       switch (m.op) {
         case 'LABEL': break;
         case 'LD': R[m.d] = src(m.src); break;
-        case 'ST': if (m.dst.kind === 'idx') M.aset(m.dst.arr, rv(m.dst.r), rv(m.s)); else M.env.set(m.dst.name, rv(m.s)); break;
+        case 'ST': if (m.dst.kind === 'idx' || m.dst.kind === 'ind') M.aset(...cell(m.dst), rv(m.s)); else M.env.set(m.dst.name, rv(m.s)); break;
         case 'NEG': R[m.d] = -rv(m.s); break;
         case 'INC': M.env.set(m.name, M.val(m.name) + 1); break;
         case 'BR': next = labels.has(m.L) ? labels.get(m.L) : code.length; break;
@@ -779,7 +815,7 @@
             if (t) next = labels.has(m.L) ? labels.get(m.L) : code.length;
           } else {
             const op = Object.keys(OPN).find((k) => OPN[k] === m.op);
-            R[m.d] = arith(op, rv(m.s), rv(m.t));
+            R[m.d] = arith(op, rv(m.s), m.c !== undefined ? +m.c : rv(m.t));
           }
       }
       pc = next;
@@ -799,8 +835,9 @@
   }
 
   // Aho 8.6: code generation with register and address descriptors and getReg
-  function generate(prog, nRegs = 3) {
+  function generate(prog, nRegs = 3, width = 1) {
     nRegs = Math.max(2, Math.min(8, nRegs | 0 || 3));
+    width = Math.max(1, width | 0 || 1);
     const bb = basicBlocks(prog.ins);
     const exitLive = exitLiveOf(prog);
     const lv = liveness(bb, exitLive);
@@ -850,6 +887,14 @@
           regs[r].add(kv); A(kv).add('R' + r);
           return r;
         };
+        // with elements of width w the index becomes a byte offset: MUL Rt, Ri, #w
+        const scale = (ri, avoid, ops) => {
+          if (width === 1) return ri;
+          const rt = choose(avoid, null, ops);
+          spill(rt, null, ops); clear(rt);
+          emit({ op: 'MUL', d: rt, s: ri, c: width, why: `offset = index × ${width}` });
+          return rt;
+        };
         const setOnly = (r, v) => {
           clear(r);
           for (const s of regs) s.delete(v);
@@ -881,14 +926,25 @@
           for (const s of regs) s.delete(x.dst);
           regs[ry].add(x.dst); addr.set(x.dst, new Set(['R' + ry]));
         } else if (x.k === 'load') {
-          const ri = ensure(x.idx, [], x.dst, [x.idx]);
+          const ri0 = ensure(x.idx, [], x.dst, [x.idx]);
+          const ri = scale(ri0, [], [x.idx]);
           const rx = pickX(x.dst, [x.idx], [ri], []);
-          emit({ op: 'LD', d: rx, src: { kind: 'idx', arr: x.arr, r: ri } });
+          emit({ op: 'LD', d: rx, src: idxOp(x.arr, ri, width) });
           setOnly(rx, x.dst);
         } else if (x.k === 'store') {
-          const ri = ensure(x.idx, [], null, [x.idx, x.a]);
-          const ra = ensure(x.a, [ri], null, [x.idx, x.a]);
-          emit({ op: 'ST', dst: { kind: 'idx', arr: x.arr, r: ri }, s: ra });
+          let ri, ra;
+          if (width === 1) { ri = ensure(x.idx, [], null, [x.idx, x.a]); ra = ensure(x.a, [ri], null, [x.idx, x.a]); }
+          else { ra = ensure(x.a, [], null, [x.idx, x.a]); ri = scale(ensure(x.idx, [ra], null, [x.idx, x.a]), [ra], [x.idx, x.a]); }
+          emit({ op: 'ST', dst: idxOp(x.arr, ri, width), s: ra });
+        } else if (x.k === 'deref') {
+          const rp = ensure(x.a, [], x.dst, [x.a]);
+          const rx = pickX(x.dst, [x.a], [rp], []);
+          emit({ op: 'LD', d: rx, src: { kind: 'ind', r: rp } });
+          setOnly(rx, x.dst);
+        } else if (x.k === 'pstore') {
+          const ra = ensure(x.a, [], null, [x.p, x.a]);
+          const rp = ensure(x.p, [ra], null, [x.p, x.a]);
+          emit({ op: 'ST', dst: { kind: 'ind', r: rp }, s: ra });
         }
         const lastOne = k === b.ins.length - 1;
         let cond = null;
@@ -922,7 +978,7 @@
       });
     }
     if (prog.ins.some((x) => isJump(x) && x.ti >= prog.ins.length)) code.push({ op: 'LABEL', L: 'EXIT' });
-    return { code, rows, total, bb, lv, nRegs };
+    return { code, rows, total, bb, lv, nRegs, width };
   }
 
   // ---------- peephole ----------
@@ -1024,8 +1080,11 @@
     return { ins: unlinked(objs), log };
   }
   // naive code: every statement loads its operands and stores its result
-  function naiveCode(ins) {
+  const idxOp = (arr, r, w = 1) => (w > 1 ? { kind: 'idx', arr, r, w } : { kind: 'idx', arr, r });
+  function naiveCode(ins, width = 1) {
+    width = Math.max(1, width | 0 || 1);
     const { name } = labelNames(ins);
+    const sc = (r) => (width > 1 ? [{ op: 'MUL', d: r, s: r, c: width }] : []);
     const code = [];
     const ld = (d, v) => ({ op: 'LD', d, src: isNum(v) ? { kind: 'imm', v } : { kind: 'mem', name: v } });
     ins.forEach((x, i) => {
@@ -1035,8 +1094,10 @@
         case 'bin': code.push(ld(0, x.a), ld(1, x.b), { op: OPN[x.op], d: 0, s: 0, t: 1 }, { op: 'ST', dst: { kind: 'mem', name: x.dst }, s: 0 }); break;
         case 'un': code.push(ld(0, x.a)); if (x.op === 'minus') code.push({ op: 'NEG', d: 0, s: 0 }); else code.push(ld(1, '0'), { op: 'EQ', d: 0, s: 0, t: 1 }); code.push({ op: 'ST', dst: { kind: 'mem', name: x.dst }, s: 0 }); break;
         case 'copy': code.push(ld(0, x.a), { op: 'ST', dst: { kind: 'mem', name: x.dst }, s: 0 }); break;
-        case 'load': code.push(ld(1, x.idx), { op: 'LD', d: 0, src: { kind: 'idx', arr: x.arr, r: 1 } }, { op: 'ST', dst: { kind: 'mem', name: x.dst }, s: 0 }); break;
-        case 'store': code.push(ld(1, x.idx), ld(0, x.a), { op: 'ST', dst: { kind: 'idx', arr: x.arr, r: 1 }, s: 0 }); break;
+        case 'load': code.push(ld(1, x.idx), ...sc(1), { op: 'LD', d: 0, src: idxOp(x.arr, 1, width) }, { op: 'ST', dst: { kind: 'mem', name: x.dst }, s: 0 }); break;
+        case 'store': code.push(ld(1, x.idx), ...sc(1), ld(0, x.a), { op: 'ST', dst: idxOp(x.arr, 1, width), s: 0 }); break;
+        case 'deref': code.push(ld(1, x.a), { op: 'LD', d: 0, src: { kind: 'ind', r: 1 } }, { op: 'ST', dst: { kind: 'mem', name: x.dst }, s: 0 }); break;
+        case 'pstore': code.push(ld(1, x.p), ld(0, x.a), { op: 'ST', dst: { kind: 'ind', r: 1 }, s: 0 }); break;
         case 'goto': code.push({ op: 'BR', L: T }); break;
         case 'if': code.push(ld(0, x.a)); if (x.b !== '0') code.push(ld(1, x.b), { op: 'SUB', d: 0, s: 0, t: 1 }); code.push({ op: BR[x.rel], s: 0, L: T }); break;
       }

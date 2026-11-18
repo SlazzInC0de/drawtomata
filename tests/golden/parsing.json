@@ -4907,6 +4907,15 @@
       "$"
      ],
      "action": "reduce by F → id",
+     "form": [
+      "id",
+      "+",
+      "id",
+      "*",
+      "id"
+     ],
+     "at": 0,
+     "lhs": "F",
      "handle": "id"
     },
     {
@@ -4919,6 +4928,15 @@
       "$"
      ],
      "action": "reduce by T → F",
+     "form": [
+      "F",
+      "+",
+      "id",
+      "*",
+      "id"
+     ],
+     "at": 0,
+     "lhs": "T",
      "handle": "F"
     },
     {
@@ -4931,6 +4949,15 @@
       "$"
      ],
      "action": "reduce by E → T",
+     "form": [
+      "T",
+      "+",
+      "id",
+      "*",
+      "id"
+     ],
+     "at": 0,
+     "lhs": "E",
      "handle": "T"
     },
     {
@@ -4962,6 +4989,15 @@
       "$"
      ],
      "action": "reduce by F → id",
+     "form": [
+      "E",
+      "+",
+      "id",
+      "*",
+      "id"
+     ],
+     "at": 2,
+     "lhs": "F",
      "handle": "id"
     },
     {
@@ -4972,6 +5008,15 @@
       "$"
      ],
      "action": "reduce by T → F",
+     "form": [
+      "E",
+      "+",
+      "F",
+      "*",
+      "id"
+     ],
+     "at": 2,
+     "lhs": "T",
      "handle": "F"
     },
     {
@@ -4997,6 +5042,15 @@
       "$"
      ],
      "action": "reduce by F → id",
+     "form": [
+      "E",
+      "+",
+      "T",
+      "*",
+      "id"
+     ],
+     "at": 4,
+     "lhs": "F",
      "handle": "id"
     },
     {
@@ -5005,6 +5059,15 @@
       "$"
      ],
      "action": "reduce by T → T*F",
+     "form": [
+      "E",
+      "+",
+      "T",
+      "*",
+      "F"
+     ],
+     "at": 2,
+     "lhs": "T",
      "handle": "T * F"
     },
     {
@@ -5013,6 +5076,13 @@
       "$"
      ],
      "action": "reduce by E → E+T",
+     "form": [
+      "E",
+      "+",
+      "T"
+     ],
+     "at": 0,
+     "lhs": "E",
      "handle": "E + T"
     },
     {
@@ -5050,6 +5120,15 @@
       "$"
      ],
      "action": "reduce by F → id",
+     "form": [
+      "id",
+      "+",
+      "id",
+      "*",
+      "id"
+     ],
+     "at": 0,
+     "lhs": "F",
      "handle": "id"
     },
     {
@@ -5062,6 +5141,15 @@
       "$"
      ],
      "action": "reduce by T → F",
+     "form": [
+      "F",
+      "+",
+      "id",
+      "*",
+      "id"
+     ],
+     "at": 0,
+     "lhs": "T",
      "handle": "F"
     },
     {
@@ -5074,6 +5162,15 @@
       "$"
      ],
      "action": "reduce by E → T",
+     "form": [
+      "T",
+      "+",
+      "id",
+      "*",
+      "id"
+     ],
+     "at": 0,
+     "lhs": "E",
      "handle": "T"
     },
     {
@@ -5105,6 +5202,15 @@
       "$"
      ],
      "action": "reduce by F → id",
+     "form": [
+      "E",
+      "+",
+      "id",
+      "*",
+      "id"
+     ],
+     "at": 2,
+     "lhs": "F",
      "handle": "id"
     },
     {
@@ -5115,6 +5221,15 @@
       "$"
      ],
      "action": "reduce by T → F",
+     "form": [
+      "E",
+      "+",
+      "F",
+      "*",
+      "id"
+     ],
+     "at": 2,
+     "lhs": "T",
      "handle": "F"
     },
     {
@@ -5140,6 +5255,15 @@
       "$"
      ],
      "action": "reduce by F → id",
+     "form": [
+      "E",
+      "+",
+      "T",
+      "*",
+      "id"
+     ],
+     "at": 4,
+     "lhs": "F",
      "handle": "id"
     },
     {
@@ -5148,6 +5272,15 @@
       "$"
      ],
      "action": "reduce by T → T*F",
+     "form": [
+      "E",
+      "+",
+      "T",
+      "*",
+      "F"
+     ],
+     "at": 2,
+     "lhs": "T",
      "handle": "T * F"
     },
     {
@@ -5156,6 +5289,13 @@
       "$"
      ],
      "action": "reduce by E → E+T",
+     "form": [
+      "E",
+      "+",
+      "T"
+     ],
+     "at": 0,
+     "lhs": "E",
      "handle": "E + T"
     },
     {
@@ -10094,6 +10234,15 @@
       "$"
      ],
      "action": "reduce by F → id",
+     "form": [
+      "id",
+      "*",
+      "id",
+      "+",
+      "id"
+     ],
+     "at": 0,
+     "lhs": "F",
      "handle": "id"
     },
     {
@@ -10125,6 +10274,15 @@
       "$"
      ],
      "action": "reduce by F → id",
+     "form": [
+      "F",
+      "*",
+      "id",
+      "+",
+      "id"
+     ],
+     "at": 2,
+     "lhs": "F",
      "handle": "id"
     },
     {
@@ -10135,6 +10293,15 @@
       "$"
      ],
      "action": "reduce by T' → λ",
+     "form": [
+      "F",
+      "*",
+      "F",
+      "+",
+      "id"
+     ],
+     "at": 3,
+     "lhs": "T'",
      "handle": "λ"
     },
     {
@@ -10145,6 +10312,16 @@
       "$"
      ],
      "action": "reduce by T' → * F T'",
+     "form": [
+      "F",
+      "*",
+      "F",
+      "T'",
+      "+",
+      "id"
+     ],
+     "at": 1,
+     "lhs": "T'",
      "handle": "* F T'"
     },
     {
@@ -10155,6 +10332,14 @@
       "$"
      ],
      "action": "reduce by T → F T'",
+     "form": [
+      "F",
+      "T'",
+      "+",
+      "id"
+     ],
+     "at": 0,
+     "lhs": "T",
      "handle": "F T'"
     },
     {
@@ -10180,6 +10365,13 @@
       "$"
      ],
      "action": "reduce by F → id",
+     "form": [
+      "T",
+      "+",
+      "id"
+     ],
+     "at": 2,
+     "lhs": "F",
      "handle": "id"
     },
     {
@@ -10188,6 +10380,13 @@
       "$"
      ],
      "action": "reduce by T' → λ",
+     "form": [
+      "T",
+      "+",
+      "F"
+     ],
+     "at": 3,
+     "lhs": "T'",
      "handle": "λ"
     },
     {
@@ -10196,6 +10395,14 @@
       "$"
      ],
      "action": "reduce by T → F T'",
+     "form": [
+      "T",
+      "+",
+      "F",
+      "T'"
+     ],
+     "at": 2,
+     "lhs": "T",
      "handle": "F T'"
     },
     {
@@ -10204,6 +10411,13 @@
       "$"
      ],
      "action": "reduce by E' → λ",
+     "form": [
+      "T",
+      "+",
+      "T"
+     ],
+     "at": 3,
+     "lhs": "E'",
      "handle": "λ"
     },
     {
@@ -10212,6 +10426,14 @@
       "$"
      ],
      "action": "reduce by E' → + T E'",
+     "form": [
+      "T",
+      "+",
+      "T",
+      "E'"
+     ],
+     "at": 1,
+     "lhs": "E'",
      "handle": "+ T E'"
     },
     {
@@ -10220,6 +10442,12 @@
       "$"
      ],
      "action": "reduce by E → T E'",
+     "form": [
+      "T",
+      "E'"
+     ],
+     "at": 0,
+     "lhs": "E",
      "handle": "T E'"
     },
     {
@@ -10257,6 +10485,15 @@
       "$"
      ],
      "action": "reduce by F → id",
+     "form": [
+      "id",
+      "*",
+      "id",
+      "+",
+      "id"
+     ],
+     "at": 0,
+     "lhs": "F",
      "handle": "id"
     },
     {
@@ -10288,6 +10525,15 @@
       "$"
      ],
      "action": "reduce by F → id",
+     "form": [
+      "F",
+      "*",
+      "id",
+      "+",
+      "id"
+     ],
+     "at": 2,
+     "lhs": "F",
      "handle": "id"
     },
     {
@@ -10298,6 +10544,15 @@
       "$"
      ],
      "action": "reduce by T' → λ",
+     "form": [
+      "F",
+      "*",
+      "F",
+      "+",
+      "id"
+     ],
+     "at": 3,
+     "lhs": "T'",
      "handle": "λ"
     },
     {
@@ -10308,6 +10563,16 @@
       "$"
      ],
      "action": "reduce by T' → * F T'",
+     "form": [
+      "F",
+      "*",
+      "F",
+      "T'",
+      "+",
+      "id"
+     ],
+     "at": 1,
+     "lhs": "T'",
      "handle": "* F T'"
     },
     {
@@ -10318,6 +10583,14 @@
       "$"
      ],
      "action": "reduce by T → F T'",
+     "form": [
+      "F",
+      "T'",
+      "+",
+      "id"
+     ],
+     "at": 0,
+     "lhs": "T",
      "handle": "F T'"
     },
     {
@@ -10343,6 +10616,13 @@
       "$"
      ],
      "action": "reduce by F → id",
+     "form": [
+      "T",
+      "+",
+      "id"
+     ],
+     "at": 2,
+     "lhs": "F",
      "handle": "id"
     },
     {
@@ -10351,6 +10631,13 @@
       "$"
      ],
      "action": "reduce by T' → λ",
+     "form": [
+      "T",
+      "+",
+      "F"
+     ],
+     "at": 3,
+     "lhs": "T'",
      "handle": "λ"
     },
     {
@@ -10359,6 +10646,14 @@
       "$"
      ],
      "action": "reduce by T → F T'",
+     "form": [
+      "T",
+      "+",
+      "F",
+      "T'"
+     ],
+     "at": 2,
+     "lhs": "T",
      "handle": "F T'"
     },
     {
@@ -10367,6 +10662,13 @@
       "$"
      ],
      "action": "reduce by E' → λ",
+     "form": [
+      "T",
+      "+",
+      "T"
+     ],
+     "at": 3,
+     "lhs": "E'",
      "handle": "λ"
     },
     {
@@ -10375,6 +10677,14 @@
       "$"
      ],
      "action": "reduce by E' → + T E'",
+     "form": [
+      "T",
+      "+",
+      "T",
+      "E'"
+     ],
+     "at": 1,
+     "lhs": "E'",
      "handle": "+ T E'"
     },
     {
@@ -10383,6 +10693,12 @@
       "$"
      ],
      "action": "reduce by E → T E'",
+     "form": [
+      "T",
+      "E'"
+     ],
+     "at": 0,
+     "lhs": "E",
      "handle": "T E'"
     },
     {
@@ -12939,6 +13255,13 @@
       "$"
      ],
      "action": "reduce by C → d",
+     "form": [
+      "c",
+      "d",
+      "d"
+     ],
+     "at": 1,
+     "lhs": "C",
      "handle": "d"
     },
     {
@@ -12948,6 +13271,13 @@
       "$"
      ],
      "action": "reduce by C → cC",
+     "form": [
+      "c",
+      "C",
+      "d"
+     ],
+     "at": 0,
+     "lhs": "C",
      "handle": "c C"
     },
     {
@@ -12964,6 +13294,12 @@
       "$"
      ],
      "action": "reduce by C → d",
+     "form": [
+      "C",
+      "d"
+     ],
+     "at": 1,
+     "lhs": "C",
      "handle": "d"
     },
     {
@@ -12972,6 +13308,12 @@
       "$"
      ],
      "action": "reduce by S → CC",
+     "form": [
+      "C",
+      "C"
+     ],
+     "at": 0,
+     "lhs": "S",
      "handle": "C C"
     },
     {
@@ -13013,6 +13355,13 @@
       "$"
      ],
      "action": "reduce by C → d",
+     "form": [
+      "c",
+      "d",
+      "d"
+     ],
+     "at": 1,
+     "lhs": "C",
      "handle": "d"
     },
     {
@@ -13022,6 +13371,13 @@
       "$"
      ],
      "action": "reduce by C → cC",
+     "form": [
+      "c",
+      "C",
+      "d"
+     ],
+     "at": 0,
+     "lhs": "C",
      "handle": "c C"
     },
     {
@@ -13038,6 +13394,12 @@
       "$"
      ],
      "action": "reduce by C → d",
+     "form": [
+      "C",
+      "d"
+     ],
+     "at": 1,
+     "lhs": "C",
      "handle": "d"
     },
     {
@@ -13046,6 +13408,12 @@
       "$"
      ],
      "action": "reduce by S → CC",
+     "form": [
+      "C",
+      "C"
+     ],
+     "at": 0,
+     "lhs": "S",
      "handle": "C C"
     },
     {
@@ -15138,6 +15506,14 @@
       "$"
      ],
      "action": "reduce by L → id",
+     "form": [
+      "id",
+      "=",
+      "*",
+      "id"
+     ],
+     "at": 0,
+     "lhs": "L",
      "handle": "id"
     },
     {
@@ -15173,6 +15549,14 @@
       "$"
      ],
      "action": "reduce by L → id",
+     "form": [
+      "L",
+      "=",
+      "*",
+      "id"
+     ],
+     "at": 3,
+     "lhs": "L",
      "handle": "id"
     },
     {
@@ -15181,6 +15565,14 @@
       "$"
      ],
      "action": "reduce by R → L",
+     "form": [
+      "L",
+      "=",
+      "*",
+      "L"
+     ],
+     "at": 3,
+     "lhs": "R",
      "handle": "L"
     },
     {
@@ -15189,6 +15581,14 @@
       "$"
      ],
      "action": "reduce by L → *R",
+     "form": [
+      "L",
+      "=",
+      "*",
+      "R"
+     ],
+     "at": 2,
+     "lhs": "L",
      "handle": "* R"
     },
     {
@@ -15197,6 +15597,13 @@
       "$"
      ],
      "action": "reduce by R → L",
+     "form": [
+      "L",
+      "=",
+      "L"
+     ],
+     "at": 2,
+     "lhs": "R",
      "handle": "L"
     },
     {
@@ -15205,6 +15612,13 @@
       "$"
      ],
      "action": "reduce by S → L=R",
+     "form": [
+      "L",
+      "=",
+      "R"
+     ],
+     "at": 0,
+     "lhs": "S",
      "handle": "L = R"
     },
     {
@@ -15240,6 +15654,14 @@
       "$"
      ],
      "action": "reduce by L → id",
+     "form": [
+      "id",
+      "=",
+      "*",
+      "id"
+     ],
+     "at": 0,
+     "lhs": "L",
      "handle": "id"
     },
     {
@@ -15275,6 +15697,14 @@
       "$"
      ],
      "action": "reduce by L → id",
+     "form": [
+      "L",
+      "=",
+      "*",
+      "id"
+     ],
+     "at": 3,
+     "lhs": "L",
      "handle": "id"
     },
     {
@@ -15283,6 +15713,14 @@
       "$"
      ],
      "action": "reduce by R → L",
+     "form": [
+      "L",
+      "=",
+      "*",
+      "L"
+     ],
+     "at": 3,
+     "lhs": "R",
      "handle": "L"
     },
     {
@@ -15291,6 +15729,14 @@
       "$"
      ],
      "action": "reduce by L → *R",
+     "form": [
+      "L",
+      "=",
+      "*",
+      "R"
+     ],
+     "at": 2,
+     "lhs": "L",
      "handle": "* R"
     },
     {
@@ -15299,6 +15745,13 @@
       "$"
      ],
      "action": "reduce by R → L",
+     "form": [
+      "L",
+      "=",
+      "L"
+     ],
+     "at": 2,
+     "lhs": "R",
      "handle": "L"
     },
     {
@@ -15307,6 +15760,13 @@
       "$"
      ],
      "action": "reduce by S → L=R",
+     "form": [
+      "L",
+      "=",
+      "R"
+     ],
+     "at": 0,
+     "lhs": "S",
      "handle": "L = R"
     },
     {
@@ -17966,6 +18426,16 @@
       "$"
      ],
      "action": "reduce by E → b",
+     "form": [
+      "i",
+      "b",
+      "t",
+      "a",
+      "e",
+      "a"
+     ],
+     "at": 1,
+     "lhs": "E",
      "handle": "b"
     },
     {
@@ -17997,6 +18467,16 @@
       "$"
      ],
      "action": "reduce by S → a",
+     "form": [
+      "i",
+      "E",
+      "t",
+      "a",
+      "e",
+      "a"
+     ],
+     "at": 3,
+     "lhs": "S",
      "handle": "a"
     },
     {
@@ -18022,6 +18502,16 @@
       "$"
      ],
      "action": "reduce by S → a",
+     "form": [
+      "i",
+      "E",
+      "t",
+      "S",
+      "e",
+      "a"
+     ],
+     "at": 5,
+     "lhs": "S",
      "handle": "a"
     },
     {
@@ -18030,6 +18520,16 @@
       "$"
      ],
      "action": "reduce by S' → eS",
+     "form": [
+      "i",
+      "E",
+      "t",
+      "S",
+      "e",
+      "S"
+     ],
+     "at": 4,
+     "lhs": "S'",
      "handle": "e S"
     },
     {
@@ -18038,6 +18538,15 @@
       "$"
      ],
      "action": "reduce by S → i E t S S'",
+     "form": [
+      "i",
+      "E",
+      "t",
+      "S",
+      "S'"
+     ],
+     "at": 0,
+     "lhs": "S",
      "handle": "i E t S S'"
     },
     {
@@ -18088,6 +18597,16 @@
       "$"
      ],
      "action": "reduce by E → b",
+     "form": [
+      "i",
+      "b",
+      "t",
+      "a",
+      "e",
+      "a"
+     ],
+     "at": 1,
+     "lhs": "E",
      "handle": "b"
     },
     {
@@ -18119,6 +18638,16 @@
       "$"
      ],
      "action": "reduce by S → a",
+     "form": [
+      "i",
+      "E",
+      "t",
+      "a",
+      "e",
+      "a"
+     ],
+     "at": 3,
+     "lhs": "S",
      "handle": "a"
     },
     {
@@ -18144,6 +18673,16 @@
       "$"
      ],
      "action": "reduce by S → a",
+     "form": [
+      "i",
+      "E",
+      "t",
+      "S",
+      "e",
+      "a"
+     ],
+     "at": 5,
+     "lhs": "S",
      "handle": "a"
     },
     {
@@ -18152,6 +18691,16 @@
       "$"
      ],
      "action": "reduce by S' → eS",
+     "form": [
+      "i",
+      "E",
+      "t",
+      "S",
+      "e",
+      "S"
+     ],
+     "at": 4,
+     "lhs": "S'",
      "handle": "e S"
     },
     {
@@ -18160,6 +18709,15 @@
       "$"
      ],
      "action": "reduce by S → i E t S S'",
+     "form": [
+      "i",
+      "E",
+      "t",
+      "S",
+      "S'"
+     ],
+     "at": 0,
+     "lhs": "S",
      "handle": "i E t S S'"
     },
     {
@@ -21479,6 +22037,13 @@
       "$"
      ],
      "action": "reduce by S → b",
+     "form": [
+      "b",
+      "d",
+      "a"
+     ],
+     "at": 0,
+     "lhs": "S",
      "handle": "b"
     },
     {
@@ -21497,6 +22062,13 @@
       "$"
      ],
      "action": "reduce by A → Sd",
+     "form": [
+      "S",
+      "d",
+      "a"
+     ],
+     "at": 0,
+     "lhs": "A",
      "handle": "S d"
     },
     {
@@ -21513,6 +22085,12 @@
       "$"
      ],
      "action": "reduce by S → Aa",
+     "form": [
+      "A",
+      "a"
+     ],
+     "at": 0,
+     "lhs": "S",
      "handle": "A a"
     },
     {
@@ -21546,6 +22124,13 @@
       "$"
      ],
      "action": "reduce by S → b",
+     "form": [
+      "b",
+      "d",
+      "a"
+     ],
+     "at": 0,
+     "lhs": "S",
      "handle": "b"
     },
     {
@@ -21564,6 +22149,13 @@
       "$"
      ],
      "action": "reduce by A → Sd",
+     "form": [
+      "S",
+      "d",
+      "a"
+     ],
+     "at": 0,
+     "lhs": "A",
      "handle": "S d"
     },
     {
@@ -21580,6 +22172,12 @@
       "$"
      ],
      "action": "reduce by S → Aa",
+     "form": [
+      "A",
+      "a"
+     ],
+     "at": 0,
+     "lhs": "S",
      "handle": "A a"
     },
     {
@@ -28317,6 +28915,15 @@
       "$"
      ],
      "action": "reduce by E → id",
+     "form": [
+      "id",
+      "+",
+      "id",
+      "*",
+      "id"
+     ],
+     "at": 0,
+     "lhs": "E",
      "handle": "id"
     },
     {
@@ -28348,6 +28955,15 @@
       "$"
      ],
      "action": "reduce by E → id",
+     "form": [
+      "E",
+      "+",
+      "id",
+      "*",
+      "id"
+     ],
+     "at": 2,
+     "lhs": "E",
      "handle": "id"
     },
     {
@@ -28373,6 +28989,15 @@
       "$"
      ],
      "action": "reduce by E → id",
+     "form": [
+      "E",
+      "+",
+      "E",
+      "*",
+      "id"
+     ],
+     "at": 4,
+     "lhs": "E",
      "handle": "id"
     },
     {
@@ -28381,6 +29006,15 @@
       "$"
      ],
      "action": "reduce by E → E*E",
+     "form": [
+      "E",
+      "+",
+      "E",
+      "*",
+      "E"
+     ],
+     "at": 2,
+     "lhs": "E",
      "handle": "E * E"
     },
     {
@@ -28389,6 +29023,13 @@
       "$"
      ],
      "action": "reduce by E → E+E",
+     "form": [
+      "E",
+      "+",
+      "E"
+     ],
+     "at": 0,
+     "lhs": "E",
      "handle": "E + E"
     },
     {
@@ -28426,6 +29067,15 @@
       "$"
      ],
      "action": "reduce by E → id",
+     "form": [
+      "id",
+      "+",
+      "id",
+      "*",
+      "id"
+     ],
+     "at": 0,
+     "lhs": "E",
      "handle": "id"
     },
     {
@@ -28457,6 +29107,15 @@
       "$"
      ],
      "action": "reduce by E → id",
+     "form": [
+      "E",
+      "+",
+      "id",
+      "*",
+      "id"
+     ],
+     "at": 2,
+     "lhs": "E",
      "handle": "id"
     },
     {
@@ -28482,6 +29141,15 @@
       "$"
      ],
      "action": "reduce by E → id",
+     "form": [
+      "E",
+      "+",
+      "E",
+      "*",
+      "id"
+     ],
+     "at": 4,
+     "lhs": "E",
      "handle": "id"
     },
     {
@@ -28490,6 +29158,15 @@
       "$"
      ],
      "action": "reduce by E → E*E",
+     "form": [
+      "E",
+      "+",
+      "E",
+      "*",
+      "E"
+     ],
+     "at": 2,
+     "lhs": "E",
      "handle": "E * E"
     },
     {
@@ -28498,6 +29175,13 @@
       "$"
      ],
      "action": "reduce by E → E+E",
+     "form": [
+      "E",
+      "+",
+      "E"
+     ],
+     "at": 0,
+     "lhs": "E",
      "handle": "E + E"
     },
     {
@@ -31621,6 +32305,13 @@
       "$"
      ],
      "action": "reduce by A → c (conflict: shift preferred)",
+     "form": [
+      "a",
+      "c",
+      "d"
+     ],
+     "at": 1,
+     "lhs": "A",
      "handle": "c"
     },
     {
@@ -31637,6 +32328,13 @@
       "$"
      ],
      "action": "reduce by S → aAd",
+     "form": [
+      "a",
+      "A",
+      "d"
+     ],
+     "at": 0,
+     "lhs": "S",
      "handle": "a A d"
     },
     {
@@ -31678,6 +32376,13 @@
       "$"
      ],
      "action": "reduce by A → c (conflict: shift preferred)",
+     "form": [
+      "a",
+      "c",
+      "d"
+     ],
+     "at": 1,
+     "lhs": "A",
      "handle": "c"
     },
     {
@@ -31694,6 +32399,13 @@
       "$"
      ],
      "action": "reduce by S → aAd",
+     "form": [
+      "a",
+      "A",
+      "d"
+     ],
+     "at": 0,
+     "lhs": "S",
      "handle": "a A d"
     },
     {
@@ -33430,6 +34142,14 @@
       "$"
      ],
      "action": "reduce by A → ab",
+     "form": [
+      "a",
+      "a",
+      "b",
+      "b"
+     ],
+     "at": 1,
+     "lhs": "A",
      "handle": "a b"
     },
     {
@@ -33446,6 +34166,13 @@
       "$"
      ],
      "action": "reduce by A → aAb",
+     "form": [
+      "a",
+      "A",
+      "b"
+     ],
+     "at": 0,
+     "lhs": "A",
      "handle": "a A b"
     },
     {
@@ -33498,6 +34225,14 @@
       "$"
      ],
      "action": "reduce by A → ab",
+     "form": [
+      "a",
+      "a",
+      "b",
+      "b"
+     ],
+     "at": 1,
+     "lhs": "A",
      "handle": "a b"
     },
     {
@@ -33514,6 +34249,13 @@
       "$"
      ],
      "action": "reduce by A → aAb",
+     "form": [
+      "a",
+      "A",
+      "b"
+     ],
+     "at": 0,
+     "lhs": "A",
      "handle": "a A b"
     },
     {

@@ -58,7 +58,8 @@ const CG_PROGRAMS = [
   'x = a[i] + a[j]\nif x > 0 goto L1\ny = 0 - x\ngoto L2\nL1: y = x\nL2: z = y * 2',
   '1) i = 1\n2) j = 1\n3) t1 = 10 * i\n4) t2 = t1 + j\n5) t3 = 8 * t2\n6) t4 = t3 - 88\n7) a[t4] = 0\n8) j = j + 1\n9) if j <= 10 goto (3)\n10) i = i + 1\n11) if i <= 10 goto (2)\n12) i = 1\n13) t5 = i - 1\n14) t6 = 88 * t5\n15) a[t6] = 1\n16) i = i + 1\n17) if i <= 10 goto (13)',
   'if debug == 1 goto L1\ngoto L2\nL1: x = x * 1\ny = y * 2\nL2: i = i + 1\ngoto L3\nk = 0\nL3: goto L4\nL4: n = 4 * 2',
-  'a = minus b + not c\nd = -(-5) % 3\ne = x[i + 1] - -y\nif not (a <= b) goto L\nL: f = MINUS a'
+  'a = minus b + not c\nd = -(-5) % 3\ne = x[i + 1] - -y\nif not (a <= b) goto L\nL: f = MINUS a',
+  'x = y - z\nb = a[i]\na[j] = c\nx = *p\ny = *p\n*p = y\nz = *p\nif x < y goto L\nL: w = a[i]'
 ];
 // inputs that must fail, with the exact message
 const CG_ERRORS = ['x =', 'x = (a + b', 'x = a[1', 'x = a + goto', 'x = * 3', 'a[ ] = 1', 'x = a b'];
@@ -126,7 +127,7 @@ function collect() {
   });
   out.codegen = CG_PROGRAMS.map((src) => attempt(() => {
     const prog = CG.parseProgram(src), bb = CG.basicBlocks(prog.ins);
-    return { src, prog, reps: CG.representations(prog), bb, dom: CG.dominators(bb), live: CG.liveness(bb, CG.exitLiveOf ? CG.exitLiveOf(prog, bb) : undefined), opt: CG.optimize(prog), ssa: CG.toSSA(prog), gen: CG.generate(prog, 2), peep: CG.peephole(prog) };
+    return { src, prog, reps: CG.representations(prog), bb, dom: CG.dominators(bb), live: CG.liveness(bb, CG.exitLiveOf ? CG.exitLiveOf(prog, bb) : undefined), opt: CG.optimize(prog), ssa: CG.toSSA(prog), gen: CG.generate(prog, 2), gen8: CG.generate(prog, 3, 8), naive8: CG.naiveCode(prog.ins, 8), peep: CG.peephole(prog) };
   }));
   out.sdt = SDDs.map(([sdd, w]) => attempt(() => { const r = SD.run(sdd, w); return { sdd, w, classify: SD.classify(SD.parseSDD(sdd)), r }; }));
   out.lex = {

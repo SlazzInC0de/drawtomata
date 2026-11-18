@@ -37,6 +37,23 @@
       .join('')}</tbody></table></div>`;
   }
   const inputCell = (arr) => esc(arr.join(' '));
+  // the reductions of an LR trace as a rightmost derivation in reverse, handle in bold
+  function handlePruning(r) {
+    const red = r.rows.filter((x) => x.form);
+    if (!red.length) return '';
+    const show = (x) => {
+      const n = x.handle === EPS ? 0 : x.handle.split(' ').length;
+      const pre = x.form.slice(0, x.at), h = x.form.slice(x.at, x.at + n), post = x.form.slice(x.at + n);
+      return [esc(pre.join(' ')), `<b><u>${n ? esc(h.join(' ')) : EPS}</u></b>`, esc(post.join(' '))].filter(Boolean).join(' ');
+    };
+    const rows = red.map((x, i) => [String(i + 1), show(x), esc(x.handle), esc(x.action.replace(/^reduce by /, '').replace(/ \(conflict.*$/, ''))]);
+    const seq = red.map((x) => esc(x.form.join(' ') || EPS));
+    if (r.accepted) { const L = red[red.length - 1]; seq.push(esc([...L.form.slice(0, L.at), L.lhs, ...L.form.slice(L.at + (L.handle === EPS ? 0 : L.handle.split(' ').length))].join(' '))); }
+    return `<div class="sub">Handle pruning</div>
+      <p class="small muted">Each reduction replaces the handle (bold, underlined) of a right-sentential form by the left side of its production. Read top to bottom this is the rightmost derivation in reverse.</p>
+      ${ui.table(['#', 'Right-sentential form', 'Handle', 'Reducing production'], rows, 'mono')}
+      <p class="mono small">${seq.join(' ⇐ ')}</p>`;
+  }
 
   function psFirstFollow(G) {
     const ff = PS.firstFollow(G);
@@ -193,7 +210,7 @@
     if (!tk.err && kind !== 'lr0') {
       const r = PS.lrParse(GA, table, tk.toks);
       accepted = r.accepted;
-      traceHTML = (r.rows.length <= LEARN_MAX ? DT.learn.button(DT.learn.lrSteps(GA, r)) : '') + traceTable(['Stack', 'Input', 'Action', 'Handle'], r.rows.map((x) => [esc(x.stack), inputCell(x.input), esc(x.action), esc(x.handle || '')]), r.accepted);
+      traceHTML = (r.rows.length <= LEARN_MAX ? DT.learn.button(DT.learn.lrSteps(GA, r)) : '') + traceTable(['Stack', 'Input', 'Action', 'Handle'], r.rows.map((x) => [esc(x.stack), inputCell(x.input), esc(x.action), esc(x.handle || '')]), r.accepted) + handlePruning(r);
     }
     const conflictFree = table.conflicts.length === 0;
     let meta = chip('states', coll.states.length) + (raw.conflicts.length ? badChip(`${raw.conflicts.length} conflict${raw.conflicts.length > 1 ? 's' : ''}`) : okChip(`no conflicts, the grammar is ${names[kind]}`));

@@ -182,7 +182,7 @@
 
   function cgGen(prog) {
     const n = +$('#cgRegs').value || 3;
-    const g = CG.generate(prog, n);
+    const g = CG.generate(prog, n, elemWidth());
     const chk = CG.checkMachine(prog.ins, g.code, 40, CG.observedOf(prog));
     const T = CG.blockTarget(g.bb);
     const rows = [];
@@ -197,6 +197,43 @@
        <p>For x = y op z, getReg picks registers for y and z (one that already holds them, else an empty one, else one whose contents are safe to lose, spilling the rest). Rx can reuse Ry when y is dead after this instruction. The register descriptor says what each register holds; the address descriptor says where the current value of each name lives. At the end of a block every live name that is only in a register is stored.</p>
        ${App.grid(['Three-address', 'Target code', 'Cost', 'Register descriptor', 'Address descriptor'], rows)}
        <details><summary>The whole program</summary>${machListing(g.code)}</details>`);
+  }
+
+  const elemWidth = () => Math.max(1, Math.min(64, +$('#cgWidth').value | 0 || 1));
+  // Aho 8.2: the target machine, its addressing modes and one translation per statement
+  function cgTarget(prog) {
+    const w = elemWidth();
+    const modes = [
+      ['Register', 'R1', 'contents(R1)', 'LD R0, R1', '1'],
+      ['Named / variable', 'x', 'lvalue(x)', 'LD R1, x', '2'],
+      ['Immediate', '#c', 'the constant c', 'LD R1, #100', '2'],
+      ['Variable indexed', 'a(r)', 'lvalue(a) + contents(r)', 'LD R2, a(R1)', '2'],
+      ['Integer indexed', 'c(r)', 'c + contents(r)', 'LD R1, 100(R2)', '2'],
+      ['Indirect', '*r', 'contents(contents(r))', 'LD R1, *R2', '1'],
+      ['Indirect indexed', '*c(r)', 'contents(c + contents(r))', 'LD R1, *100(R2)', '2']
+    ].map((r) => r.map(esc));
+    const { name } = CG.labelNames(prog.ins);
+    let total = 0;
+    const rows = prog.ins.map((x, i) => {
+      const one = { ...x };
+      if (CG.isJump(x)) one.ti = 1;
+      const code = CG.naiveCode([one], w).filter((m) => m.op !== 'LABEL').map((m) => (m.L ? { ...m, L: name.get(x.ti) } : m));
+      const cost = code.reduce((s, m) => s + CG.mCost(m), 0);
+      total += cost;
+      return [`(${i + 1})`, esc(CG.insStr(x, (y) => name.get(y.ti))), code.map((m) => esc(CG.mStr(m))).join('<br>'), code.map((m) => String(CG.mCost(m))).join('<br>'), String(cost)];
+    });
+    const code = CG.naiveCode(prog.ins, w);
+    const chk = CG.checkMachine(prog.ins, code, 40, CG.observedOf(prog));
+    return stage('cg-tm1', '1', 'The target machine', chip('registers', 'R0, R1, …'),
+      `<p>A three-address, byte-addressable machine with load, store, computation and jump instructions. An instruction is an operator, then the target, then the source operands.</p>
+       ${App.grid(['Instruction', 'Meaning'], [['LD dst, addr', 'dst = addr (load)'], ['ST x, r', 'x = r (store)'], ['OP dst, src1, src2', 'dst = src1 OP src2 (ADD, SUB, MUL, …)'], ['BR L', 'goto L'], ['Bcond r, L', 'if r cond 0 goto L (BLTZ, BLEZ, BGTZ, BGEZ, BEQZ, BNEZ)']].map((r) => r.map(esc)))}
+       <div class="sub">Addressing modes</div>
+       <div class="formula" style="white-space:normal">Cost of an instruction = 1 + 1 for each operand whose address or constant takes the next word: a memory name, #c, a(r), c(r), *c(r) or a label. Register and *r operands add nothing.</div>
+       ${App.grid(['Mode', 'Form', 'Address / value', 'Example', 'Cost'], modes)}`)
+      + stage('cg-tm2', '2', 'Statement by statement', chip('element width', w + (w > 1 ? ' bytes' : '')) + chip('total cost', total) + (chk.ok ? App.okChip(`machine gives the same results on ${chk.runs} random inputs`) : App.badChip(`machine differs in ${chk.what}`)),
+        `<p>Each three-address statement on its own, the way the textbook translates them: load the operands, compute, store the result. ${w > 1 ? `Array elements are ${w} bytes wide, so an index is multiplied by ${w} to get the byte offset before it is used in a(r).` : 'Set the element width in the sidebar (8 for the textbook\'s b = a[i]) to see the index scaled to a byte offset.'} A pointer p is used as 0(r): load p into r, then the word at address contents(r).</p>
+         ${App.grid(['#', 'Three-address', 'Target code', 'Costs', 'Cost'], rows)}
+         <details><summary>The whole program</summary>${machListing(code)}</details>`);
   }
 
   function cgPeep(prog) {
@@ -238,14 +275,16 @@
       else if (o === 'live') html += cgLive(prog);
       else if (o === 'opt') html += cgOpt(prog);
       else if (o === 'gen') html += cgGen(prog);
+      else if (o === 'tm') html += cgTarget(prog);
       else if (o === 'peep') html += cgPeep(prog);
     } catch (e) { showErr($('#cgErr'), e.message); return; }
     ui.put($('#cgOut'), html);
   }
   rerenders.cg = () => runCG();
   $$('[data-cg]').forEach((b) => b.addEventListener('click', () => runCG(b.dataset.cg)));
-  ['#cgLive', '#cgRegs'].forEach((s) => $(s).addEventListener('keydown', (e) => { if (e.key === 'Enter') runCG(); }));
+  ['#cgLive', '#cgRegs', '#cgWidth'].forEach((s) => $(s).addEventListener('keydown', (e) => { if (e.key === 'Enter') runCG(); }));
   $('#cgRegs').addEventListener('change', () => { if (lastCgOp === 'gen') runCG(); });
+  $('#cgWidth').addEventListener('change', () => { if (lastCgOp === 'gen' || lastCgOp === 'tm') runCG(); });
 
   App.export({ runCG: () => runCG });
 })(window.DT);
