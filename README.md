@@ -46,6 +46,7 @@ The canvas has pan and zoom, undo/redo, autosave, auto-layout, and PNG / SVG / J
 - left recursion removal (direct and indirect) and left factoring
 - LL(1) predictive parsing table with conflicts explained, the non-recursive parse trace, and recursive descent procedures with a call trace
 - LR(0) items and automaton, SLR(1), canonical LR(1) and LALR(1) tables, with a shift-reduce trace for any input
+- handle pruning: every right-sentential form of the parse with its handle marked, read as a rightmost derivation in reverse
 - yacc-style `%left` / `%right` declarations to resolve conflicts, an operator precedence parser, and rewriting an ambiguous expression grammar into an unambiguous one
 
 **Pumping lemma.** Play the adversary game for classic non-regular languages (aⁿbⁿ, wwᴿ, ww, aⁿbⁿcⁿ, square and prime lengths, balanced parentheses): every split xyz is listed with the i that breaks it. For a regular language given as an RE, the minimal DFA and the pigeonhole argument show the split that always pumps.
@@ -58,7 +59,7 @@ The canvas has pan and zoom, undo/redo, autosave, auto-layout, and PNG / SVG / J
 
 **Syntax-directed translation.** Write a grammar with semantic rules (`E -> E1 + T { E.val = E1.val + T.val }`) and an input string to get the annotated parse tree, the dependency graph with a topological evaluation order, an S-attributed and L-attributed check that names the rule breaking it, and the syntax tree built by `Node` and `Leaf` calls. Inherited attributes, actions such as `addType`, and string translations with `||` all work. The values are checked by evaluating a second way: one postorder pass for S-attributed definitions, one depth-first left-to-right pass for L-attributed ones.
 
-**Code generation.** Three-address code with quadruples, triples and indirect triples; DAGs by the value-number method; SSA form with φ-functions placed at dominance frontiers; leaders, basic blocks, flow graphs and natural loops; live variables and next-use tables; block optimization through the DAG (common subexpressions, constant folding, dead code); the getReg code generator with register and address descriptors and instruction costs; and a peephole optimizer on both three-address and target code. Every transformed program is run against the original on random inputs, and the target code on a small simulated machine.
+**Code generation.** Three-address code with quadruples, triples and indirect triples; DAGs by the value-number method; SSA form with φ-functions placed at dominance frontiers; leaders, basic blocks, flow graphs and natural loops; live variables and next-use tables; block optimization through the DAG (common subexpressions, constant folding, dead code); the target machine with its addressing modes and instruction costs, and each statement translated on its own; pointers (`x = *p`, `*p = y`) and arrays with an element width, so `b = a[i]` with 8-byte elements scales the index (`MUL R1, R1, #8`); the getReg code generator with register and address descriptors and instruction costs; and a peephole optimizer on both three-address and target code. Every transformed program is run against the original on random inputs, and the target code on a small simulated machine.
 
 Every result is checked against its input before it is shown. The ambiguity search is bounded, so "none found" is evidence, not a proof.
 
@@ -75,7 +76,7 @@ Notation follows Peter Linz, *An Introduction to Formal Languages and Automata*,
 | NPDA | `δ(q0, a, z) = {(q0, az), (q1, λ)}` with the stack top written first |
 | Lex / Yacc | standard `.l` and `.y` files: definitions, `%%`, rules with actions, trailing context `r/s`; `%token`, `%left`, `%right`, `%nonassoc`, `%prec`, `%start` |
 | SDD | `T' -> * F T1' { T1'.inh = T'.inh * F.val ; T'.syn = T1'.syn }`; write `E1`, `T1'` for a second copy of a nonterminal |
-| Program | `x = a + b * c`, `a[i] = x`, `if i <= 10 goto (3)`, `L1: goto L2`; lines may be numbered `(3)` or `3)`; `t1`, `t2`, … are temporaries |
+| Program | `x = a + b * c`, `a[i] = x`, `x = *p`, `*p = y`, `if i <= 10 goto (3)`, `L1: goto L2`; lines may be numbered `(3)` or `3)`; `t1`, `t2`, … are temporaries |
 
 ## Keyboard (Draw FA)
 
@@ -138,6 +139,7 @@ tests/golden.js  golden snapshots of every engine (tests/golden/*.json)
 | 27 Oct 2026 | Syntax-directed translation: annotated parse trees, dependency graphs and evaluation order, S/L-attributed checks, syntax trees |
 | 29 Oct 2026 | Lexical analysis: transition diagrams, patterns to one DFA, lexer and symbol table, input buffering, Lex/Yacc files |
 | 30 Oct 2026 | Workspaces, first-visit examples, learning mode, limits for very large inputs |
+| 18 Nov 2026 | Handle pruning table, pointers in three-address code, array element width, target machine view with addressing modes |
 
 ## Security and privacy
 
